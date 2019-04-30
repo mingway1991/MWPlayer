@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define degreeToRadian(x) (M_PI * x / 180.0)
+#define radianToDegree(x) (180.0 * x / M_PI)
+
 typedef enum : NSUInteger {
     MWPlayerStateInit = 0,
     MWPlayerStatePlaying,
@@ -15,16 +18,30 @@ typedef enum : NSUInteger {
     MWPlayerStatePlayFinished,
 } MWPlayerState;
 
+typedef enum : NSUInteger {
+    MWPlayerDirectionPortrait,
+    MWPlayerDirectionLandscapeLeft,
+    MWPlayerDirectionLandscapeRight,
+} MWPlayerDirection;
+
+static NSString *kStateKeyPath = @"state";
+static NSString *kTotalTimeIntervalKeyPath = @"totalTimeInterval";
+static NSString *kCacheTimeIntervalKeyPath = @"cacheTimeInterval";
+static NSString *kCurrentTimeIntervalKeyPath = @"currentTimeInterval";
+static NSString *kPanToPlayPercentKeyPath = @"panToPlayPercent";
+static NSString *kDirectionKeyPath = @"direction";
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerInfo : NSObject
 
 @property (nonatomic, copy) NSString *videoUrl;
-@property (nonatomic, assign) BOOL isPlaying; //用于更新播放状态还是暂停状态
-@property (nonatomic, assign) BOOL isPlayFinished; //是否播放完成
+@property (nonatomic, assign) MWPlayerState state;
 @property (nonatomic, assign) NSTimeInterval totalTimeInterval;
 @property (nonatomic, assign) NSTimeInterval cacheTimeInterval;
 @property (nonatomic, assign) NSTimeInterval currentTimeInterval;
+@property (nonatomic, assign) float panToPlayPercent;
+@property (nonatomic, assign) MWPlayerDirection direction;
 
 @end
 

@@ -1,0 +1,22 @@
+//
+//  EVBaseViewController.m
+//  EchoVideo
+//
+//  Created by 石茗伟 on 2019/4/30.
+//  Copyright © 2019 聽風入髓. All rights reserved.
+//
+
+#import "EVBaseViewController.h"
+
+@interface EVBaseViewController ()
+
+@end
+
+@implementation EVBaseViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+}
+
+@end

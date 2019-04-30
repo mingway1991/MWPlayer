@@ -6,7 +6,7 @@
 //  Copyright © 2019 聽風入髓. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "EVBaseViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

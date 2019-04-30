@@ -12,6 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerView : UIView
 
+@property (nonatomic, copy) NSString *videoUrl;
+
+- (void)play;
+- (void)pause;
+- (void)pointToPlay:(float)percent;
+
 @end
 
 NS_ASSUME_NONNULL_END

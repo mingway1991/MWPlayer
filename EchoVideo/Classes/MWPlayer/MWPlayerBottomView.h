@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MWPlayerInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerBottomView : UIView
+
+@property (nonatomic, strong) MWPlayerInfo *info;
 
 @end
 
