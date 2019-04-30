@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  EVBaseViewController.h
 //  EchoVideo
 //
 //  Created by 石茗伟 on 2019/4/30.
@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+NS_ASSUME_NONNULL_BEGIN
 
+@interface EVBaseViewController : UIViewController
 
 @end
 
+NS_ASSUME_NONNULL_END
