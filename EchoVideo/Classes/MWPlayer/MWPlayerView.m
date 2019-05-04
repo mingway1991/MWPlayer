@@ -11,6 +11,9 @@
 #import "MWPlayerCoverView.h"
 #import "MWPlayerInfo.h"
 
+static NSString *kAVPlaterLoadedTimeRangesKeyPath = @"loadedTimeRanges";
+static NSString *kAVPlaterStatusKeyPath = @"status";
+
 @import AVFoundation;
 
 @interface MWPlayerView () {
@@ -21,8 +24,10 @@
 @property (nonatomic, strong) AVPlayer *avPlayer;
 @property (nonatomic, strong) AVPlayerLayer *avPlayerLayer;
 @property (nonatomic, strong) MWPlayerCoverView *coverView;
+@property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 
 @property (nonatomic, strong) MWPlayerInfo *info;
+@property (nonatomic, strong) CADisplayLink *displayLink;
 
 @end
 
@@ -46,6 +51,7 @@
 
 - (void)commonInit {
     self.clipsToBounds = YES;
+    
     self.info = [[MWPlayerInfo alloc] init];
     self.coverView.info = self.info;
     [self.info addObserver:self forKeyPath:kStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
@@ -56,6 +62,7 @@
     self.backgroundColor = [UIColor blackColor];
     
     [self.layer addSublayer:self.avPlayerLayer];
+    [self addSubview:self.indicatorView];
     [self addSubview:self.coverView];
     
     __weak __typeof(self) weakSelf = self;
@@ -69,6 +76,9 @@
         weakSelf.info.totalTimeInterval = total;
         weakSelf.info.currentTimeInterval = current;
     }];
+    
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];
+    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 - (void)dealloc {
@@ -84,6 +94,7 @@
     [super layoutSubviews];
     self.avPlayerLayer.frame = self.bounds;
     self.coverView.frame = self.bounds;
+    self.indicatorView.frame = self.bounds;
 }
 
 #pragma mark -
@@ -93,16 +104,16 @@
     
     self.info.videoUrl = videoUrl;
     if (self.avPlayer && self.avPlayer.currentItem) {
-        [self.avPlayer.currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
-        [self.avPlayer.currentItem removeObserver:self forKeyPath:@"status"];
+        [self.avPlayer.currentItem removeObserver:self forKeyPath:kAVPlaterLoadedTimeRangesKeyPath];
+        [self.avPlayer.currentItem removeObserver:self forKeyPath:kAVPlaterStatusKeyPath];
         
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     }
     
     if (self.avPlayer && videoUrl.length > 0) {
         AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:videoUrl]];
-        [playerItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
-        [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+        [playerItem addObserver:self forKeyPath:kAVPlaterLoadedTimeRangesKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [playerItem addObserver:self forKeyPath:kAVPlaterStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [self.avPlayer replaceCurrentItemWithPlayerItem:playerItem];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.avPlayer.currentItem];
@@ -128,7 +139,7 @@
 #pragma mark Observe
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
-    if ([keyPath isEqualToString:@"loadedTimeRanges"]){
+    if ([keyPath isEqualToString:kAVPlaterLoadedTimeRangesKeyPath]){
         NSArray *loadedTimeRanges = [playerItem loadedTimeRanges];
         CMTimeRange timeRange = [loadedTimeRanges.firstObject CMTimeRangeValue];
         NSTimeInterval startSeconds = CMTimeGetSeconds(timeRange.start);
@@ -138,7 +149,7 @@
         self.info.totalTimeInterval = total;
         self.info.cacheTimeInterval = cache;
         
-    } else if ([keyPath isEqualToString:@"status"]){
+    } else if ([keyPath isEqualToString:kAVPlaterStatusKeyPath]){
         if (playerItem.status == AVPlayerItemStatusReadyToPlay){
             NSLog(@"playerItem is ready");
         } else{
@@ -211,6 +222,15 @@
     [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
 }
 
+- (void)_upadteLoading {
+    NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+    if (current != self.info.currentTimeInterval) {
+        [self.indicatorView stopAnimating];
+    } else {
+        [self.indicatorView startAnimating];
+    }
+}
+
 #pragma mark -
 #pragma mark LazyLoad
 - (AVPlayer *)avPlayer {
@@ -234,6 +254,13 @@
         self.coverView = [[MWPlayerCoverView alloc] init];
     }
     return _coverView;
+}
+
+- (UIActivityIndicatorView *)indicatorView {
+    if (!_indicatorView) {
+        self.indicatorView = [[UIActivityIndicatorView alloc] init];
+    }
+    return _indicatorView;
 }
 
 @end

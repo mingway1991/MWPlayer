@@ -117,11 +117,7 @@ static CGFloat durationWidth = 0;
     minute = (secend % 3600)/60;
     hour = secend / 3600;
     secend = secend % 60;
-    if (hour == 0) {
-        return [NSString stringWithFormat:@"%02d:%02d", minute, secend];
-    } else {
-        return [NSString stringWithFormat:@"%02d:%02d:%02d", hour, minute, secend];
-    }
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", hour, minute, secend];
 }
 
 - (void)_removeObserver {
