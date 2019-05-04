@@ -54,6 +54,10 @@ static CGFloat kPlayerCoverBottomViewHeight = 50.f;
     [self addSubview:self.volumeView];
 }
 
+- (void)dealloc {
+    _info = nil;
+}
+
 #pragma mark -
 #pragma mark Layout
 - (void)layoutSubviews {

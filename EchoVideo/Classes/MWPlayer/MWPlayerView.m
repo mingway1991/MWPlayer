@@ -11,23 +11,25 @@
 #import "MWPlayerCoverView.h"
 #import "MWPlayerInfo.h"
 
-static NSString *kAVPlaterLoadedTimeRangesKeyPath = @"loadedTimeRanges";
-static NSString *kAVPlaterStatusKeyPath = @"status";
+static NSString *kAvPlaterStatusKeyPath = @"status";
+static NSString *kAvPlaterLoadedTimeRangesKeyPath = @"loadedTimeRanges";
+static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 @import AVFoundation;
 
 @interface MWPlayerView () {
-    UIView *_superView;
-    CGRect _originFrame;
+    UIView *_superView; // 保存父视图，便于全屏后恢复
+    CGRect _originFrame; // 保存原始frame，便于全屏后恢复
 }
 
 @property (nonatomic, strong) AVPlayer *avPlayer;
 @property (nonatomic, strong) AVPlayerLayer *avPlayerLayer;
+
 @property (nonatomic, strong) MWPlayerCoverView *coverView;
 @property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 
 @property (nonatomic, strong) MWPlayerInfo *info;
-@property (nonatomic, strong) CADisplayLink *displayLink;
+@property (nonatomic, strong) CADisplayLink *loadingDisplayLink;
 
 @end
 
@@ -51,19 +53,14 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
 
 - (void)commonInit {
     self.clipsToBounds = YES;
+    self.backgroundColor = [UIColor blackColor];
     
     self.info = [[MWPlayerInfo alloc] init];
     self.coverView.info = self.info;
-    [self.info addObserver:self forKeyPath:kStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [self.info addObserver:self forKeyPath:kPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [self.info addObserver:self forKeyPath:kDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    
+    [self _addPropertyObserver];
     
     self.info.state = MWPlayerStateInit;
-    self.backgroundColor = [UIColor blackColor];
-    
-    [self.layer addSublayer:self.avPlayerLayer];
-    [self addSubview:self.indicatorView];
-    [self addSubview:self.coverView];
     
     __weak __typeof(self) weakSelf = self;
     [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
@@ -77,15 +74,29 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
         weakSelf.info.currentTimeInterval = current;
     }];
     
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];
-    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    self.loadingDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];
+    [self.loadingDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    
+    [self.layer addSublayer:self.avPlayerLayer];
+    [self addSubview:self.indicatorView];
+    [self addSubview:self.coverView];
 }
 
 - (void)dealloc {
-    [_info removeObserver:self forKeyPath:kStateKeyPath];
-    [_info removeObserver:self forKeyPath:kPanToPlayPercentKeyPath];
-    [_info removeObserver:self forKeyPath:kDirectionKeyPath];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"mwplayerview dealloc");
+    
+    [_loadingDisplayLink invalidate];
+    _loadingDisplayLink = nil;
+    
+    [self _releasePropertyObserver];
+    _info = nil;
+    
+    [self _releaseCurrentAvPlayerItemObserver];
+    [_avPlayer removeTimeObserver:self];
+    _avPlayer = nil;
+    
+    [_avPlayerLayer removeFromSuperlayer];
+    _avPlayerLayer = nil;
 }
 
 #pragma mark -
@@ -102,22 +113,14 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
 - (void)setVideoUrl:(NSString *)videoUrl {
     _videoUrl = videoUrl;
     
-    self.info.videoUrl = videoUrl;
-    if (self.avPlayer && self.avPlayer.currentItem) {
-        [self.avPlayer.currentItem removeObserver:self forKeyPath:kAVPlaterLoadedTimeRangesKeyPath];
-        [self.avPlayer.currentItem removeObserver:self forKeyPath:kAVPlaterStatusKeyPath];
-        
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
-    }
+    [self _releaseCurrentAvPlayerItemObserver];
     
-    if (self.avPlayer && videoUrl.length > 0) {
-        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:videoUrl]];
-        [playerItem addObserver:self forKeyPath:kAVPlaterLoadedTimeRangesKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [playerItem addObserver:self forKeyPath:kAVPlaterStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [self.avPlayer replaceCurrentItemWithPlayerItem:playerItem];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.avPlayer.currentItem];
-    }
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:videoUrl]];
+    [self.avPlayer replaceCurrentItemWithPlayerItem:playerItem];
+    
+    [self _addCurrentAvPlayerItemObserver];
+    
+    self.info.videoUrl = videoUrl;
 }
 
 #pragma mark -
@@ -135,11 +138,23 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
     self.info.state = MWPlayerStatePlaying;
 }
 
+- (void)stop {
+    self.info.state = MWPlayerStateStop;
+}
+
 #pragma mark -
 #pragma mark Observe
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
-    if ([keyPath isEqualToString:kAVPlaterLoadedTimeRangesKeyPath]){
+    if ([keyPath isEqualToString:kAvPlaterStatusKeyPath]){
+        // avplaer load status
+        if (playerItem.status == AVPlayerItemStatusReadyToPlay){
+            NSLog(@"playerItem is ready");
+        } else{
+            NSLog(@"load break");
+        }
+    } else if ([keyPath isEqualToString:kAvPlaterLoadedTimeRangesKeyPath]){
+        // avplayer buffer
         NSArray *loadedTimeRanges = [playerItem loadedTimeRanges];
         CMTimeRange timeRange = [loadedTimeRanges.firstObject CMTimeRangeValue];
         NSTimeInterval startSeconds = CMTimeGetSeconds(timeRange.start);
@@ -148,24 +163,27 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
         NSTimeInterval total = CMTimeGetSeconds(playerItem.duration);
         self.info.totalTimeInterval = total;
         self.info.cacheTimeInterval = cache;
+    } else if ([keyPath isEqualToString:kAvPlaterPlaybackBufferEmptyKeyPath]){
+        // avplaer playback buffer empty
         
-    } else if ([keyPath isEqualToString:kAVPlaterStatusKeyPath]){
-        if (playerItem.status == AVPlayerItemStatusReadyToPlay){
-            NSLog(@"playerItem is ready");
-        } else{
-            NSLog(@"load break");
-        }
     } else if ([keyPath isEqualToString:kStateKeyPath]) {
-        if (self.info.state == MWPlayerStatePlaying) {
+        // 更改播放状态
+        if (self.info.state == MWPlayerStateInit) {
+            [self _stop];
+        } else if (self.info.state == MWPlayerStatePlaying) {
             [self _play];
         } else if (self.info.state == MWPlayerStatePause) {
             [self _pause];
+        } else if (self.info.state == MWPlayerStateStop) {
+            [self _stop];
         } else if (self.info.state == MWPlayerStatePlayFinished) {
             [self _changeProgressWithPercent:0];
         }
     } else if ([keyPath isEqualToString:kPanToPlayPercentKeyPath]) {
+        // 更改播放进度
         [self _changeProgressWithPercent:self.info.panToPlayPercent];
     } else if ([keyPath isEqualToString:kDirectionKeyPath]) {
+        // 更改播放器方向
         if (self.info.direction == MWPlayerDirectionPortrait) {
             [self _zoomOut];
         } else {
@@ -174,22 +192,39 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
     }
 }
 
-- (void)playbackFinished:(NSNotification *)notification {
+/* 监听播放完成状态 */
+- (void)observePlaybackFinished:(NSNotification *)notification {
     self.info.state = MWPlayerStatePlayFinished;
 }
 
 #pragma mark -
 #pragma mark Private
+/* 初始状态播放器 */
+- (void)_init {
+    [self.avPlayer pause];
+    [self.coverView show];
+}
+
+/* 播放 */
 - (void)_play {
     [self.avPlayer play];
     [self.coverView show];
 }
 
+/* 暂停 */
 - (void)_pause {
     [self.avPlayer pause];
     [self.coverView show];
 }
 
+/* 停止 */
+- (void)_stop {
+    [self.avPlayer seekToTime:CMTimeMake(0, 1)];
+    [self.avPlayer pause];
+    [self.coverView show];
+}
+
+/* 拖动进度条 */
 - (void)_changeProgressWithPercent:(float)percent {
     if (self.avPlayer.status == AVPlayerStatusReadyToPlay) {
         NSTimeInterval duration = percent * CMTimeGetSeconds(self.avPlayer.currentItem.duration);
@@ -200,6 +235,20 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
     }
 }
 
+/* 更新loading状态 */
+- (void)_upadteLoading {
+    NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+    if (current == 0 && current == self.info.currentTimeInterval) {
+        [self.indicatorView stopAnimating];
+    } else if (current != self.info.currentTimeInterval) {
+        [self.indicatorView stopAnimating];
+    } else {
+        [self.indicatorView startAnimating];
+    }
+}
+
+/// full screen
+/* 全屏 */
 - (void)_zoomInWithDirection:(MWPlayerDirection)direction {
     _superView = self.superview;
     _originFrame = self.frame;
@@ -215,6 +264,7 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
     }
 }
 
+/* 缩小窗口 */
 - (void)_zoomOut {
     self.frame = _originFrame;
     [_superView addSubview:self];
@@ -222,13 +272,41 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
     [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
 }
 
-- (void)_upadteLoading {
-    NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
-    if (current != self.info.currentTimeInterval) {
-        [self.indicatorView stopAnimating];
-    } else {
-        [self.indicatorView startAnimating];
+/// observer
+/* 取消当前avplayer playitem 监听 */
+- (void)_releaseCurrentAvPlayerItemObserver {
+    if (_avPlayer && _avPlayer.currentItem) {
+        [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterStatusKeyPath];
+        [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterLoadedTimeRangesKeyPath];
+        [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterPlaybackBufferEmptyKeyPath];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     }
+}
+
+/* 添加当前avplayer playitem 监听 */
+- (void)_addCurrentAvPlayerItemObserver {
+    if (_avPlayer && _avPlayer.currentItem) {
+        [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterLoadedTimeRangesKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterPlaybackBufferEmptyKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observePlaybackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:_avPlayer.currentItem];
+    }
+}
+
+/* 取消属性监听 */
+- (void)_releasePropertyObserver {
+    [_info removeObserver:self forKeyPath:kStateKeyPath];
+    [_info removeObserver:self forKeyPath:kPanToPlayPercentKeyPath];
+    [_info removeObserver:self forKeyPath:kDirectionKeyPath];
+}
+
+/* 添加属性监听 */
+- (void)_addPropertyObserver {
+    [_info addObserver:self forKeyPath:kStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
 }
 
 #pragma mark -
@@ -243,8 +321,8 @@ static NSString *kAVPlaterStatusKeyPath = @"status";
 - (AVPlayerLayer *)avPlayerLayer {
     if (!_avPlayerLayer) {
         self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
-        self.avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-        self.avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
+        _avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        _avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
     }
     return _avPlayerLayer;
 }

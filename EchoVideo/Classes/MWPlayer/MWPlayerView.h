@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)play;
 - (void)pause;
 - (void)pointToPlay:(float)percent;
+- (void)stop;
 
 @end
 

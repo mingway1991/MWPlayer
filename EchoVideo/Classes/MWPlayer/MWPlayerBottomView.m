@@ -52,6 +52,7 @@ static CGFloat kCoverViewBottomHeight = 30.f;
     if (_info) {
         [self _removeObserver];
     }
+    _info = nil;
 }
 
 #pragma mark -
@@ -79,8 +80,16 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 #pragma mark Observe
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:kStateKeyPath]) {
-        BOOL isPlaying = self.info.state == MWPlayerStatePlaying;
-        [self.playOrPauseButton setSelected:!isPlaying];
+        switch (self.info.state) {
+            case MWPlayerStatePlaying: {
+                [self.playOrPauseButton setSelected:NO];
+                break;
+            }
+            default: {
+                [self.playOrPauseButton setSelected:YES];
+                break;
+            }
+        }
     } else if ([keyPath isEqualToString:kTotalTimeIntervalKeyPath]) {
         self.progressView.totalTimeInterval = self.info.totalTimeInterval;
         [self _updateDurationLabel];

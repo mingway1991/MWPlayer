@@ -15,14 +15,15 @@ typedef enum : NSUInteger {
     MWPlayerStateInit = 0,
     MWPlayerStatePlaying,
     MWPlayerStatePause,
+    MWPlayerStateStop,
     MWPlayerStatePlayFinished,
-} MWPlayerState;
+} MWPlayerState; // 播放器状态
 
 typedef enum : NSUInteger {
     MWPlayerDirectionPortrait,
     MWPlayerDirectionLandscapeLeft,
     MWPlayerDirectionLandscapeRight,
-} MWPlayerDirection;
+} MWPlayerDirection; // 播放器方向
 
 static NSString *kStateKeyPath = @"state";
 static NSString *kTotalTimeIntervalKeyPath = @"totalTimeInterval";
@@ -40,8 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSTimeInterval totalTimeInterval;
 @property (nonatomic, assign) NSTimeInterval cacheTimeInterval;
 @property (nonatomic, assign) NSTimeInterval currentTimeInterval;
-@property (nonatomic, assign) float panToPlayPercent;
 @property (nonatomic, assign) MWPlayerDirection direction;
+// 临时标记需要跳到的进度
+@property (nonatomic, assign) float panToPlayPercent;
 
 @end
 
