@@ -64,6 +64,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     
     __weak __typeof(self) weakSelf = self;
     [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        if (weakSelf.info.state == MWPlayerStatePrepareToPlay || weakSelf.info.state == MWPlayerStateInit) {
+            weakSelf.info.state = MWPlayerStatePlaying;
+        }
         NSTimeInterval current = CMTimeGetSeconds(time);
         NSTimeInterval total = CMTimeGetSeconds(weakSelf.avPlayer.currentItem.duration);
         if (current > total || total <= 0 || total != total || current != current) {
@@ -126,7 +129,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 #pragma mark -
 #pragma mark Public
 - (void)play {
-    self.info.state = MWPlayerStatePlaying;
+    self.info.state = MWPlayerStatePrepareToPlay;
 }
 
 - (void)pause {
@@ -135,7 +138,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 - (void)pointToPlay:(float)percent {
     [self _changeProgressWithPercent:percent];
-    self.info.state = MWPlayerStatePlaying;
+    self.info.state = MWPlayerStatePrepareToPlay;
 }
 
 - (void)stop {
@@ -169,9 +172,11 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     } else if ([keyPath isEqualToString:kStateKeyPath]) {
         // 更改播放状态
         if (self.info.state == MWPlayerStateInit) {
-            [self _stop];
-        } else if (self.info.state == MWPlayerStatePlaying) {
+            [self _init];
+        } else if (self.info.state == MWPlayerStatePrepareToPlay) {
             [self _play];
+        } else if (self.info.state == MWPlayerStatePlaying) {
+            // 正在播放
         } else if (self.info.state == MWPlayerStatePause) {
             [self _pause];
         } else if (self.info.state == MWPlayerStateStop) {
@@ -219,7 +224,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 /* 停止 */
 - (void)_stop {
-    [self.avPlayer seekToTime:CMTimeMake(0, 1)];
+    [self _changeProgressWithPercent:0];
     [self.avPlayer pause];
     [self.coverView show];
 }
@@ -237,13 +242,17 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 /* 更新loading状态 */
 - (void)_upadteLoading {
-    NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
-    if (current == 0 && current == self.info.currentTimeInterval) {
-        [self.indicatorView stopAnimating];
-    } else if (current != self.info.currentTimeInterval) {
-        [self.indicatorView stopAnimating];
-    } else {
+    if (self.info.state == MWPlayerStatePrepareToPlay) {
+        // 准备播放状态默认显示加载中
         [self.indicatorView startAnimating];
+    } else if (self.info.state == MWPlayerStatePlaying) {
+        // 播放状态下，判断是否处于加载中状态
+        NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+        if (current != self.info.currentTimeInterval) {
+            [self.indicatorView stopAnimating];
+        } else {
+            [self.indicatorView startAnimating];
+        }
     }
 }
 

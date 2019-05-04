@@ -12,11 +12,12 @@
 #define radianToDegree(x) (180.0 * x / M_PI)
 
 typedef enum : NSUInteger {
-    MWPlayerStateInit = 0,
-    MWPlayerStatePlaying,
-    MWPlayerStatePause,
-    MWPlayerStateStop,
-    MWPlayerStatePlayFinished,
+    MWPlayerStateInit = 0, // 初始状态
+    MWPlayerStatePrepareToPlay, // 准备播放
+    MWPlayerStatePlaying, // 正在播放
+    MWPlayerStatePause, // 暂停
+    MWPlayerStateStop, // 停止
+    MWPlayerStatePlayFinished, // 播放完成
 } MWPlayerState; // 播放器状态
 
 typedef enum : NSUInteger {

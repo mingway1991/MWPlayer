@@ -147,7 +147,7 @@ static CGFloat durationWidth = 0;
 #pragma mark Actions
 - (void)clickPlayOrPauseButton:(UIButton *)sender {
     [sender setSelected:!sender.isSelected];
-    self.info.state = self.info.state == MWPlayerStatePlaying ? MWPlayerStatePause : MWPlayerStatePlaying;
+    self.info.state = self.info.state == MWPlayerStatePlaying ? MWPlayerStatePause : MWPlayerStatePrepareToPlay;
 }
 
 - (void)clickFullScreenButton:(UIButton *)sender {
@@ -171,7 +171,7 @@ static CGFloat durationWidth = 0;
 }
 
 - (void)progressViewEndPanProgress:(MWPlayerProgressView *)progressView {
-    self.info.state = MWPlayerStatePlaying;
+    self.info.state = MWPlayerStatePrepareToPlay;
 }
 
 #pragma mark -
