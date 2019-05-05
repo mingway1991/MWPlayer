@@ -217,6 +217,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 #pragma mark Private
 /* 初始状态播放器 */
 - (void)_init {
+    [self _changeProgressWithPercent:0];
     [self.avPlayer pause];
     [self.coverView show];
 }
@@ -329,16 +330,20 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 /* 取消属性监听 */
 - (void)_releaseInfoPropertyObserver {
-    [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
-    [_info removeObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath];
-    [_info removeObserver:self forKeyPath:kInfoDirectionKeyPath];
+    if (_info) {
+        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoDirectionKeyPath];
+    }
 }
 
 /* 添加属性监听 */
 - (void)_addInfoPropertyObserver {
-    [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kInfoDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    if (_info) {
+        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    }
 }
 
 #pragma mark -

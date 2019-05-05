@@ -133,17 +133,21 @@ static CGFloat durationWidth = 0;
 }
 
 - (void)_removeObserver {
-    [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
-    [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
-    [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
-    [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
+    if (_info) {
+        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
+    }
 }
 
 - (void)_addObserver {
-    [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    if (_info) {
+        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    }
 }
 
 #pragma mark -

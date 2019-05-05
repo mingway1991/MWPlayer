@@ -14,6 +14,7 @@
     MWPlayerConfiguration *configuration = [[MWPlayerConfiguration alloc] init];
     configuration.topToolViewHeight = 50.f;
     configuration.bottomToolViewHeight = 50.f;
+    configuration.bottomToolViewBackgroundColor = [UIColor blackColor];
     return configuration;
 }
 

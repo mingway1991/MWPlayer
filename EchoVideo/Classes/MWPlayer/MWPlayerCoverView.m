@@ -79,9 +79,8 @@ typedef enum : NSUInteger {
     [self _removeConfigurationPropertyObserver];
     _configuration = configuration;
     [self _addConfigurationPropertyObserver];
-    
     [self _addTopView];
-    self.bottomView.configuration = configuration;
+    self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
 }
 
 #pragma mark -
@@ -96,6 +95,8 @@ typedef enum : NSUInteger {
         [self _updateTopViewFrame];
     } else if ([keyPath isEqualToString:kConfigurationBottomToolViewHeightKeyPath]) {
         [self _updateBottomViewFrame];
+    } else if ([keyPath isEqualToString:kConfigurationBottomToolViewBackgroundColorKeyPath]) {
+        self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
     }
 }
 
@@ -189,6 +190,7 @@ typedef enum : NSUInteger {
         [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 
@@ -198,6 +200,7 @@ typedef enum : NSUInteger {
         [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewKeyPath];
         [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath];
         [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath];
     }
 }
 

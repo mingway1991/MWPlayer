@@ -12,6 +12,7 @@
 static NSString *kConfigurationTopToolViewKeyPath = @"topToolView";
 static NSString *kConfigurationTopToolViewHeightKeyPath = @"topToolViewHeight";
 static NSString *kConfigurationBottomToolViewHeightKeyPath = @"bottomToolViewHeight";
+static NSString *kConfigurationBottomToolViewBackgroundColorKeyPath = @"bottomToolViewBackgroundColor";
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) UIView *topToolView; // 顶部工具view，默认空
 @property (nonatomic, assign) CGFloat topToolViewHeight; // 底部工具视图高度，默认50
 @property (nonatomic, assign) CGFloat bottomToolViewHeight; // 底部工具视图高度，默认50
+@property (nonatomic, strong) UIColor *bottomToolViewBackgroundColor; // 底部工具视图背景色，默认黑色
 
 + (instancetype)defaultConfiguration;
 
