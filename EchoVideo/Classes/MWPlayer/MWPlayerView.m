@@ -63,7 +63,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     self.info.state = MWPlayerStateInit;
     
     __weak __typeof(self) weakSelf = self;
-    [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 600) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         if (weakSelf.info.state == MWPlayerStatePrepareToPlay || weakSelf.info.state == MWPlayerStateInit) {
             weakSelf.info.state = MWPlayerStatePlaying;
         }
