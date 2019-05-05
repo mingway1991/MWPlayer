@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat bottomToolViewHeight; // 底部工具视图高度，默认50
 @property (nonatomic, strong) UIColor *bottomToolViewBackgroundColor; // 底部工具视图背景色，默认黑色
 @property (nonatomic, assign) BOOL needLoop; // 是否需要循环播放，默认NO
-@property (nonatomic, assign, readonly) int32_t timescale; // 帧率，默认600
+@property (nonatomic, assign, readonly) int32_t timescale; // 帧率600
 
 + (instancetype)defaultConfiguration;
 

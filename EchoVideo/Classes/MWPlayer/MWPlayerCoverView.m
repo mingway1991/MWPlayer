@@ -212,8 +212,13 @@ typedef enum : NSUInteger {
 - (void)_horizontalMoved:(CGFloat)value {
     // 快进快退的方法
     NSString *style = @"";
-    if (value < 0) { style = @"<<"; } // 向左移动
-    if (value > 0) { style = @">>"; } // 向右移动
+    if (value < 0) {
+        style = @"<<";
+        self.info.panToPlayPercent = (self.info.currentTimeInterval-5)/self.info.totalTimeInterval;
+    } else if (value > 0) {
+        style = @">>";
+        self.info.panToPlayPercent = (self.info.currentTimeInterval+5)/self.info.totalTimeInterval;
+    }
     if (value == 0) { return; }
 }
 
@@ -246,7 +251,7 @@ typedef enum : NSUInteger {
                 // 音量和亮度
                 _panDirection = MWCoverViewPanDirectionUpOrDown;
                 // 判断移动的点在屏幕的哪个位置
-                if (locationPoint.x <= self.frame.size.width / 2.0) {//以屏幕的1/2位分界线
+                if (locationPoint.x <= self.frame.size.width / 2.0) { //以屏幕的1/2位分界线
                     // 亮度,调节亮度
                     _isVolume = NO;
                 } else {
