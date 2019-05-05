@@ -1,8 +1,8 @@
 //
-//  EVVideoPlayerViewController.h
+//  EVVideoListViewController.h
 //  EchoVideo
 //
-//  Created by 石茗伟 on 2019/4/30.
+//  Created by 石茗伟 on 2019/5/5.
 //  Copyright © 2019 聽風入髓. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EVVideoPlayerViewController : EVBaseViewController
+@interface EVVideoListViewController : EVBaseViewController
 
 @end
 

@@ -78,8 +78,11 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 
 #pragma mark -
 #pragma mark Observe
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:kStateKeyPath]) {
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context {
+    if ([keyPath isEqualToString:kInfoStateKeyPath]) {
         switch (self.info.state) {
             case MWPlayerStatePlaying: {
                 [self.playOrPauseButton setSelected:NO];
@@ -90,12 +93,12 @@ static CGFloat kCoverViewBottomHeight = 30.f;
                 break;
             }
         }
-    } else if ([keyPath isEqualToString:kTotalTimeIntervalKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoTotalTimeIntervalKeyPath]) {
         self.progressView.totalTimeInterval = self.info.totalTimeInterval;
         [self _updateDurationLabel];
-    } else if ([keyPath isEqualToString:kCacheTimeIntervalKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoCacheTimeIntervalKeyPath]) {
         self.progressView.cacheTimeInterval = self.info.cacheTimeInterval;
-    } else if ([keyPath isEqualToString:kCurrentTimeIntervalKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoCurrentTimeIntervalKeyPath]) {
         self.progressView.currentTimeInterval = self.info.currentTimeInterval;
         [self _updateDurationLabel];
     }
@@ -130,17 +133,17 @@ static CGFloat durationWidth = 0;
 }
 
 - (void)_removeObserver {
-    [_info removeObserver:self forKeyPath:kStateKeyPath];
-    [_info removeObserver:self forKeyPath:kTotalTimeIntervalKeyPath];
-    [_info removeObserver:self forKeyPath:kCacheTimeIntervalKeyPath];
-    [_info removeObserver:self forKeyPath:kCurrentTimeIntervalKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
 }
 
 - (void)_addObserver {
-    [_info addObserver:self forKeyPath:kStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
 }
 
 #pragma mark -

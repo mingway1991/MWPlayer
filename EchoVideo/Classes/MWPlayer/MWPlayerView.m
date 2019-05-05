@@ -55,10 +55,12 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     self.clipsToBounds = YES;
     self.backgroundColor = [UIColor blackColor];
     
+    self.configuration = [MWPlayerConfiguration defaultConfiguration];
+    
     self.info = [[MWPlayerInfo alloc] init];
     self.coverView.info = self.info;
     
-    [self _addPropertyObserver];
+    [self _addInfoPropertyObserver];
     
     self.info.state = MWPlayerStateInit;
     
@@ -91,7 +93,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     [_loadingDisplayLink invalidate];
     _loadingDisplayLink = nil;
     
-    [self _releasePropertyObserver];
+    [self _releaseInfoPropertyObserver];
     _info = nil;
     
     [self _releaseCurrentAvPlayerItemObserver];
@@ -126,6 +128,12 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     self.info.videoUrl = videoUrl;
 }
 
+- (void)setConfiguration:(MWPlayerConfiguration *)configuration {
+    _configuration = configuration;
+    
+    self.coverView.configuration = configuration;
+}
+
 #pragma mark -
 #pragma mark Public
 - (void)play {
@@ -147,7 +155,10 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 #pragma mark -
 #pragma mark Observe
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSString *,id> *)change
+                       context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
     if ([keyPath isEqualToString:kAvPlaterStatusKeyPath]){
         // avplaer load status
@@ -169,7 +180,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     } else if ([keyPath isEqualToString:kAvPlaterPlaybackBufferEmptyKeyPath]){
         // avplaer playback buffer empty
         
-    } else if ([keyPath isEqualToString:kStateKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoStateKeyPath]) {
         // 更改播放状态
         if (self.info.state == MWPlayerStateInit) {
             [self _init];
@@ -184,10 +195,10 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
         } else if (self.info.state == MWPlayerStatePlayFinished) {
             [self _changeProgressWithPercent:0];
         }
-    } else if ([keyPath isEqualToString:kPanToPlayPercentKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoPanToPlayPercentKeyPath]) {
         // 更改播放进度
         [self _changeProgressWithPercent:self.info.panToPlayPercent];
-    } else if ([keyPath isEqualToString:kDirectionKeyPath]) {
+    } else if ([keyPath isEqualToString:kInfoDirectionKeyPath]) {
         // 更改播放器方向
         if (self.info.direction == MWPlayerDirectionPortrait) {
             [self _zoomOut];
@@ -226,6 +237,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 - (void)_stop {
     [self _changeProgressWithPercent:0];
     [self.avPlayer pause];
+    [self _releaseCurrentAvPlayerItemObserver];
+    [self.avPlayer replaceCurrentItemWithPlayerItem:nil];
     [self.coverView show];
 }
 
@@ -242,16 +255,26 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 
 /* 更新loading状态 */
 - (void)_upadteLoading {
-    if (self.info.state == MWPlayerStatePrepareToPlay) {
-        // 准备播放状态默认显示加载中
-        [self.indicatorView startAnimating];
-    } else if (self.info.state == MWPlayerStatePlaying) {
-        // 播放状态下，判断是否处于加载中状态
-        NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
-        if (current != self.info.currentTimeInterval) {
-            [self.indicatorView stopAnimating];
-        } else {
+    switch (self.info.state) {
+        case MWPlayerStatePrepareToPlay: {
+            // 准备播放状态默认显示加载中
             [self.indicatorView startAnimating];
+            break;
+        }
+        case MWPlayerStatePlaying: {
+            // 播放状态下，判断是否处于加载中状态
+            NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+            if (current != self.info.currentTimeInterval) {
+                [self.indicatorView stopAnimating];
+            } else {
+                [self.indicatorView startAnimating];
+            }
+            break;
+        }
+        default: {
+            // 默认
+            [self.indicatorView stopAnimating];
+            break;
         }
     }
 }
@@ -305,17 +328,17 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
 }
 
 /* 取消属性监听 */
-- (void)_releasePropertyObserver {
-    [_info removeObserver:self forKeyPath:kStateKeyPath];
-    [_info removeObserver:self forKeyPath:kPanToPlayPercentKeyPath];
-    [_info removeObserver:self forKeyPath:kDirectionKeyPath];
+- (void)_releaseInfoPropertyObserver {
+    [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath];
+    [_info removeObserver:self forKeyPath:kInfoDirectionKeyPath];
 }
 
 /* 添加属性监听 */
-- (void)_addPropertyObserver {
-    [_info addObserver:self forKeyPath:kStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    [_info addObserver:self forKeyPath:kDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+- (void)_addInfoPropertyObserver {
+    [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [_info addObserver:self forKeyPath:kInfoDirectionKeyPath options:NSKeyValueObservingOptionNew context:nil];
 }
 
 #pragma mark -

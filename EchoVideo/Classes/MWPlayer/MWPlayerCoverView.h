@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "MWPlayerInfo.h"
+#import "MWPlayerConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerCoverView : UIView
 
 @property (nonatomic, strong) MWPlayerInfo *info;
+@property (nonatomic, strong) MWPlayerConfiguration *configuration;
 
 - (void)show;
 - (void)hide;

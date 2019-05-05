@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "EVVideoPlayerViewController.h"
+#import "EVVideoListViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +20,7 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     
-    EVVideoPlayerViewController *vc = [[EVVideoPlayerViewController alloc] init];
+    EVVideoListViewController *vc = [[EVVideoListViewController alloc] init];
     self.window.rootViewController = vc;
     [self.window makeKeyAndVisible];
     

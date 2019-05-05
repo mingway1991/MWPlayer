@@ -26,12 +26,13 @@ typedef enum : NSUInteger {
     MWPlayerDirectionLandscapeRight,
 } MWPlayerDirection; // 播放器方向
 
-static NSString *kStateKeyPath = @"state";
-static NSString *kTotalTimeIntervalKeyPath = @"totalTimeInterval";
-static NSString *kCacheTimeIntervalKeyPath = @"cacheTimeInterval";
-static NSString *kCurrentTimeIntervalKeyPath = @"currentTimeInterval";
-static NSString *kPanToPlayPercentKeyPath = @"panToPlayPercent";
-static NSString *kDirectionKeyPath = @"direction";
+// kvo 使用
+static NSString *kInfoStateKeyPath = @"state";
+static NSString *kInfoTotalTimeIntervalKeyPath = @"totalTimeInterval";
+static NSString *kInfoCacheTimeIntervalKeyPath = @"cacheTimeInterval";
+static NSString *kInfoCurrentTimeIntervalKeyPath = @"currentTimeInterval";
+static NSString *kInfoPanToPlayPercentKeyPath = @"panToPlayPercent";
+static NSString *kInfoDirectionKeyPath = @"direction";
 
 NS_ASSUME_NONNULL_BEGIN
 
