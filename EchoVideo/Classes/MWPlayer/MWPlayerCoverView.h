@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerCoverView : UIView
 
-@property (nonatomic, strong) MWPlayerInfo *info;
-@property (nonatomic, strong) MWPlayerConfiguration *configuration;
+@property (nonatomic, weak) MWPlayerInfo *info;
+@property (nonatomic, weak) MWPlayerConfiguration *configuration;
 
 - (void)show;
 - (void)hide;

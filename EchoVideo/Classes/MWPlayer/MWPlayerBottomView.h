@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerBottomView : UIView
 
-@property (nonatomic, strong) MWPlayerInfo *info;
+@property (nonatomic, weak) MWPlayerInfo *info;
 
 @end
 

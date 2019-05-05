@@ -52,6 +52,13 @@
     [self.view addSubview:self.playerView];
 }
 
+- (void)dealloc {
+    NSLog(@"%@ dealloc", NSStringFromClass([self class]));
+    [_playerView stop];
+    [_playerView removeFromSuperview];
+    _playerView = nil;
+}
+
 - (void)closePlayer {
     [self.playerView stop];
     self.playerView.hidden = YES;

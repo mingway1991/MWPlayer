@@ -26,6 +26,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 @property (nonatomic, strong) AVPlayer *avPlayer;
 @property (nonatomic, strong) MWPlayerInfo *info;
 @property (nonatomic, strong) CADisplayLink *loadingDisplayLink;
+@property (nonatomic, strong) id periodicTimeObserver;
 
 @property (nonatomic, strong) AVPlayerLayer *avPlayerLayer;
 @property (nonatomic, strong) UIView<MWPlayerLoadingProtocol> *loadingView;
@@ -59,9 +60,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.coverView.info = self.info;
     [self _addInfoPropertyObserver];
     self.info.state = MWPlayerStateInit;
-    
-    __weak __typeof(self) weakSelf = self;
-    [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, self.configuration.timescale) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+
+    __weak typeof(self) weakSelf = self;
+    self.periodicTimeObserver = [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, self.configuration.timescale) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         if (weakSelf.info.state == MWPlayerStatePrepareToPlay || weakSelf.info.state == MWPlayerStateInit) {
             weakSelf.info.state = MWPlayerStatePlaying;
         }
@@ -74,13 +75,10 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         weakSelf.info.totalTimeInterval = total;
         weakSelf.info.currentTimeInterval = current;
     }];
-    
+
     [self.layer addSublayer:self.avPlayerLayer];
     [self addSubview:self.coverView];
     [self _addLoadingView];
-    
-    self.loadingDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];
-    [self.loadingDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 - (void)dealloc {
@@ -89,7 +87,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _releaseConfigurationPropertyObserver];
     [self _releaseInfoPropertyObserver];
     [self _releaseCurrentAvPlayerItemObserver];
-    [_avPlayer removeTimeObserver:self];
+    [_avPlayer removeTimeObserver:_periodicTimeObserver];
     [_avPlayerLayer removeFromSuperlayer];
     _loadingDisplayLink = nil;
     _info = nil;
@@ -254,16 +252,19 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_play {
     [self.avPlayer play];
     [self.coverView show];
+    [self _addLoadingDisplayLink];
 }
 
 /* 暂停 */
 - (void)_pause {
     [self.avPlayer pause];
     [self.coverView show];
+    [self _stopLoadingDisplayLink];
 }
 
 /* 停止 */
 - (void)_stop {
+    [self _stopLoadingDisplayLink];
     self.info.cacheTimeInterval = 0;
     self.info.currentTimeInterval = 0;
     self.info.totalTimeInterval = 0;
@@ -363,6 +364,19 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 - (void)_updateLoadingViewFrame {
     self.loadingView.frame = self.bounds;
+}
+
+- (void)_addLoadingDisplayLink {
+    if (!self.loadingDisplayLink) {
+        [self _stopLoadingDisplayLink];
+    }
+    self.loadingDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];
+    [self.loadingDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+}
+
+- (void)_stopLoadingDisplayLink {
+    [self.loadingDisplayLink invalidate];
+    self.loadingDisplayLink = nil;
 }
 
 /// observer

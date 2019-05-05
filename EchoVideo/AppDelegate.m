@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "EVVideoListViewController.h"
+#import "EVHomeViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,8 +20,9 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     
-    EVVideoListViewController *vc = [[EVVideoListViewController alloc] init];
-    self.window.rootViewController = vc;
+    EVHomeViewController *vc = [[EVHomeViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     
     return YES;

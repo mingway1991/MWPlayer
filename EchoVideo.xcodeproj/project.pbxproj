@@ -10,6 +10,7 @@
 		4D7C8144A61A9CF88CB354AA /* Pods_EchoVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD948BE7758D5B2AEAA4D27B /* Pods_EchoVideo.framework */; };
 		7A1BA751227E74C8001B1223 /* EVVideoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA750227E74C8001B1223 /* EVVideoListViewController.m */; };
 		7A1BA754227E7752001B1223 /* MWPlayerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */; };
+		7A1BA759227EE13C001B1223 /* EVHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA758227EE13C001B1223 /* EVHomeViewController.m */; };
 		7A8332862277E14200493BA7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332852277E14200493BA7 /* AppDelegate.m */; };
 		7A83328E2277E14300493BA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A83328D2277E14300493BA7 /* Assets.xcassets */; };
 		7A8332912277E14300493BA7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A83328F2277E14300493BA7 /* LaunchScreen.storyboard */; };
@@ -29,6 +30,8 @@
 		7A1BA752227E7752001B1223 /* MWPlayerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerConfiguration.h; sourceTree = "<group>"; };
 		7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
 		7A1BA755227EB1DE001B1223 /* MWPlayerLoadingProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerLoadingProtocol.h; sourceTree = "<group>"; };
+		7A1BA757227EE13C001B1223 /* EVHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVHomeViewController.h; sourceTree = "<group>"; };
+		7A1BA758227EE13C001B1223 /* EVHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVHomeViewController.m; sourceTree = "<group>"; };
 		7A8332812277E14200493BA7 /* EchoVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EchoVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A8332842277E14200493BA7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7A8332852277E14200493BA7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -91,6 +94,15 @@
 			path = VideoList;
 			sourceTree = "<group>";
 		};
+		7A1BA756227EE12F001B1223 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				7A1BA757227EE13C001B1223 /* EVHomeViewController.h */,
+				7A1BA758227EE13C001B1223 /* EVHomeViewController.m */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		7A8332782277E14200493BA7 = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +138,7 @@
 		7A83329D2277E45300493BA7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7A1BA756227EE12F001B1223 /* Home */,
 				7A1BA74E227E74B8001B1223 /* VideoList */,
 				7A8332A62277EA0900493BA7 /* MWPlayer */,
 				7A83329E2277E45300493BA7 /* Base */,
@@ -284,6 +297,7 @@
 				7A8332A12277E45300493BA7 /* EVBaseViewController.m in Sources */,
 				7A8332B62278251900493BA7 /* MWPlayerInfo.m in Sources */,
 				7A1BA754227E7752001B1223 /* MWPlayerConfiguration.m in Sources */,
+				7A1BA759227EE13C001B1223 /* EVHomeViewController.m in Sources */,
 				7A1BA751227E74C8001B1223 /* EVVideoListViewController.m in Sources */,
 				7A8332942277E14300493BA7 /* main.m in Sources */,
 				7A8332862277E14200493BA7 /* AppDelegate.m in Sources */,
