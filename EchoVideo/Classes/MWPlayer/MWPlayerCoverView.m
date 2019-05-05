@@ -49,6 +49,7 @@ typedef enum : NSUInteger {
 }
 
 - (void)commonInit {
+    [self _addTopView];
     [self addSubview:self.bottomView];
     [self addSubview:self.volumeView];
 }
@@ -71,7 +72,6 @@ typedef enum : NSUInteger {
 #pragma mark Setter
 - (void)setInfo:(MWPlayerInfo *)info {
     _info = info;
-    
     self.bottomView.info = info;
 }
 
@@ -80,6 +80,7 @@ typedef enum : NSUInteger {
     _configuration = configuration;
     [self _addConfigurationPropertyObserver];
     [self _addTopView];
+    [self _updateTopViewFrame];
     self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
 }
 
@@ -166,9 +167,11 @@ typedef enum : NSUInteger {
     if (self.topView) {
         [self.topView removeFromSuperview];
     }
-    self.topView = self.configuration.topToolView;
-    [self addSubview:self.topView];
-    [self _updateTopViewFrame];
+    if (self.configuration.topToolView) {
+        self.topView = self.configuration.topToolView;
+        [self addSubview:self.topView];
+        [self _updateTopViewFrame];
+    }
 }
 
 /* 更新topView frame */

@@ -18,6 +18,7 @@ typedef enum : NSUInteger {
     MWPlayerStatePause, // 暂停
     MWPlayerStateStop, // 停止
     MWPlayerStatePlayFinished, // 播放完成
+    MWPlayerStateLoadBreak, // 加载失败
 } MWPlayerState; // 播放器状态
 
 typedef enum : NSUInteger {

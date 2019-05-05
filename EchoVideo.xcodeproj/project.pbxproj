@@ -28,6 +28,7 @@
 		7A1BA750227E74C8001B1223 /* EVVideoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVVideoListViewController.m; sourceTree = "<group>"; };
 		7A1BA752227E7752001B1223 /* MWPlayerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerConfiguration.h; sourceTree = "<group>"; };
 		7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
+		7A1BA755227EB1DE001B1223 /* MWPlayerLoadingProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerLoadingProtocol.h; sourceTree = "<group>"; };
 		7A8332812277E14200493BA7 /* EchoVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EchoVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A8332842277E14200493BA7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7A8332852277E14200493BA7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -157,6 +158,7 @@
 				7A8332AE2277FA2B00493BA7 /* MWPlayerProgressView.m */,
 				7A8332B42278251900493BA7 /* MWPlayerInfo.h */,
 				7A8332B52278251900493BA7 /* MWPlayerInfo.m */,
+				7A1BA755227EB1DE001B1223 /* MWPlayerLoadingProtocol.h */,
 			);
 			path = MWPlayer;
 			sourceTree = "<group>";

@@ -51,8 +51,8 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 - (void)dealloc {
     if (_info) {
         [self _removeObserver];
+        _info = nil;
     }
-    _info = nil;
 }
 
 #pragma mark -

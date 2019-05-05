@@ -25,8 +25,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // mp4 mov avi
     _videos = @[@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/movie.mp4"];
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/movie.mp4",
+                @"http://vfx.mtime.cn/Video/2017/03/31/mp4/170331093811717750.mp4",
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/RQ004F14.mov",
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/GoneNutty.avi",
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_1280x720_20mb.flv",
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_1280x720_20mb.mkv",
+                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_176x144_1mb.3gp"];
     
     UIView *topView = [[UIView alloc] init];
     topView.backgroundColor = [UIColor blackColor];

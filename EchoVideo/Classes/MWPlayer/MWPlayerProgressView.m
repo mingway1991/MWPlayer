@@ -16,7 +16,7 @@ static CGFloat kProgressHeight = 2.f;
 @property (nonatomic, strong) UIView *totalView;
 @property (nonatomic, strong) UIView *currentView;
 @property (nonatomic, strong) UIView *cacheView;
-@property (nonatomic, strong) UIButton *currentButton;
+@property (nonatomic, strong) UIView *currentPointView;
 
 @end
 
@@ -46,7 +46,7 @@ static CGFloat kProgressHeight = 2.f;
     [self addSubview:self.totalView];
     [self addSubview:self.cacheView];
     [self addSubview:self.currentView];
-    [self addSubview:self.currentButton];
+    [self addSubview:self.currentPointView];
 }
 
 #pragma mark -
@@ -86,7 +86,7 @@ static CGFloat kProgressHeight = 2.f;
 
 - (void)_updateCurrentFrame {
    self.currentView.frame = CGRectMake(0, (CGRectGetHeight(self.bounds)-kProgressHeight)/2.f, self.totalTimeInterval == 0 ? 0 : CGRectGetWidth(self.bounds) * (self.currentTimeInterval/self.totalTimeInterval), kProgressHeight);
-    self.currentButton.center = CGPointMake(CGRectGetMaxX(self.currentView.frame), self.currentView.center.y);
+    self.currentPointView.center = CGPointMake(CGRectGetMaxX(self.currentView.frame), self.currentView.center.y);
 }
 
 #pragma mark -
@@ -103,7 +103,7 @@ static CGFloat kProgressHeight = 2.f;
             CGPoint transP = [panGesture translationInView:panGesture.view];
             CGFloat changedX = transP.x;
             [panGesture setTranslation:CGPointZero inView:panGesture.view];
-            CGFloat newCenterX = self.currentButton.center.x+changedX;
+            CGFloat newCenterX = self.currentPointView.center.x+changedX;
             if (newCenterX >= 0 && newCenterX <= CGRectGetWidth(self.totalView.bounds)) {
                 CGFloat currentWidth = newCenterX;
                 CGFloat totalWidth = CGRectGetWidth(self.totalView.bounds);
@@ -149,27 +149,31 @@ static CGFloat kProgressHeight = 2.f;
     return _currentView;
 }
 
-- (UIButton *)currentButton {
-    if (!_currentButton) {
-        self.currentButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _currentButton.backgroundColor = [UIColor redColor];
-        CGFloat currentButtonHeight = 10.f;
-        _currentButton.frame = CGRectMake(0, 0, currentButtonHeight, currentButtonHeight);
-        _currentButton.layer.cornerRadius = 5.f;
+- (UIView *)currentPointView {
+    if (!_currentPointView) {
+        CGFloat pointViewHeight = 30.f;
+        CGFloat centerViewHeight = 10.f;
+        self.currentPointView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, pointViewHeight, pointViewHeight)];
+        _currentPointView.backgroundColor = [UIColor clearColor];
+        
+        UIView *centerView = [[UIView alloc] initWithFrame:CGRectMake((pointViewHeight-centerViewHeight)/2.f, (pointViewHeight-centerViewHeight)/2.f, centerViewHeight, centerViewHeight)];
+        centerView.backgroundColor = [UIColor redColor];
+        centerView.layer.cornerRadius = centerViewHeight/2.f;
+        [_currentPointView addSubview:centerView];
         
         CALayer * spreadLayer;
         spreadLayer = [CALayer layer];
-        CGFloat diameter = currentButtonHeight*2;  //扩散的大小
+        CGFloat diameter = centerViewHeight*2;  //扩散的大小
         spreadLayer.bounds = CGRectMake(0,0, diameter, diameter);
         spreadLayer.cornerRadius = diameter/2; //设置圆角变为圆形
-        spreadLayer.position = _currentButton.center;
+        spreadLayer.position = CGPointMake(centerViewHeight/2.f, centerViewHeight/2.f);
         spreadLayer.backgroundColor = [UIColor colorWithRed:.8 green:.2 blue:.2 alpha:.5].CGColor;
-        [_currentButton.layer insertSublayer:spreadLayer below:_currentButton.layer];
+        [centerView.layer insertSublayer:spreadLayer below:centerView.layer];
         
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-        [_currentButton addGestureRecognizer:panGesture];
+        [_currentPointView addGestureRecognizer:panGesture];
     }
-    return _currentButton;
+    return _currentPointView;
 }
 
 @end
