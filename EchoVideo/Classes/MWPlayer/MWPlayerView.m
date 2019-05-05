@@ -384,7 +384,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 - (void)_addLoadingDisplayLink {
-    if (!self.loadingDisplayLink) {
+    if (self.loadingDisplayLink) {
         [self _stopLoadingDisplayLink];
     }
     self.loadingDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(_upadteLoading)];

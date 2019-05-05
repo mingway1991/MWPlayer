@@ -18,9 +18,10 @@ typedef enum : NSUInteger {
 } MWCoverViewPanDirection; // 拖动方向
 
 @interface MWPlayerCoverView () <UIGestureRecognizerDelegate> {
-    MWCoverViewPanDirection _panDirection;
-    dispatch_source_t _hideTimer;
-    BOOL _isVolume;
+    MWCoverViewPanDirection _panDirection; // 拖动手势方向
+    dispatch_source_t _hideTimer; // 隐藏工具条倒计时
+    BOOL _isVolume; // 是否是修改音量
+    BOOL _isShow; // 是否已经显示工具条
 }
 
 @property (nonatomic, strong) UIView *topView;
@@ -119,6 +120,10 @@ typedef enum : NSUInteger {
         if (self.topView) {
             MWSetMinY(self.topView, -CGRectGetHeight(self.topView.bounds));
         }
+    } completion:^(BOOL finished) {
+        if (finished) {
+            self->_isShow = NO;
+        }
     }];
 }
 
@@ -130,6 +135,7 @@ typedef enum : NSUInteger {
         }
     } completion:^(BOOL finished) {
         if (finished) {
+            self->_isShow = YES;
             [self _countDownToHideView];
         }
     }];
@@ -176,6 +182,7 @@ typedef enum : NSUInteger {
 
 /* 更新topView frame */
 - (void)_updateTopViewFrame {
+    _isShow = NO;
     if (self.configuration.topToolView) {
         self.configuration.topToolView.frame = CGRectMake(0, -self.configuration.topToolViewHeight, CGRectGetWidth(self.bounds), self.configuration.topToolViewHeight);
     }
@@ -183,6 +190,7 @@ typedef enum : NSUInteger {
 
 /* 更新底部视图frame */
 - (void)_updateBottomViewFrame {
+    _isShow = NO;
     self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds), self.configuration.bottomToolViewHeight);
 }
 
@@ -232,7 +240,11 @@ typedef enum : NSUInteger {
 #pragma mark -
 #pragma mark Gesture
 - (void)handleTapGesture:(UITapGestureRecognizer *)tap {
-    [self _showView];
+    if (_isShow) {
+        [self _hideView];
+    } else {
+        [self _showView];
+    }
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)pan {
