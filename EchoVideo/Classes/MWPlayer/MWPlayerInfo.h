@@ -8,9 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define degreeToRadian(x) (M_PI * x / 180.0)
-#define radianToDegree(x) (180.0 * x / M_PI)
-
 typedef enum : NSUInteger {
     MWPlayerStateInit = 0, // 初始状态
     MWPlayerStatePrepareToPlay, // 准备播放

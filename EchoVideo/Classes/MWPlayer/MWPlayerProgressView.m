@@ -54,7 +54,6 @@ static CGFloat kProgressHeight = 2.f;
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    
     self.totalView.frame = CGRectMake(0, (CGRectGetHeight(self.bounds)-kProgressHeight)/2.f, CGRectGetWidth(self.bounds), kProgressHeight);
     [self _updateCacheViewFrame];
     [self _updateCurrentFrame];

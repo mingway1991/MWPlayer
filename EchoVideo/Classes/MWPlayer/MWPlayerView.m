@@ -320,11 +320,11 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
     self.frame = [UIScreen mainScreen].bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     if (direction == MWPlayerDirectionLandscapeLeft) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(degreeToRadian(90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(degreeToRadian(90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
     } else if (direction == MWPlayerDirectionLandscapeRight) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(degreeToRadian(-90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(degreeToRadian(-90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
     }
 }
 

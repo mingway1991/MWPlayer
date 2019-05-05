@@ -10,20 +10,18 @@
 
 #define force_inline __inline__ __attribute__((always_inline))
 
-//NSLog
+// NSLog
 #ifdef DEBUG
 #define NSLog(fmt, ...)  NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
 #else
 #define NSLog(...)
 #endif
 
-/*
- 全局配置
- */
+// 全局配置
 #define MWScreenWidth [UIScreen mainScreen].bounds.size.width
 #define MWScreenHeight [UIScreen mainScreen].bounds.size.height
 
-//get
+// get
 #define MWGetMinX(view) CGRectGetMinX(view.frame)//视图最小X坐标
 #define MWGetMinY(view) CGRectGetMinY(view.frame)//视图最小Y坐标
 #define MWGetMidX(view) CGRectGetMidX(view.frame)//视图中间X坐标
@@ -48,15 +46,20 @@
 #define iPhoneXS_Max ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size) : NO)
 #define kiPhoneXAll ([UIScreen mainScreen].bounds.size.height == 812 || [UIScreen mainScreen].bounds.size.height == 896)
 
-//导航条高度
+// 导航条高度
 #define MWNavigationBarHeight 44.f
-//状态栏高度，如果状态栏隐藏则会返回0
+// 状态栏高度，如果状态栏隐藏则会返回0
 #define MWStatusBarHeight [[UIApplication sharedApplication] statusBarFrame].size.height
-//状态栏加导航条高度
+// 状态栏加导航条高度
 #define MWTopBarHeight MWStatusBarHeight+MWNavigationBarHeight
-//tabbar高度
+// tabbar高度
 #define MWTabBarHeight 49.f
-//安全区域高度
+// 安全区域高度
 #define MWSafeAreaHeight (kiPhoneXAll ? 34.f : 0.f)
+
+// 角度转弧度
+#define MWDegreeToRadian(x) (M_PI * x / 180.0)
+// 弧度转角度
+#define MWRadianToDegree(x) (180.0 * x / M_PI)
 
 #endif /* MWDefines_h */
