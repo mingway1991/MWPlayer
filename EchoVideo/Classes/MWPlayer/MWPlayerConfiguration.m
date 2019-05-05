@@ -23,6 +23,7 @@
     configuration.bottomToolViewHeight = 50.f;
     configuration.bottomToolViewBackgroundColor = [UIColor blackColor];
     configuration.needLoop = NO;
+    configuration.videoGravity = MWPlayerVideoGravityResizeAspect;
     configuration.timescale = 600;
     return configuration;
 }

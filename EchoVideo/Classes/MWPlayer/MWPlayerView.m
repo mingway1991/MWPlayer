@@ -83,7 +83,6 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 - (void)dealloc {
     NSLog(@"mwplayerview dealloc");
-    [_loadingDisplayLink invalidate];
     [self _releaseConfigurationPropertyObserver];
     [self _releaseInfoPropertyObserver];
     [self _releaseCurrentAvPlayerItemObserver];
@@ -130,6 +129,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _addConfigurationPropertyObserver];
     [self _addLoadingView];
     [self _updateLoadingViewFrame];
+    self.avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
     self.coverView.configuration = configuration;
 }
 
@@ -232,6 +232,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         // MWPlayerConfiguration 监听
         if ([keyPath isEqualToString:kConfigurationLoadingViewKeyPath]) {
             [self _addLoadingView];
+        } else if ([keyPath isEqualToString:kConfigurationVideoGravityKeyPath]) {
+            self.avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
         }
     }
 }
@@ -326,6 +328,21 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
             break;
         }
     }
+}
+
+/* 获取转化过的videoGravity */
+- (AVLayerVideoGravity)_getAvPlayerVideoGravity {
+    switch (self.configuration.videoGravity) {
+        case MWPlayerVideoGravityResizeAspect:
+            return AVLayerVideoGravityResizeAspect;
+        case MWPlayerVideoGravityResizeAspectFill:
+            return AVLayerVideoGravityResizeAspectFill;
+        case MWPlayerVideoGravityResize:
+            return AVLayerVideoGravityResize;
+        default:
+            return AVLayerVideoGravityResizeAspect;
+    }
+    return AVLayerVideoGravityResizeAspect;
 }
 
 /// full screen
@@ -424,6 +441,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_releaseConfigurationPropertyObserver {
     if (_configuration) {
         [_configuration removeObserver:self forKeyPath:kConfigurationLoadingViewKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationVideoGravityKeyPath];
     }
 }
 
@@ -431,6 +449,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_addConfigurationPropertyObserver {
     if (_configuration) {
         [_configuration addObserver:self forKeyPath:kConfigurationLoadingViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationVideoGravityKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 
@@ -453,7 +472,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (AVPlayerLayer *)avPlayerLayer {
     if (!_avPlayerLayer) {
         self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
-        _avPlayerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        _avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
         _avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
     }
     return _avPlayerLayer;

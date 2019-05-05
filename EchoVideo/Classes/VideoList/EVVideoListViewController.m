@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UITableView *videoListTableView;
 
 @property (nonatomic, strong) MWPlayerView *playerView;
+@property (nonatomic, strong) MWPlayerConfiguration *configuration;
 
 @end
 
@@ -44,9 +45,15 @@
     [closeButton addTarget:self action:@selector(closePlayer) forControlEvents:UIControlEventTouchUpInside];
     [topView addSubview:closeButton];
     
-    MWPlayerConfiguration *configuration = [MWPlayerConfiguration defaultConfiguration];
-    configuration.topToolView = topView;
-    self.playerView.configuration = configuration;
+    UIButton *videoGravityButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    videoGravityButton.frame = CGRectMake(CGRectGetMaxX(closeButton.frame)+10, 5, 60.f, 40.f);
+    [videoGravityButton setTitle:@"填充" forState:UIControlStateNormal];
+    [videoGravityButton addTarget:self action:@selector(videoGravity) forControlEvents:UIControlEventTouchUpInside];
+    [topView addSubview:videoGravityButton];
+    
+    self.configuration = [MWPlayerConfiguration defaultConfiguration];
+    self.configuration.topToolView = topView;
+    self.playerView.configuration = self.configuration;
     
     [self.view addSubview:self.videoListTableView];
     [self.view addSubview:self.playerView];
@@ -62,6 +69,10 @@
 - (void)closePlayer {
     [self.playerView stop];
     self.playerView.hidden = YES;
+}
+
+- (void)videoGravity {
+    self.configuration.videoGravity = self.configuration.videoGravity == MWPlayerVideoGravityResizeAspect ? MWPlayerVideoGravityResizeAspectFill:MWPlayerVideoGravityResizeAspect;
 }
 
 #pragma mark -

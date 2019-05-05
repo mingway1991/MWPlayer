@@ -15,6 +15,13 @@ static NSString *kConfigurationTopToolViewKeyPath = @"topToolView";
 static NSString *kConfigurationTopToolViewHeightKeyPath = @"topToolViewHeight";
 static NSString *kConfigurationBottomToolViewHeightKeyPath = @"bottomToolViewHeight";
 static NSString *kConfigurationBottomToolViewBackgroundColorKeyPath = @"bottomToolViewBackgroundColor";
+static NSString *kConfigurationVideoGravityKeyPath = @"videoGravity";
+
+typedef enum : NSUInteger {
+    MWPlayerVideoGravityResizeAspect = 0, // 按比例完整显示
+    MWPlayerVideoGravityResizeAspectFill, // 按比例充满屏幕
+    MWPlayerVideoGravityResize
+} MWPlayerVideoGravity;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat bottomToolViewHeight; // 底部工具视图高度，默认50
 @property (nonatomic, strong) UIColor *bottomToolViewBackgroundColor; // 底部工具视图背景色，默认黑色
 @property (nonatomic, assign) BOOL needLoop; // 是否需要循环播放，默认NO
+@property (nonatomic, assign) MWPlayerVideoGravity videoGravity; // 填充模式，默认MWPlayerVideoGravityResizeAspect
 @property (nonatomic, assign, readonly) int32_t timescale; // 帧率600
 
 + (instancetype)defaultConfiguration;
