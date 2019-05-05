@@ -16,9 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *videoUrl;
 @property (nonatomic, strong) MWPlayerConfiguration *configuration; // 不赋值使用默认配置
 
+/* 播放 */
 - (void)play;
+/* 暂停 */
 - (void)pause;
-- (void)pointToPlay:(float)percent;
+/* 指定某处播放 */
+- (void)seekToPlay:(float)percent;
+/* 重置为未播放状态 */
 - (void)stop;
 
 @end

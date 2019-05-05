@@ -8,6 +8,12 @@
 
 #import "MWPlayerConfiguration.h"
 
+@interface MWPlayerConfiguration ()
+
+@property (nonatomic, assign, readwrite) int32_t timescale;
+
+@end
+
 @implementation MWPlayerConfiguration
 
 + (instancetype)defaultConfiguration {
@@ -16,6 +22,8 @@
     configuration.topToolViewHeight = 50.f;
     configuration.bottomToolViewHeight = 50.f;
     configuration.bottomToolViewBackgroundColor = [UIColor blackColor];
+    configuration.needLoop = NO;
+    configuration.timescale = 600;
     return configuration;
 }
 

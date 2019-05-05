@@ -67,13 +67,11 @@ static CGFloat kProgressHeight = 2.f;
 
 - (void)setCacheTimeInterval:(NSTimeInterval)cacheTimeInterval {
     _cacheTimeInterval = cacheTimeInterval;
-    
     [self _updateCacheViewFrame];
 }
 
 - (void)setCurrentTimeInterval:(NSTimeInterval)currentTimeInterval {
     _currentTimeInterval = currentTimeInterval;
-    
     [self _updateCurrentFrame];
 }
 
@@ -104,8 +102,8 @@ static CGFloat kProgressHeight = 2.f;
             [panGesture setTranslation:CGPointZero inView:panGesture.view];
             CGFloat newCenterX = self.currentPointView.center.x+changedX;
             if (newCenterX >= 0 && newCenterX <= CGRectGetWidth(self.totalView.bounds)) {
-                CGFloat currentWidth = newCenterX;
-                CGFloat totalWidth = CGRectGetWidth(self.totalView.bounds);
+                float currentWidth = newCenterX;
+                float totalWidth = CGRectGetWidth(self.totalView.bounds);
                 self.currentTimeInterval = self.totalTimeInterval*(currentWidth/totalWidth);
                 if ([self.delegate respondsToSelector:@selector(progressViewHandlePanProgress:percent:)]) {
                     [self.delegate progressViewHandlePanProgress:self percent:currentWidth/totalWidth];
