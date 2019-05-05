@@ -160,14 +160,14 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
                         change:(NSDictionary<NSString *,id> *)change
                        context:(void *)context {
     AVPlayerItem *playerItem = (AVPlayerItem *)object;
-    if ([keyPath isEqualToString:kAvPlaterStatusKeyPath]){
+    if ([keyPath isEqualToString:kAvPlaterStatusKeyPath]) {
         // avplaer load status
         if (playerItem.status == AVPlayerItemStatusReadyToPlay){
             NSLog(@"playerItem is ready");
         } else{
             NSLog(@"load break");
         }
-    } else if ([keyPath isEqualToString:kAvPlaterLoadedTimeRangesKeyPath]){
+    } else if ([keyPath isEqualToString:kAvPlaterLoadedTimeRangesKeyPath]) {
         // avplayer buffer
         NSArray *loadedTimeRanges = [playerItem loadedTimeRanges];
         CMTimeRange timeRange = [loadedTimeRanges.firstObject CMTimeRangeValue];
@@ -177,7 +177,15 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty";
         NSTimeInterval total = CMTimeGetSeconds(playerItem.duration);
         self.info.totalTimeInterval = total;
         self.info.cacheTimeInterval = cache;
-    } else if ([keyPath isEqualToString:kAvPlaterPlaybackBufferEmptyKeyPath]){
+        
+        if (self.info.state == MWPlayerStatePlaying) {
+            // 缓冲增加，继续播放
+            NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+            if (current == self.info.currentTimeInterval) {
+                self.info.state = MWPlayerStatePrepareToPlay;
+            }
+        }
+    } else if ([keyPath isEqualToString:kAvPlaterPlaybackBufferEmptyKeyPath]) {
         // avplaer playback buffer empty
         
     } else if ([keyPath isEqualToString:kInfoStateKeyPath]) {
