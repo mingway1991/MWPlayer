@@ -86,9 +86,6 @@ static CGFloat kProgressHeight = 2.f;
 
 - (void)_updateCurrentFrame {
    self.currentView.frame = CGRectMake(0, (CGRectGetHeight(self.bounds)-kProgressHeight)/2.f, self.totalTimeInterval == 0 ? 0 : CGRectGetWidth(self.bounds) * (self.currentTimeInterval/self.totalTimeInterval), kProgressHeight);
-    
-    CGFloat currentButtonHeight = 10.f;
-    self.currentButton.frame = CGRectMake(0, 0, currentButtonHeight, currentButtonHeight);
     self.currentButton.center = CGPointMake(CGRectGetMaxX(self.currentView.frame), self.currentView.center.y);
 }
 
@@ -156,6 +153,18 @@ static CGFloat kProgressHeight = 2.f;
     if (!_currentButton) {
         self.currentButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _currentButton.backgroundColor = [UIColor redColor];
+        CGFloat currentButtonHeight = 10.f;
+        _currentButton.frame = CGRectMake(0, 0, currentButtonHeight, currentButtonHeight);
+        _currentButton.layer.cornerRadius = 5.f;
+        
+        CALayer * spreadLayer;
+        spreadLayer = [CALayer layer];
+        CGFloat diameter = currentButtonHeight*2;  //扩散的大小
+        spreadLayer.bounds = CGRectMake(0,0, diameter, diameter);
+        spreadLayer.cornerRadius = diameter/2; //设置圆角变为圆形
+        spreadLayer.position = _currentButton.center;
+        spreadLayer.backgroundColor = [UIColor colorWithRed:.8 green:.2 blue:.2 alpha:.5].CGColor;
+        [_currentButton.layer insertSublayer:spreadLayer below:_currentButton.layer];
         
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
         [_currentButton addGestureRecognizer:panGesture];

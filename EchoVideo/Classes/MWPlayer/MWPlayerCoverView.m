@@ -173,7 +173,7 @@ typedef enum : NSUInteger {
 /* 更新topView frame */
 - (void)_updateTopViewFrame {
     if (self.configuration.topToolView) {
-        self.configuration.topToolView.frame = CGRectMake(0, self.configuration.topToolViewHeight, CGRectGetWidth(self.bounds), self.configuration.topToolViewHeight);
+        self.configuration.topToolView.frame = CGRectMake(0, -self.configuration.topToolViewHeight, CGRectGetWidth(self.bounds), self.configuration.topToolViewHeight);
     }
 }
 
