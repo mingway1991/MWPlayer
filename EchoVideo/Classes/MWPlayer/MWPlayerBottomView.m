@@ -71,7 +71,7 @@ static CGFloat kCoverViewBottomHeight = 30.f;
     [super layoutSubviews];
     
     self.playOrPauseButton.frame = CGRectMake(10.f, (CGRectGetHeight(self.bounds)-kCoverViewBottomHeight)/2.f, kCoverViewBottomHeight, kCoverViewBottomHeight);
-    self.fullScreenButton.frame = CGRectMake(CGRectGetWidth(self.bounds)-10-kCoverViewBottomHeight, CGRectGetMinX(self.playOrPauseButton.frame), kCoverViewBottomHeight, kCoverViewBottomHeight);
+    self.fullScreenButton.frame = CGRectMake(CGRectGetWidth(self.bounds)-10-kCoverViewBottomHeight, CGRectGetMinY(self.playOrPauseButton.frame), kCoverViewBottomHeight, kCoverViewBottomHeight);
     [self _updateDurationLabel];
     [self _updateProgressViewFrame];
 }
