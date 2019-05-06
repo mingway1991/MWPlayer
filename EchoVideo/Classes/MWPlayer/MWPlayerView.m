@@ -28,7 +28,6 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 @property (nonatomic, strong) CADisplayLink *loadingDisplayLink;
 @property (nonatomic, strong) id periodicTimeObserver;
 
-@property (nonatomic, strong) AVPlayerLayer *avPlayerLayer;
 @property (nonatomic, strong) UIView<MWPlayerLoadingProtocol> *loadingView;
 @property (nonatomic, strong) MWPlayerCoverView *coverView;
 
@@ -36,7 +35,12 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 @implementation MWPlayerView
 
+@synthesize avPlayer = _avPlayer;
 @synthesize configuration = _configuration;
+
++ (Class)layerClass {
+    return [AVPlayerLayer class];
+}
 
 - (instancetype)init {
     self = [super init];
@@ -57,6 +61,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)commonInit {
     self.clipsToBounds = YES;
     self.backgroundColor = [UIColor blackColor];
+    self.avPlayer = [[AVPlayer alloc] init];
     self.info = [[MWPlayerInfo alloc] init];
     self.coverView.info = self.info;
     [self _addInfoPropertyObserver];
@@ -77,7 +82,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         weakSelf.info.currentTimeInterval = current;
     }];
 
-    [self.layer addSublayer:self.avPlayerLayer];
+    [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
+    self.layer.contentsScale = [UIScreen mainScreen].scale;
+    
     [self addSubview:self.coverView];
     [self _addLoadingView];
 }
@@ -95,13 +102,17 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 #pragma mark Layout
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.avPlayerLayer.frame = self.bounds;
     self.coverView.frame = self.bounds;
     [self _updateLoadingViewFrame];
 }
 
 #pragma mark -
 #pragma mark Setter
+- (void)setAvPlayer:(AVPlayer *)avPlayer {
+    _avPlayer = avPlayer;
+    [(AVPlayerLayer *)[self layer] setPlayer:avPlayer];
+}
+
 - (void)setVideoUrl:(NSString *)videoUrl {
     _videoUrl = videoUrl;
     [self _removeCurrentAvPlayerItemObserver];
@@ -124,7 +135,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _addConfigurationPropertyObserver];
     [self _addLoadingView];
     [self _updateLoadingViewFrame];
-    self.avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
+    [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
 }
 
 #pragma mark -
@@ -160,6 +171,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
                 NSLog(@"playerItem is ready");
             } else{
                 NSLog(@"load break");
+                if (playerItem.error) {
+                    NSLog(@"error: %@",playerItem.error.localizedDescription);
+                }
                 self.info.state = MWPlayerStateLoadBreak;
             }
         } else if ([keyPath isEqualToString:kAvPlaterLoadedTimeRangesKeyPath]) {
@@ -227,7 +241,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         if ([keyPath isEqualToString:kConfigurationLoadingViewKeyPath]) {
             [self _addLoadingView];
         } else if ([keyPath isEqualToString:kConfigurationVideoGravityKeyPath]) {
-            self.avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
+            [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
         }
     }
 }
@@ -371,10 +385,10 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.frame = [UIScreen mainScreen].bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     if (direction == MWPlayerDirectionLandscapeLeft) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+        [self.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
         [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
     } else if (direction == MWPlayerDirectionLandscapeRight) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+        [self.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
         [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
     }
 }
@@ -383,7 +397,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_zoomOut {
     self.frame = _originFrame;
     [_superView addSubview:self];
-    [self.avPlayerLayer setAffineTransform:CGAffineTransformIdentity];
+    [self.layer setAffineTransform:CGAffineTransformIdentity];
     [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
 }
 
@@ -462,27 +476,15 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 #pragma mark -
 #pragma mark LazyLoad
+- (AVPlayer*)avPlayer {
+    return [(AVPlayerLayer *)[self layer] player];
+}
+
 - (MWPlayerCoverView *)coverView {
     if (!_coverView) {
         self.coverView = [[MWPlayerCoverView alloc] init];
     }
     return _coverView;
-}
-
-- (AVPlayer *)avPlayer {
-    if (!_avPlayer) {
-        self.avPlayer = [[AVPlayer alloc] init];
-    }
-    return _avPlayer;
-}
-
-- (AVPlayerLayer *)avPlayerLayer {
-    if (!_avPlayerLayer) {
-        self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
-        _avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
-        _avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
-    }
-    return _avPlayerLayer;
 }
 
 - (MWPlayerConfiguration *)configuration {
