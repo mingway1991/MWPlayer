@@ -120,13 +120,13 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 - (void)setConfiguration:(MWPlayerConfiguration *)configuration {
+    self.coverView.configuration = configuration;
     [self _removeConfigurationPropertyObserver];
     _configuration = configuration;
     [self _addConfigurationPropertyObserver];
     [self _addLoadingView];
     [self _updateLoadingViewFrame];
     self.avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
-    self.coverView.configuration = configuration;
 }
 
 #pragma mark -

@@ -36,6 +36,9 @@
                 @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_1280x720_20mb.mkv",
                 @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_176x144_1mb.3gp"];
     
+    [self.view addSubview:self.videoListTableView];
+    [self.view addSubview:self.playerView];
+    
     UIView *topView = [[UIView alloc] init];
     topView.backgroundColor = [UIColor blackColor];
     
@@ -54,9 +57,6 @@
     self.configuration = [MWPlayerConfiguration defaultConfiguration];
     self.configuration.topToolView = topView;
     self.playerView.configuration = self.configuration;
-    
-    [self.view addSubview:self.videoListTableView];
-    [self.view addSubview:self.playerView];
 }
 
 - (void)dealloc {

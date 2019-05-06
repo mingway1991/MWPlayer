@@ -31,6 +31,7 @@ static NSString *kInfoCacheTimeIntervalKeyPath = @"cacheTimeInterval";
 static NSString *kInfoCurrentTimeIntervalKeyPath = @"currentTimeInterval";
 static NSString *kInfoPanToPlayPercentKeyPath = @"panToPlayPercent";
 static NSString *kInfoDirectionKeyPath = @"direction";
+static NSString *kInfoErrorMessageKeyPath = @"errMessage";
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) MWPlayerDirection direction;
 // 临时标记需要跳到的进度
 @property (nonatomic, assign) float panToPlayPercent;
+@property (nonatomic, copy) NSString *errMessage;
 
 @end
 

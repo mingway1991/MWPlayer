@@ -25,6 +25,7 @@ typedef enum : NSUInteger {
 }
 
 @property (nonatomic, strong) UIView *topView;
+@property (nonatomic, strong) UILabel *tipsLabel;
 @property (nonatomic, strong) MWPlayerBottomView *bottomView;
 @property (nonatomic, strong) MPVolumeView *volumeView;
 @property (nonatomic, strong) UISlider *volumeViewSlider;
@@ -52,6 +53,7 @@ typedef enum : NSUInteger {
 - (void)commonInit {
     [self _addTopView];
     [self addSubview:self.bottomView];
+    [self addSubview:self.tipsLabel];
     [self addSubview:self.volumeView];
 }
 
@@ -64,6 +66,7 @@ typedef enum : NSUInteger {
 - (void)layoutSubviews {
     [super layoutSubviews];
     
+    self.tipsLabel.frame = self.bounds;
     [self _updateTopViewFrame];
     [self _updateBottomViewFrame];
 }
@@ -71,8 +74,10 @@ typedef enum : NSUInteger {
 #pragma mark -
 #pragma mark Setter
 - (void)setInfo:(MWPlayerInfo *)info {
-    _info = info;
     self.bottomView.info = info;
+    [self _removeInfoObserver];
+    _info = info;
+    [self _addInfoObserver];
 }
 
 - (void)setConfiguration:(MWPlayerConfiguration *)configuration {
@@ -103,6 +108,18 @@ typedef enum : NSUInteger {
 
 #pragma mark -
 #pragma mark Observer
+- (void)_removeInfoObserver {
+    if (_info) {
+        [_info removeObserver:self forKeyPath:kInfoErrorMessageKeyPath];
+    }
+}
+
+- (void)_addInfoObserver {
+    if (_info) {
+        [_info addObserver:self forKeyPath:kInfoErrorMessageKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    }
+}
+
 /* 添加configuration相关属性监听 */
 - (void)_addConfigurationPropertyObserver {
     if (_configuration) {
@@ -125,6 +142,7 @@ typedef enum : NSUInteger {
 
 /* 清除监听 */
 - (void)cleanObserver {
+    [self _removeInfoObserver];
     [self _removeConfigurationPropertyObserver];
     [self.bottomView cleanObserver];
 }
@@ -348,6 +366,17 @@ typedef enum : NSUInteger {
         [self addGestureRecognizer:panGesture];
     }
     return _bottomView;
+}
+
+- (UILabel *)tipsLabel {
+    if (!_tipsLabel) {
+        self.tipsLabel = [[UILabel alloc] init];
+        _tipsLabel.textAlignment = NSTextAlignmentCenter;
+        _tipsLabel.font = [UIFont systemFontOfSize:12.f];
+        _tipsLabel.textColor = [UIColor whiteColor];
+        _tipsLabel.hidden = YES;
+    }
+    return _tipsLabel;
 }
 
 - (MPVolumeView *)volumeView {
