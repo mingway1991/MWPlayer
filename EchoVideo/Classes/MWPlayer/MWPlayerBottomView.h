@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) MWPlayerInfo *info;
 
+- (void)cleanObserver;
+
 @end
 
 NS_ASSUME_NONNULL_END

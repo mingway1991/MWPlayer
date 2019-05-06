@@ -57,7 +57,6 @@ typedef enum : NSUInteger {
 
 - (void)dealloc {
     NSLog(@"mwplayercoverview dealloc");
-    [self _removeConfigurationPropertyObserver];
 }
 
 #pragma mark -
@@ -86,7 +85,7 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark -
-#pragma mark Observer
+#pragma mark Observe Callback
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
@@ -100,6 +99,34 @@ typedef enum : NSUInteger {
     } else if ([keyPath isEqualToString:kConfigurationBottomToolViewBackgroundColorKeyPath]) {
         self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
     }
+}
+
+#pragma mark -
+#pragma mark Observer
+/* 添加configuration相关属性监听 */
+- (void)_addConfigurationPropertyObserver {
+    if (_configuration) {
+        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    }
+}
+
+/* 移除configuration相关属性监听 */
+- (void)_removeConfigurationPropertyObserver {
+    if (_configuration) {
+        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath];
+    }
+}
+
+/* 清除监听 */
+- (void)cleanObserver {
+    [self _removeConfigurationPropertyObserver];
+    [self.bottomView cleanObserver];
 }
 
 #pragma mark -
@@ -167,7 +194,8 @@ typedef enum : NSUInteger {
     dispatch_resume(_hideTimer);
 }
 
-/// 视图
+#pragma mark -
+#pragma mark View
 /* 添加顶部视图 */
 - (void)_addTopView {
     if (self.topView) {
@@ -192,49 +220,6 @@ typedef enum : NSUInteger {
 - (void)_updateBottomViewFrame {
     _isShow = NO;
     self.bottomView.frame = CGRectMake(0, CGRectGetHeight(self.bounds), CGRectGetWidth(self.bounds), self.configuration.bottomToolViewHeight);
-}
-
-/// 监听
-/* 添加configuration相关属性监听 */
-- (void)_addConfigurationPropertyObserver {
-    if (_configuration) {
-//        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    }
-}
-
-/* 移除configuration相关属性监听 */
-- (void)_removeConfigurationPropertyObserver {
-    if (_configuration) {
-//        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewKeyPath];
-//        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath];
-//        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath];
-//        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath];
-    }
-}
-
-/// 手势
-/* 横向移动 */
-- (void)_horizontalMoved:(CGFloat)value {
-    // 快进快退的方法
-    NSString *style = @"";
-    if (value < 0) {
-        style = @"<<";
-        self.info.panToPlayPercent = (self.info.currentTimeInterval-5)/self.info.totalTimeInterval;
-    } else if (value > 0) {
-        style = @">>";
-        self.info.panToPlayPercent = (self.info.currentTimeInterval+5)/self.info.totalTimeInterval;
-    }
-    if (value == 0) { return; }
-}
-
-/* 竖向移动 */
-- (void)_verticalMoved:(CGFloat)value {
-    // 通过三目运算符来判断显示音量还是亮度
-    // 关于音量界面不显示图标的问题,可以百度搜索BrightnessView这个类来解决
-    _isVolume ? (self.volumeViewSlider.value -= value / 10000) : ([UIScreen mainScreen].brightness -= value / 10000);
 }
 
 #pragma mark -
@@ -308,6 +293,29 @@ typedef enum : NSUInteger {
         default:
             break;
     }
+}
+
+#pragma mark -
+#pragma mark Pan Gesture
+/* 横向移动 */
+- (void)_horizontalMoved:(CGFloat)value {
+    // 快进快退的方法
+    NSString *style = @"";
+    if (value < 0) {
+        style = @"<<";
+        self.info.panToPlayPercent = (self.info.currentTimeInterval-5)/self.info.totalTimeInterval;
+    } else if (value > 0) {
+        style = @">>";
+        self.info.panToPlayPercent = (self.info.currentTimeInterval+5)/self.info.totalTimeInterval;
+    }
+    if (value == 0) { return; }
+}
+
+/* 竖向移动 */
+- (void)_verticalMoved:(CGFloat)value {
+    // 通过三目运算符来判断显示音量还是亮度
+    // 关于音量界面不显示图标的问题,可以百度搜索BrightnessView这个类来解决
+    _isVolume ? (self.volumeViewSlider.value -= value / 10000) : ([UIScreen mainScreen].brightness -= value / 10000);
 }
 
 #pragma mark -

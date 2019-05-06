@@ -50,17 +50,16 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 
 - (void)dealloc {
     NSLog(@"mwplayerbottomview dealloc");
-    [self _removeObserver];
 }
 
 #pragma mark -
 #pragma mark Setter
 - (void)setInfo:(MWPlayerInfo *)info {
     if (_info) {
-        [self _removeObserver];
+        [self _removeInfoObserver];
     }
     _info = info;
-    [self _addObserver];
+    [self _addInfoObserver];
 }
 
 #pragma mark -
@@ -84,7 +83,7 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 }
 
 #pragma mark -
-#pragma mark Observe
+#pragma mark Observe Callback
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
@@ -139,22 +138,28 @@ static CGFloat durationWidth = 0;
     return [NSString stringWithFormat:@"%02d:%02d:%02d", hour, minute, secend];
 }
 
-- (void)_removeObserver {
+#pragma mark -
+#pragma mark Observer
+- (void)_removeInfoObserver {
     if (_info) {
-//        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
-//        [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
-//        [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
-//        [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
+        [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
     }
 }
 
-- (void)_addObserver {
+- (void)_addInfoObserver {
     if (_info) {
-//        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-//        [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
+}
+
+- (void)cleanObserver {
+    [self _removeInfoObserver];
 }
 
 #pragma mark -

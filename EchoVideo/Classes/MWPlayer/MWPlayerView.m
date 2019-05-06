@@ -84,6 +84,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 - (void)dealloc {
     NSLog(@"mwplayerview dealloc");
+    [_coverView cleanObserver];
     [self _removeInfoPropertyObserver];
     [self _removeConfigurationPropertyObserver];
     [self _removeCurrentAvPlayerItemObserver];
@@ -147,7 +148,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 #pragma mark -
-#pragma mark Observe
+#pragma mark Observe Callback
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
@@ -239,7 +240,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 #pragma mark -
-#pragma mark Private
+#pragma mark State Changed
 /* 初始状态播放器 */
 - (void)_init {
     [self.coverView show];
@@ -299,72 +300,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self.coverView show];
 }
 
-/* 更新loading状态 */
-- (void)_upadteLoading {
-    switch (self.info.state) {
-        case MWPlayerStatePrepareToPlay: {
-            // 准备播放状态默认显示加载中
-            [self.loadingView startAnimating];
-            break;
-        }
-        case MWPlayerStatePlaying: {
-            // 播放状态下，判断是否处于加载中状态
-            NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
-            if (current != self.info.currentTimeInterval) {
-                [self.loadingView stopAnimating];
-            } else {
-                [self.loadingView startAnimating];
-            }
-            break;
-        }
-        default: {
-            // 默认
-            [self.loadingView stopAnimating];
-            break;
-        }
-    }
-}
-
-/* 获取转化过的videoGravity */
-- (AVLayerVideoGravity)_getAvPlayerVideoGravity {
-    switch (self.configuration.videoGravity) {
-        case MWPlayerVideoGravityResizeAspect:
-            return AVLayerVideoGravityResizeAspect;
-        case MWPlayerVideoGravityResizeAspectFill:
-            return AVLayerVideoGravityResizeAspectFill;
-        case MWPlayerVideoGravityResize:
-            return AVLayerVideoGravityResize;
-        default:
-            return AVLayerVideoGravityResizeAspect;
-    }
-    return AVLayerVideoGravityResizeAspect;
-}
-
-/// full screen
-/* 全屏 */
-- (void)_zoomInWithDirection:(MWPlayerDirection)direction {
-    _superView = self.superview;
-    _originFrame = self.frame;
-    [UIApplication sharedApplication].statusBarHidden = YES;
-    self.frame = [UIScreen mainScreen].bounds;
-    [[UIApplication sharedApplication].keyWindow addSubview:self];
-    if (direction == MWPlayerDirectionLandscapeLeft) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
-    } else if (direction == MWPlayerDirectionLandscapeRight) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
-    }
-}
-
-/* 缩小窗口 */
-- (void)_zoomOut {
-    self.frame = _originFrame;
-    [_superView addSubview:self];
-    [self.avPlayerLayer setAffineTransform:CGAffineTransformIdentity];
-    [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
-}
-
+#pragma mark -
+#pragma mark Loading
 /// loading
 - (void)_addLoadingView {
     if (self.loadingView) {
@@ -391,7 +328,77 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.loadingDisplayLink = nil;
 }
 
-/// observer
+/* 更新loading状态 */
+- (void)_upadteLoading {
+    switch (self.info.state) {
+        case MWPlayerStatePrepareToPlay: {
+            // 准备播放状态默认显示加载中
+            [self.loadingView startAnimating];
+            break;
+        }
+        case MWPlayerStatePlaying: {
+            // 播放状态下，判断是否处于加载中状态
+            NSTimeInterval current = CMTimeGetSeconds(self.avPlayer.currentTime);
+            if (current != self.info.currentTimeInterval) {
+                [self.loadingView stopAnimating];
+            } else {
+                [self.loadingView startAnimating];
+            }
+            break;
+        }
+        default: {
+            // 默认
+            [self.loadingView stopAnimating];
+            break;
+        }
+    }
+}
+
+#pragma mark -
+#pragma mark Zoom In/Out
+/* 全屏 */
+- (void)_zoomInWithDirection:(MWPlayerDirection)direction {
+    _superView = self.superview;
+    _originFrame = self.frame;
+    [UIApplication sharedApplication].statusBarHidden = YES;
+    self.frame = [UIScreen mainScreen].bounds;
+    [[UIApplication sharedApplication].keyWindow addSubview:self];
+    if (direction == MWPlayerDirectionLandscapeLeft) {
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+    } else if (direction == MWPlayerDirectionLandscapeRight) {
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+    }
+}
+
+/* 缩小窗口 */
+- (void)_zoomOut {
+    self.frame = _originFrame;
+    [_superView addSubview:self];
+    [self.avPlayerLayer setAffineTransform:CGAffineTransformIdentity];
+    [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
+}
+
+#pragma mark -
+#pragma mark Private
+/* 获取转化过的videoGravity */
+- (AVLayerVideoGravity)_getAvPlayerVideoGravity {
+    switch (self.configuration.videoGravity) {
+        case MWPlayerVideoGravityResizeAspect:
+            return AVLayerVideoGravityResizeAspect;
+        case MWPlayerVideoGravityResizeAspectFill:
+            return AVLayerVideoGravityResizeAspectFill;
+        case MWPlayerVideoGravityResize:
+            return AVLayerVideoGravityResize;
+        default:
+            return AVLayerVideoGravityResizeAspect;
+    }
+    return AVLayerVideoGravityResizeAspect;
+}
+
+#pragma mark -
+#pragma mark Observer
 /* 取消当前avplayer playitem 监听 */
 - (void)_removeCurrentAvPlayerItemObserver {
     if (_avPlayer && _avPlayer.currentItem) {
