@@ -95,14 +95,23 @@ typedef enum : NSUInteger {
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
                        context:(void *)context {
-    if ([keyPath isEqualToString:kConfigurationTopToolViewKeyPath]) {
-        [self _addTopView];
-    } else if ([keyPath isEqualToString:kConfigurationTopToolViewHeightKeyPath]) {
-        [self _updateTopViewFrame];
-    } else if ([keyPath isEqualToString:kConfigurationBottomToolViewHeightKeyPath]) {
-        [self _updateBottomViewFrame];
-    } else if ([keyPath isEqualToString:kConfigurationBottomToolViewBackgroundColorKeyPath]) {
-        self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
+    if ([object isKindOfClass:[MWPlayerConfiguration class]]) {
+        if ([keyPath isEqualToString:kConfigurationTopToolViewKeyPath]) {
+            [self _addTopView];
+        } else if ([keyPath isEqualToString:kConfigurationTopToolViewHeightKeyPath]) {
+            [self _updateTopViewFrame];
+        } else if ([keyPath isEqualToString:kConfigurationBottomToolViewHeightKeyPath]) {
+            [self _updateBottomViewFrame];
+        } else if ([keyPath isEqualToString:kConfigurationBottomToolViewBackgroundColorKeyPath]) {
+            self.bottomView.backgroundColor = self.configuration.bottomToolViewBackgroundColor;
+        }
+    } else if ([object isKindOfClass:[MWPlayerInfo class]]) {
+        if (self.info.errMessage) {
+            self.tipsLabel.hidden = NO;
+            self.tipsLabel.text = self.info.errMessage;
+        } else {
+            self.tipsLabel.hidden = YES;
+        }
     }
 }
 
@@ -372,7 +381,7 @@ typedef enum : NSUInteger {
     if (!_tipsLabel) {
         self.tipsLabel = [[UILabel alloc] init];
         _tipsLabel.textAlignment = NSTextAlignmentCenter;
-        _tipsLabel.font = [UIFont systemFontOfSize:12.f];
+        _tipsLabel.font = [UIFont systemFontOfSize:14.f];
         _tipsLabel.textColor = [UIColor whiteColor];
         _tipsLabel.hidden = YES;
     }

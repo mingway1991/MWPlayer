@@ -45,7 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) MWPlayerDirection direction;
 // 临时标记需要跳到的进度
 @property (nonatomic, assign) float panToPlayPercent;
-@property (nonatomic, copy) NSString *errMessage;
+@property (nonatomic, copy, nullable) NSString *errMessage;
+
+- (void)clear;
 
 @end
 

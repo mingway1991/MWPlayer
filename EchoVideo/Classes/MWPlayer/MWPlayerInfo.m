@@ -22,4 +22,13 @@
     return self;
 }
 
+- (void)clear {
+    _state = MWPlayerStateInit;
+    _cacheTimeInterval = 0;
+    _currentTimeInterval = 0;
+    _totalTimeInterval = 0;
+    _panToPlayPercent = 0;
+    _errMessage = nil;
+}
+
 @end

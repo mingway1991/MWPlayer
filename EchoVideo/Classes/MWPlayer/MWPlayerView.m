@@ -114,9 +114,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     }
     
     self.info.videoUrl = videoUrl;
-    self.info.cacheTimeInterval = 0;
-    self.info.currentTimeInterval = 0;
-    self.info.totalTimeInterval = 0;
+    [self.info clear];
 }
 
 - (void)setConfiguration:(MWPlayerConfiguration *)configuration {
@@ -248,6 +246,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /* 播放 */
 - (void)_play {
+    self.info.errMessage = nil;
     [self.avPlayer play];
     [self.coverView show];
     [self _startLoadingDisplayLink];
@@ -255,6 +254,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /* 暂停 */
 - (void)_pause {
+    self.info.errMessage = nil;
     [self.avPlayer pause];
     [self.coverView show];
     [self _stopLoadingDisplayLink];
@@ -262,10 +262,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /* 停止 */
 - (void)_stop {
-    self.info.cacheTimeInterval = 0;
-    self.info.currentTimeInterval = 0;
-    self.info.totalTimeInterval = 0;
-    self.info.panToPlayPercent = 0;
+    [self.info clear];
     [self.avPlayer.currentItem cancelPendingSeeks];
     [self.avPlayer.currentItem.asset cancelLoading];
     [self _removeCurrentAvPlayerItemObserver];
@@ -287,6 +284,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self.avPlayer pause];
     [self.coverView show];
     [self _stopLoadingDisplayLink];
+    self.info.errMessage = @"加载失败";
 }
 
 #pragma mark -
