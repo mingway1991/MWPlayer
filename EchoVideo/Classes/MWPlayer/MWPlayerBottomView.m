@@ -49,10 +49,8 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 }
 
 - (void)dealloc {
-    if (_info) {
-        [self _removeObserver];
-        _info = nil;
-    }
+    NSLog(@"mwplayerbottomview dealloc");
+    [self _removeObserver];
 }
 
 #pragma mark -
@@ -143,19 +141,19 @@ static CGFloat durationWidth = 0;
 
 - (void)_removeObserver {
     if (_info) {
-        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
-        [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
-        [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
-        [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
+//        [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
+//        [_info removeObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath];
+//        [_info removeObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath];
+//        [_info removeObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath];
     }
 }
 
 - (void)_addObserver {
     if (_info) {
-        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_info addObserver:self forKeyPath:kInfoStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_info addObserver:self forKeyPath:kInfoTotalTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_info addObserver:self forKeyPath:kInfoCacheTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_info addObserver:self forKeyPath:kInfoCurrentTimeIntervalKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 

@@ -56,7 +56,7 @@ typedef enum : NSUInteger {
 }
 
 - (void)dealloc {
-    _info = nil;
+    NSLog(@"mwplayercoverview dealloc");
     [self _removeConfigurationPropertyObserver];
 }
 
@@ -198,20 +198,20 @@ typedef enum : NSUInteger {
 /* 添加configuration相关属性监听 */
 - (void)_addConfigurationPropertyObserver {
     if (_configuration) {
-        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_configuration addObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath options:NSKeyValueObservingOptionNew context:nil];
+//        [_configuration addObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 
 /* 移除configuration相关属性监听 */
 - (void)_removeConfigurationPropertyObserver {
     if (_configuration) {
-        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewKeyPath];
-        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath];
-        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath];
-        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath];
+//        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewKeyPath];
+//        [_configuration removeObserver:self forKeyPath:kConfigurationTopToolViewHeightKeyPath];
+//        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewHeightKeyPath];
+//        [_configuration removeObserver:self forKeyPath:kConfigurationBottomToolViewBackgroundColorKeyPath];
     }
 }
 

@@ -36,6 +36,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 @implementation MWPlayerView
 
+@synthesize configuration = _configuration;
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -55,7 +57,6 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)commonInit {
     self.clipsToBounds = YES;
     self.backgroundColor = [UIColor blackColor];
-    self.configuration = [MWPlayerConfiguration defaultConfiguration];
     self.info = [[MWPlayerInfo alloc] init];
     self.coverView.info = self.info;
     [self _addInfoPropertyObserver];
@@ -83,16 +84,10 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 - (void)dealloc {
     NSLog(@"mwplayerview dealloc");
-    [self _releaseConfigurationPropertyObserver];
-    [self _releaseInfoPropertyObserver];
-    [self _releaseCurrentAvPlayerItemObserver];
+    [self _removeInfoPropertyObserver];
+    [self _removeConfigurationPropertyObserver];
+    [self _removeCurrentAvPlayerItemObserver];
     [_avPlayer removeTimeObserver:_periodicTimeObserver];
-    [_avPlayerLayer removeFromSuperlayer];
-    _loadingDisplayLink = nil;
-    _info = nil;
-    _configuration = nil;
-    _avPlayer = nil;
-    _avPlayerLayer = nil;
 }
 
 #pragma mark -
@@ -108,7 +103,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 #pragma mark Setter
 - (void)setVideoUrl:(NSString *)videoUrl {
     _videoUrl = videoUrl;
-    [self _releaseCurrentAvPlayerItemObserver];
+    [self _removeCurrentAvPlayerItemObserver];
     if (videoUrl.length > 0) {
         AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:videoUrl]];
         [self.avPlayer replaceCurrentItemWithPlayerItem:playerItem];
@@ -124,7 +119,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 - (void)setConfiguration:(MWPlayerConfiguration *)configuration {
-    [self _releaseConfigurationPropertyObserver];
+    [self _removeConfigurationPropertyObserver];
     _configuration = configuration;
     [self _addConfigurationPropertyObserver];
     [self _addLoadingView];
@@ -273,7 +268,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.info.panToPlayPercent = 0;
     [self.avPlayer.currentItem cancelPendingSeeks];
     [self.avPlayer.currentItem.asset cancelLoading];
-    [self _releaseCurrentAvPlayerItemObserver];
+    [self _removeCurrentAvPlayerItemObserver];
     [self.avPlayer replaceCurrentItemWithPlayerItem:nil];
     [self.coverView show];
 }
@@ -398,12 +393,11 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /// observer
 /* 取消当前avplayer playitem 监听 */
-- (void)_releaseCurrentAvPlayerItemObserver {
+- (void)_removeCurrentAvPlayerItemObserver {
     if (_avPlayer && _avPlayer.currentItem) {
         [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterStatusKeyPath];
         [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterLoadedTimeRangesKeyPath];
         [_avPlayer.currentItem removeObserver:self forKeyPath:kAvPlaterPlaybackBufferEmptyKeyPath];
-        
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     }
 }
@@ -414,13 +408,12 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterStatusKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterLoadedTimeRangesKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [_avPlayer.currentItem addObserver:self forKeyPath:kAvPlaterPlaybackBufferEmptyKeyPath options:NSKeyValueObservingOptionNew context:nil];
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observePlaybackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:_avPlayer.currentItem];
     }
 }
 
 /* 取消info属性监听 */
-- (void)_releaseInfoPropertyObserver {
+- (void)_removeInfoPropertyObserver {
     if (_info) {
         [_info removeObserver:self forKeyPath:kInfoStateKeyPath];
         [_info removeObserver:self forKeyPath:kInfoPanToPlayPercentKeyPath];
@@ -438,7 +431,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 /* 取消configuration属性监听 */
-- (void)_releaseConfigurationPropertyObserver {
+- (void)_removeConfigurationPropertyObserver {
     if (_configuration) {
         [_configuration removeObserver:self forKeyPath:kConfigurationLoadingViewKeyPath];
         [_configuration removeObserver:self forKeyPath:kConfigurationVideoGravityKeyPath];
@@ -476,6 +469,13 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         _avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
     }
     return _avPlayerLayer;
+}
+
+- (MWPlayerConfiguration *)configuration {
+    if (!_configuration) {
+        self.configuration = [MWPlayerConfiguration defaultConfiguration];
+    }
+    return _configuration;
 }
 
 @end
