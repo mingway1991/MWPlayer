@@ -140,7 +140,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 - (void)seekToPlay:(float)percent {
-    [self _changeProgressWithPercent:percent needPlay:YES];
+    [self _dragProgressWithPercent:percent needPlay:YES];
 }
 
 - (void)stop {
@@ -209,13 +209,13 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
             } else if (self.info.state == MWPlayerStateStop) {
                 [self _stop];
             } else if (self.info.state == MWPlayerStatePlayFinished) {
-                [self _changeProgressWithPercent:0 needPlay:self.configuration.needLoop];
+                [self _playFinished];
             } else if (self.info.state == MWPlayerStateLoadBreak) {
                 [self _loadBreak];
             }
         } else if ([keyPath isEqualToString:kInfoPanToPlayPercentKeyPath]) {
             // 更改播放进度
-            [self _changeProgressWithPercent:self.info.panToPlayPercent needPlay:NO];
+            [self _dragProgressWithPercent:self.info.panToPlayPercent needPlay:NO];
         } else if ([keyPath isEqualToString:kInfoDirectionKeyPath]) {
             // 更改播放器方向
             if (self.info.direction == MWPlayerDirectionPortrait) {
@@ -250,7 +250,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_play {
     [self.avPlayer play];
     [self.coverView show];
-    [self _addLoadingDisplayLink];
+    [self _startLoadingDisplayLink];
 }
 
 /* 暂停 */
@@ -262,7 +262,6 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /* 停止 */
 - (void)_stop {
-    [self _stopLoadingDisplayLink];
     self.info.cacheTimeInterval = 0;
     self.info.currentTimeInterval = 0;
     self.info.totalTimeInterval = 0;
@@ -272,11 +271,29 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _removeCurrentAvPlayerItemObserver];
     [self.avPlayer replaceCurrentItemWithPlayerItem:nil];
     [self.coverView show];
+    [self _stopLoadingDisplayLink];
 }
 
+/* 播放完成 */
+- (void)_playFinished {
+    [self _dragProgressWithPercent:0 needPlay:self.configuration.needLoop];
+    [self.coverView show];
+    [self _stopLoadingDisplayLink];
+}
+
+/* 加载失败 */
+- (void)_loadBreak {
+    [self _dragProgressWithPercent:0 needPlay:NO];
+    [self.avPlayer pause];
+    [self.coverView show];
+    [self _stopLoadingDisplayLink];
+}
+
+#pragma mark -
+#pragma mark Drag Process To Play
 /* 拖动进度条 */
-- (void)_changeProgressWithPercent:(float)percent
-                          needPlay:(BOOL)needPlay {
+- (void)_dragProgressWithPercent:(float)percent
+                        needPlay:(BOOL)needPlay {
     if (self.avPlayer.status == AVPlayerStatusReadyToPlay && self.avPlayer.currentItem) {
         NSTimeInterval duration = percent * CMTimeGetSeconds(self.avPlayer.currentItem.duration);
         CMTime seekTime = CMTimeMake(duration, 1);
@@ -289,15 +306,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
                             self.info.state = MWPlayerStatePrepareToPlay;
                         }
                     }
-        }];
+                }];
     }
-}
-
-/* 加载失败 */
-- (void)_loadBreak {
-    [self _changeProgressWithPercent:0 needPlay:NO];
-    [self.avPlayer pause];
-    [self.coverView show];
 }
 
 #pragma mark -
@@ -315,7 +325,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.loadingView.frame = self.bounds;
 }
 
-- (void)_addLoadingDisplayLink {
+- (void)_startLoadingDisplayLink {
     if (self.loadingDisplayLink) {
         [self _stopLoadingDisplayLink];
     }
@@ -324,6 +334,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 - (void)_stopLoadingDisplayLink {
+    [self _upadteLoading];
     [self.loadingDisplayLink invalidate];
     self.loadingDisplayLink = nil;
 }

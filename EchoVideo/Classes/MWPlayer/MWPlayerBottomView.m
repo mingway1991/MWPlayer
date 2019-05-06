@@ -55,9 +55,7 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 #pragma mark -
 #pragma mark Setter
 - (void)setInfo:(MWPlayerInfo *)info {
-    if (_info) {
-        [self _removeInfoObserver];
-    }
+    [self _removeInfoObserver];
     _info = info;
     [self _addInfoObserver];
 }

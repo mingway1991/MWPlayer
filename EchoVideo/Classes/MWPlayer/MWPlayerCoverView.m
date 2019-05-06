@@ -284,6 +284,7 @@ typedef enum : NSUInteger {
                 }
                 case MWCoverViewPanDirectionLeftOrRight:{
                     // 水平
+                    [self _horizontalEnd];
                     break;
                 }
                 default:
@@ -303,10 +304,10 @@ typedef enum : NSUInteger {
     NSString *style = @"";
     if (value < 0) {
         style = @"<<";
-        self.info.panToPlayPercent = (self.info.currentTimeInterval-5)/self.info.totalTimeInterval;
+        self.info.panToPlayPercent = (self.info.currentTimeInterval-3)/self.info.totalTimeInterval;
     } else if (value > 0) {
         style = @">>";
-        self.info.panToPlayPercent = (self.info.currentTimeInterval+5)/self.info.totalTimeInterval;
+        self.info.panToPlayPercent = (self.info.currentTimeInterval+3)/self.info.totalTimeInterval;
     }
     if (value == 0) { return; }
 }
@@ -316,6 +317,14 @@ typedef enum : NSUInteger {
     // 通过三目运算符来判断显示音量还是亮度
     // 关于音量界面不显示图标的问题,可以百度搜索BrightnessView这个类来解决
     _isVolume ? (self.volumeViewSlider.value -= value / 10000) : ([UIScreen mainScreen].brightness -= value / 10000);
+}
+
+- (void)_horizontalEnd {
+    self.info.state = MWPlayerStatePrepareToPlay;
+}
+
+- (void)_verticalPanEnd {
+    
 }
 
 #pragma mark -
