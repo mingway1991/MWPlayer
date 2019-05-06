@@ -296,8 +296,6 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         NSTimeInterval duration = percent * CMTimeGetSeconds(self.avPlayer.currentItem.duration);
         CMTime seekTime = CMTimeMake(duration, 1);
         [self.avPlayer seekToTime:seekTime
-                  toleranceBefore:kCMTimeZero
-                   toleranceAfter:kCMTimeZero
                 completionHandler:^(BOOL finished) {
                     if (finished) {
                         if (needPlay) {
