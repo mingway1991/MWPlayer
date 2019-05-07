@@ -10,6 +10,7 @@
 #import "EVAlbumModel.h"
 #import "EVNetwork+Album.h"
 #import "EVVideoListViewController.h"
+#import "MWDefines.h"
 
 @interface EVHomeViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -75,6 +76,7 @@
         self.albumTableView = [[UITableView alloc] initWithFrame:self.view.bounds];
         _albumTableView.dataSource = self;
         _albumTableView.delegate = self;
+        _albumTableView.contentInset = UIEdgeInsetsMake(MWTopBarHeight, 0, 0, 0);
     }
     return _albumTableView;
 }

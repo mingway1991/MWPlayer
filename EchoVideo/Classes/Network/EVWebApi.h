@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define kEchoVideoHost @"http://127.0.0.1:8085"
+#define kEchoVideoHost @"http://119.28.1.117:8085"
 
 #define kLoginApi @"/v1/login"
 #define kRefreshApi @"/v1/refresh"

@@ -11,6 +11,7 @@
 #import "EVNetwork+Video.h"
 #import "EVNewVideoView.h"
 #import "EVPlayVideoViewController.h"
+#import "MWDefines.h"
 
 @import MJRefresh;
 
@@ -148,6 +149,7 @@
         self.videoListTableView = [[UITableView alloc] initWithFrame:self.view.bounds];
         _videoListTableView.dataSource = self;
         _videoListTableView.delegate = self;
+        _videoListTableView.contentInset = UIEdgeInsetsMake(MWTopBarHeight, 0, 0, 0);
         
         __weak typeof(self) weakSelf = self;
         _videoListTableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
