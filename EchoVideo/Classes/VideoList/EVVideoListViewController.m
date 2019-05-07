@@ -7,17 +7,20 @@
 //
 
 #import "EVVideoListViewController.h"
-#import "MWPlayerView.h"
-#import "MWPlayerConfiguration.h"
+#import "EVVideoModel.h"
+#import "EVNetwork+Video.h"
+#import "EVNewVideoView.h"
+#import "EVPlayVideoViewController.h"
 
-@interface EVVideoListViewController () <UITableViewDataSource, UITableViewDelegate> {
-    NSArray *_videos;
-}
+@import MJRefresh;
 
+@interface EVVideoListViewController () <UITableViewDataSource, UITableViewDelegate, EVNewVideoViewDelegate>
+
+@property (nonatomic, strong) NSNumber *after;
+@property (nonatomic, strong) NSNumber *count;
 @property (nonatomic, strong) UITableView *videoListTableView;
-
-@property (nonatomic, strong) MWPlayerView *playerView;
-@property (nonatomic, strong) MWPlayerConfiguration *configuration;
+@property (nonatomic, strong) EVNetwork *network;
+@property (nonatomic, strong) NSArray<EVVideoModel *> *videos;
 
 @end
 
@@ -26,53 +29,79 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // mp4 mov avi
-    _videos = @[@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/movie.mp4",
-                @"http://vfx.mtime.cn/Video/2017/03/31/mp4/170331093811717750.mp4",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/RQ004F14.mov",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/GoneNutty.avi",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_1280x720_20mb.flv",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_1280x720_20mb.mkv",
-                @"https://echo-video.oss-cn-shanghai.aliyuncs.com/SampleVideo_176x144_1mb.3gp"];
-    
+    [self initUI];
+    [self.videoListTableView.mj_header beginRefreshing];
+}
+
+- (void)initUI {
     [self.view addSubview:self.videoListTableView];
-    [self.view addSubview:self.playerView];
     
-    UIView *topView = [[UIView alloc] init];
-    topView.backgroundColor = [UIColor blackColor];
-    
-    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.frame = CGRectMake(20, 5, 60.f, 40.f);
-    [closeButton setTitle:@"关闭" forState:UIControlStateNormal];
-    [closeButton addTarget:self action:@selector(closePlayer) forControlEvents:UIControlEventTouchUpInside];
-    [topView addSubview:closeButton];
-    
-    UIButton *videoGravityButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    videoGravityButton.frame = CGRectMake(CGRectGetMaxX(closeButton.frame)+10, 5, 60.f, 40.f);
-    [videoGravityButton setTitle:@"填充" forState:UIControlStateNormal];
-    [videoGravityButton addTarget:self action:@selector(videoGravity) forControlEvents:UIControlEventTouchUpInside];
-    [topView addSubview:videoGravityButton];
-    
-    self.configuration = [MWPlayerConfiguration defaultConfiguration];
-    self.configuration.topToolView = topView;
-    self.playerView.configuration = self.configuration;
+    UIBarButtonItem *newVideoBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newVideoAction)];
+    self.navigationItem.rightBarButtonItem = newVideoBarButton;
 }
 
-- (void)dealloc {
-    NSLog(@"%@ dealloc", NSStringFromClass([self class]));
-    [_playerView stop];
-    [_playerView removeFromSuperview];
-    _playerView = nil;
+#pragma mark -
+#pragma mark Setter
+- (void)setAlbum:(EVAlbumModel *)album {
+    _album = album;
+    self.title = album.title;
 }
 
-- (void)closePlayer {
-    [self.playerView stop];
-    self.playerView.hidden = YES;
+#pragma mark -
+#pragma mark Action
+- (void)newVideoAction {
+    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    newVideoView.delegate = self;
+    [newVideoView show];
 }
 
-- (void)videoGravity {
-    self.configuration.videoGravity = self.configuration.videoGravity == MWPlayerVideoGravityResizeAspect ? MWPlayerVideoGravityResizeAspectFill:MWPlayerVideoGravityResizeAspect;
+#pragma mark -
+#pragma mark Request
+- (void)loadVideosWithIsRefresh:(BOOL)isRefresh {
+    if (isRefresh) {
+        self.after = @(0);
+    } else {
+        self.after = self.videos.lastObject.video_id;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.network loadVideosWithAid:self.album.album_id
+                              after:self.after
+                              count:self.count
+                       successBlock:^(NSArray<EVVideoModel *> * _Nonnull videos) {
+                           NSMutableArray *newVideos = [NSMutableArray arrayWithArray:weakSelf.videos];
+                           if (isRefresh) {
+                               newVideos = [videos mutableCopy];
+                               [weakSelf.videoListTableView.mj_header endRefreshing];
+                               if (videos.count == weakSelf.count.integerValue) {
+                                   weakSelf.videoListTableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+                                       [weakSelf loadVideosWithIsRefresh:NO];
+                                   }];
+                               }
+                           } else {
+                               [newVideos addObjectsFromArray:videos];
+                               if (videos.count < weakSelf.count.integerValue) {
+                                   [weakSelf.videoListTableView.mj_footer endRefreshingWithNoMoreData];
+                               } else {
+                                   [weakSelf.videoListTableView.mj_footer endRefreshing];
+                               }
+                           }
+                           weakSelf.videos = newVideos;
+                           [weakSelf.videoListTableView reloadData];
+    } failureBlock:^(NSString * _Nonnull msg) {
+        if (isRefresh) {
+            [weakSelf.videoListTableView.mj_header endRefreshing];
+        } else {
+            [weakSelf.videoListTableView.mj_header endRefreshing];
+        }
+    }];
+}
+
+- (void)createVideoWithTitle:(NSString *)title videoUrl:(NSString *)videoUrl completion:(void(^)(void))completion {
+    [self.network createVideoWithTitle:title cover_url:nil video_url:videoUrl aid:self.album.album_id successBlock:^{
+        completion();
+    } failureBlock:^(NSString * _Nonnull msg) {
+        
+    }];
 }
 
 #pragma mark -
@@ -90,16 +119,26 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = _videos[indexPath.row];
+    cell.textLabel.text = [_videos[indexPath.row] title];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    self.playerView.hidden = NO;
-    self.playerView.videoUrl = _videos[indexPath.row];
-    [self.playerView play];
+    EVPlayVideoViewController *vc = [[EVPlayVideoViewController alloc] init];
+    vc.videos = @[self.videos[indexPath.row]];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark -
+#pragma mark EVNewVideoViewDelegate
+- (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title url:(NSString *)url {
+    __weak typeof(self) weakSelf = self;
+    [self createVideoWithTitle:title videoUrl:url completion:^{
+        [weakSelf.videoListTableView.mj_header beginRefreshing];
+        [newVideoView hide];
+    }];
 }
 
 #pragma mark -
@@ -109,16 +148,34 @@
         self.videoListTableView = [[UITableView alloc] initWithFrame:self.view.bounds];
         _videoListTableView.dataSource = self;
         _videoListTableView.delegate = self;
+        
+        __weak typeof(self) weakSelf = self;
+        _videoListTableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+            [weakSelf loadVideosWithIsRefresh:YES];
+        }];
     }
     return _videoListTableView;
 }
 
-- (MWPlayerView *)playerView {
-    if (!_playerView) {
-        self.playerView = [[MWPlayerView alloc] initWithFrame:CGRectMake(0, 64.f, CGRectGetWidth([UIScreen mainScreen].bounds), 300.f)];
-        self.playerView.hidden = YES;
+- (EVNetwork *)network {
+    if (!_network) {
+        self.network = [[EVNetwork alloc] init];
     }
-    return _playerView;
+    return _network;
+}
+
+- (NSNumber *)after {
+    if (!_after) {
+        self.after = @(0);
+    }
+    return _after;
+}
+
+- (NSNumber *)count {
+    if (!_count) {
+        self.count = @(10);
+    }
+    return _count;
 }
 
 @end

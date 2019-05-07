@@ -8,6 +8,10 @@
 
 #import "AppDelegate.h"
 #import "EVHomeViewController.h"
+#import "EVLoginViewController.h"
+#import "EVLoginUserModel.h"
+#import "EVNetwork+User.h"
+#import "Constant.h"
 
 @interface AppDelegate ()
 
@@ -19,15 +23,53 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    
-    EVHomeViewController *vc = [[EVHomeViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    self.window.rootViewController = nav;
+    [self switchBlankVC];
+    if ([[EVLoginUserModel sharedInstance] verifyTokenValid] == TokenExpired) {
+        //无token或者token已过期
+        [self switchLoginVc];
+    } else if ([[EVLoginUserModel sharedInstance] verifyTokenValid] == TokenNeedRefresh) {
+        //token将要过期，刷新token
+        [self performSelector:@selector(refreshToken) withObject:nil afterDelay:1];
+    } else {
+        //token正常状态
+        [self switchHomeVc];
+    }
     [self.window makeKeyAndVisible];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(switchHomeVc) name:SWITCH_HOME_NOTIFICATION_NAME object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(switchLoginVc) name:SWITCH_LOGIN_NOTIFICATION_NAME object:nil];
     
     return YES;
 }
 
+- (void)switchBlankVC {
+    EVBaseViewController *baseVC = [[EVBaseViewController alloc] init];
+    self.window.rootViewController = baseVC;
+}
+
+- (void)switchLoginVc {
+    EVLoginViewController *vc = [[EVLoginViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    self.window.rootViewController = nav;
+}
+
+- (void)switchHomeVc {
+    EVHomeViewController *vc = [[EVHomeViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    self.window.rootViewController = nav;
+}
+
+- (void)refreshToken {
+    __weak typeof(self) weakSelf = self;
+    [[[EVNetwork alloc] init] refreshTokenWithSuccessBlock:^(NSString * _Nonnull access_token, NSString * _Nonnull expired_date) {
+        [EVLoginUserModel sharedInstance].access_token = access_token;
+        [EVLoginUserModel sharedInstance].expired_date = expired_date;
+        [[EVLoginUserModel sharedInstance] save];
+        [weakSelf switchHomeVc];
+    } failureBlock:^(NSString * _Nonnull msg) {
+        [weakSelf switchLoginVc];
+    }];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

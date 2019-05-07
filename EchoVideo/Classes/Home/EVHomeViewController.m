@@ -7,11 +7,15 @@
 //
 
 #import "EVHomeViewController.h"
+#import "EVAlbumModel.h"
+#import "EVNetwork+Album.h"
 #import "EVVideoListViewController.h"
 
 @interface EVHomeViewController ()<UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) UITableView *listTableView;
+@property (nonatomic, strong) UITableView *albumTableView;
+@property (nonatomic, strong) EVNetwork *network;
+@property (nonatomic, strong) NSArray<EVAlbumModel *> *albums;
 
 @end
 
@@ -20,7 +24,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.view addSubview:self.listTableView];
+    self.title = @"专辑";
+    [self.view addSubview:self.albumTableView];
+    [self loadAlbums];
+}
+
+#pragma mark -
+#pragma mark Request
+- (void)loadAlbums {
+    __weak typeof(self) weakSelf = self;
+    [self.network loadAlbumsWithSuccessBlock:^(NSArray<EVAlbumModel *> * _Nonnull albums) {
+        weakSelf.albums = albums;
+        [weakSelf.albumTableView reloadData];
+    } failureBlock:^(NSString * _Nonnull msg) {
+        
+    }];
 }
 
 #pragma mark -
@@ -30,7 +48,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return self.albums.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -38,28 +56,34 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = @"视频列表";
+    cell.textLabel.text = [self.albums[indexPath.row] title];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    if (indexPath.row == 0) {
-        EVVideoListViewController *vc = [[EVVideoListViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+    EVVideoListViewController *vc = [[EVVideoListViewController alloc] init];
+    vc.album = self.albums[indexPath.row];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark -
 #pragma mark LazyLoad
-- (UITableView *)listTableView {
-    if (!_listTableView) {
-        self.listTableView = [[UITableView alloc] initWithFrame:self.view.bounds];
-        _listTableView.dataSource = self;
-        _listTableView.delegate = self;
+- (UITableView *)albumTableView {
+    if (!_albumTableView) {
+        self.albumTableView = [[UITableView alloc] initWithFrame:self.view.bounds];
+        _albumTableView.dataSource = self;
+        _albumTableView.delegate = self;
     }
-    return _listTableView;
+    return _albumTableView;
+}
+
+- (EVNetwork *)network {
+    if (!_network) {
+        self.network = [[EVNetwork alloc] init];
+    }
+    return _network;
 }
 
 @end

@@ -24,6 +24,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 }
 
 @property (nonatomic, strong) AVPlayer *avPlayer;
+@property (nonatomic, strong) AVPlayerLayer *avPlayerLayer;
 @property (nonatomic, strong) MWPlayerInfo *info;
 @property (nonatomic, strong) CADisplayLink *loadingDisplayLink;
 @property (nonatomic, strong) id periodicTimeObserver;
@@ -35,12 +36,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 @implementation MWPlayerView
 
-@synthesize avPlayer = _avPlayer;
 @synthesize configuration = _configuration;
-
-+ (Class)layerClass {
-    return [AVPlayerLayer class];
-}
 
 - (instancetype)init {
     self = [super init];
@@ -81,10 +77,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         weakSelf.info.totalTimeInterval = total;
         weakSelf.info.currentTimeInterval = current;
     }];
-
-    [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
-    self.layer.contentsScale = [UIScreen mainScreen].scale;
     
+    [self.layer addSublayer:self.avPlayerLayer];
     [self addSubview:self.coverView];
     [self _addLoadingView];
 }
@@ -102,17 +96,13 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 #pragma mark Layout
 - (void)layoutSubviews {
     [super layoutSubviews];
+    self.avPlayerLayer.frame = self.bounds;
     self.coverView.frame = self.bounds;
     [self _updateLoadingViewFrame];
 }
 
 #pragma mark -
 #pragma mark Setter
-- (void)setAvPlayer:(AVPlayer *)avPlayer {
-    _avPlayer = avPlayer;
-    [(AVPlayerLayer *)[self layer] setPlayer:avPlayer];
-}
-
 - (void)setVideoUrl:(NSString *)videoUrl {
     _videoUrl = videoUrl;
     [self _removeCurrentAvPlayerItemObserver];
@@ -135,7 +125,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _addConfigurationPropertyObserver];
     [self _addLoadingView];
     [self _updateLoadingViewFrame];
-    [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
+    [self.avPlayerLayer setVideoGravity:[self _getAvPlayerVideoGravity]];
 }
 
 #pragma mark -
@@ -241,7 +231,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         if ([keyPath isEqualToString:kConfigurationLoadingViewKeyPath]) {
             [self _addLoadingView];
         } else if ([keyPath isEqualToString:kConfigurationVideoGravityKeyPath]) {
-            [(AVPlayerLayer *)self.layer setVideoGravity:[self _getAvPlayerVideoGravity]];
+            [self.avPlayerLayer setVideoGravity:[self _getAvPlayerVideoGravity]];
         }
     }
 }
@@ -381,14 +371,13 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_zoomInWithDirection:(MWPlayerDirection)direction {
     _superView = self.superview;
     _originFrame = self.frame;
-    [UIApplication sharedApplication].statusBarHidden = YES;
     self.frame = [UIScreen mainScreen].bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     if (direction == MWPlayerDirectionLandscapeLeft) {
-        [self.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
         [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
     } else if (direction == MWPlayerDirectionLandscapeRight) {
-        [self.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
         [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
     }
 }
@@ -397,7 +386,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 - (void)_zoomOut {
     self.frame = _originFrame;
     [_superView addSubview:self];
-    [self.layer setAffineTransform:CGAffineTransformIdentity];
+    [self.avPlayerLayer setAffineTransform:CGAffineTransformIdentity];
     [self.coverView.layer setAffineTransform:CGAffineTransformIdentity];
 }
 
@@ -476,8 +465,20 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 #pragma mark -
 #pragma mark LazyLoad
-- (AVPlayer*)avPlayer {
-    return [(AVPlayerLayer *)[self layer] player];
+- (AVPlayer *)avPlayer {
+    if (!_avPlayer) {
+        self.avPlayer = [[AVPlayer alloc] init];
+    }
+    return _avPlayer;
+}
+
+- (AVPlayerLayer *)avPlayerLayer {
+    if (!_avPlayerLayer) {
+        self.avPlayerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
+        _avPlayerLayer.videoGravity = [self _getAvPlayerVideoGravity];
+        _avPlayerLayer.contentsScale = [UIScreen mainScreen].scale;
+    }
+    return _avPlayerLayer;
 }
 
 - (MWPlayerCoverView *)coverView {
