@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4D7C8144A61A9CF88CB354AA /* Pods_EchoVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD948BE7758D5B2AEAA4D27B /* Pods_EchoVideo.framework */; };
 		7A1BA751227E74C8001B1223 /* EVVideoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA750227E74C8001B1223 /* EVVideoListViewController.m */; };
-		7A1BA754227E7752001B1223 /* MWPlayerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */; };
 		7A1BA759227EE13C001B1223 /* EVHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A1BA758227EE13C001B1223 /* EVHomeViewController.m */; };
 		7A62D69C22811E4B000A25DF /* EVLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A62D69B22811E4B000A25DF /* EVLoginViewController.m */; };
 		7A62D6A022811E9C000A25DF /* EVNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A62D69F22811E9C000A25DF /* EVNetwork.m */; };
@@ -31,20 +30,19 @@
 		7A8332912277E14300493BA7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A83328F2277E14300493BA7 /* LaunchScreen.storyboard */; };
 		7A8332942277E14300493BA7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332932277E14300493BA7 /* main.m */; };
 		7A8332A12277E45300493BA7 /* EVBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332A02277E45300493BA7 /* EVBaseViewController.m */; };
-		7A8332A92277EA1600493BA7 /* MWPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332A82277EA1600493BA7 /* MWPlayerView.m */; };
-		7A8332AC2277F32A00493BA7 /* MWPlayerCoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332AB2277F32A00493BA7 /* MWPlayerCoverView.m */; };
-		7A8332AF2277FA2B00493BA7 /* MWPlayerProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332AE2277FA2B00493BA7 /* MWPlayerProgressView.m */; };
-		7A8332B22278238B00493BA7 /* MWPlayerBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332B12278238B00493BA7 /* MWPlayerBottomView.m */; };
-		7A8332B62278251900493BA7 /* MWPlayerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332B52278251900493BA7 /* MWPlayerInfo.m */; };
+		7A9DF81E2282701500434AF2 /* MWPlayerBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */; };
+		7A9DF81F2282701500434AF2 /* MWPlayerProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */; };
+		7A9DF8202282701500434AF2 /* MWPlayerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8122282701500434AF2 /* MWPlayerInfo.m */; };
+		7A9DF8212282701500434AF2 /* MWPlayerCoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8132282701500434AF2 /* MWPlayerCoverView.m */; };
+		7A9DF8222282701500434AF2 /* MWPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF81B2282701500434AF2 /* MWPlayerView.m */; };
+		7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */; };
+		7A9DF827228273AA00434AF2 /* MWPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF826228273AA00434AF2 /* MWPopup.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1585F8A18D2EA3333906E83F /* Pods-EchoVideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EchoVideo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EchoVideo/Pods-EchoVideo.debug.xcconfig"; sourceTree = "<group>"; };
 		7A1BA74F227E74C8001B1223 /* EVVideoListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVVideoListViewController.h; sourceTree = "<group>"; };
 		7A1BA750227E74C8001B1223 /* EVVideoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVVideoListViewController.m; sourceTree = "<group>"; };
-		7A1BA752227E7752001B1223 /* MWPlayerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerConfiguration.h; sourceTree = "<group>"; };
-		7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
-		7A1BA755227EB1DE001B1223 /* MWPlayerLoadingProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerLoadingProtocol.h; sourceTree = "<group>"; };
 		7A1BA757227EE13C001B1223 /* EVHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVHomeViewController.h; sourceTree = "<group>"; };
 		7A1BA758227EE13C001B1223 /* EVHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVHomeViewController.m; sourceTree = "<group>"; };
 		7A62D69A22811E4B000A25DF /* EVLoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVLoginViewController.h; sourceTree = "<group>"; };
@@ -87,17 +85,22 @@
 		7A8332932277E14300493BA7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7A83329F2277E45300493BA7 /* EVBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EVBaseViewController.h; sourceTree = "<group>"; };
 		7A8332A02277E45300493BA7 /* EVBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EVBaseViewController.m; sourceTree = "<group>"; };
-		7A8332A72277EA1600493BA7 /* MWPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerView.h; sourceTree = "<group>"; };
-		7A8332A82277EA1600493BA7 /* MWPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerView.m; sourceTree = "<group>"; };
-		7A8332AA2277F32A00493BA7 /* MWPlayerCoverView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerCoverView.h; sourceTree = "<group>"; };
-		7A8332AB2277F32A00493BA7 /* MWPlayerCoverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerCoverView.m; sourceTree = "<group>"; };
-		7A8332AD2277FA2B00493BA7 /* MWPlayerProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerProgressView.h; sourceTree = "<group>"; };
-		7A8332AE2277FA2B00493BA7 /* MWPlayerProgressView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerProgressView.m; sourceTree = "<group>"; };
-		7A8332B02278238B00493BA7 /* MWPlayerBottomView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerBottomView.h; sourceTree = "<group>"; };
-		7A8332B12278238B00493BA7 /* MWPlayerBottomView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerBottomView.m; sourceTree = "<group>"; };
-		7A8332B42278251900493BA7 /* MWPlayerInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerInfo.h; sourceTree = "<group>"; };
-		7A8332B52278251900493BA7 /* MWPlayerInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPlayerInfo.m; sourceTree = "<group>"; };
-		7A8332B722784EC800493BA7 /* MWDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWDefines.h; sourceTree = "<group>"; };
+		7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerBottomView.m; sourceTree = "<group>"; };
+		7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerProgressView.m; sourceTree = "<group>"; };
+		7A9DF8122282701500434AF2 /* MWPlayerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerInfo.m; sourceTree = "<group>"; };
+		7A9DF8132282701500434AF2 /* MWPlayerCoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerCoverView.m; sourceTree = "<group>"; };
+		7A9DF8142282701500434AF2 /* MWPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerView.h; sourceTree = "<group>"; };
+		7A9DF8152282701500434AF2 /* MWPlayerConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerConfiguration.h; sourceTree = "<group>"; };
+		7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerLoadingProtocol.h; sourceTree = "<group>"; };
+		7A9DF8172282701500434AF2 /* MWPlayerCoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerCoverView.h; sourceTree = "<group>"; };
+		7A9DF8182282701500434AF2 /* MWPlayerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerInfo.h; sourceTree = "<group>"; };
+		7A9DF8192282701500434AF2 /* MWPlayerProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerProgressView.h; sourceTree = "<group>"; };
+		7A9DF81A2282701500434AF2 /* MWPlayerBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerBottomView.h; sourceTree = "<group>"; };
+		7A9DF81B2282701500434AF2 /* MWPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerView.m; sourceTree = "<group>"; };
+		7A9DF81C2282701500434AF2 /* MWDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWDefines.h; sourceTree = "<group>"; };
+		7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
+		7A9DF825228273AA00434AF2 /* MWPopup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPopup.h; sourceTree = "<group>"; };
+		7A9DF826228273AA00434AF2 /* MWPopup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPopup.m; sourceTree = "<group>"; };
 		9F150051DAC68DF6DD99F236 /* Pods-EchoVideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EchoVideo.release.xcconfig"; path = "Pods/Target Support Files/Pods-EchoVideo/Pods-EchoVideo.release.xcconfig"; sourceTree = "<group>"; };
 		CD948BE7758D5B2AEAA4D27B /* Pods_EchoVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EchoVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -265,6 +268,7 @@
 		7A83329D2277E45300493BA7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7A9DF80E2282701500434AF2 /* Component */,
 				7A62D6CD22813141000A25DF /* Constant */,
 				7A62D6AB22811FCE000A25DF /* Category */,
 				7A62D6A122811EF6000A25DF /* Model */,
@@ -273,7 +277,6 @@
 				7A1BA756227EE12F001B1223 /* Home */,
 				7A1BA74E227E74B8001B1223 /* VideoList */,
 				7A62D6D32281856C000A25DF /* PlayVideo */,
-				7A8332A62277EA0900493BA7 /* MWPlayer */,
 				7A83329E2277E45300493BA7 /* Base */,
 			);
 			path = Classes;
@@ -288,25 +291,43 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
-		7A8332A62277EA0900493BA7 /* MWPlayer */ = {
+		7A9DF80E2282701500434AF2 /* Component */ = {
 			isa = PBXGroup;
 			children = (
-				7A1BA752227E7752001B1223 /* MWPlayerConfiguration.h */,
-				7A1BA753227E7752001B1223 /* MWPlayerConfiguration.m */,
-				7A8332B722784EC800493BA7 /* MWDefines.h */,
-				7A8332A72277EA1600493BA7 /* MWPlayerView.h */,
-				7A8332A82277EA1600493BA7 /* MWPlayerView.m */,
-				7A8332AA2277F32A00493BA7 /* MWPlayerCoverView.h */,
-				7A8332AB2277F32A00493BA7 /* MWPlayerCoverView.m */,
-				7A8332B02278238B00493BA7 /* MWPlayerBottomView.h */,
-				7A8332B12278238B00493BA7 /* MWPlayerBottomView.m */,
-				7A8332AD2277FA2B00493BA7 /* MWPlayerProgressView.h */,
-				7A8332AE2277FA2B00493BA7 /* MWPlayerProgressView.m */,
-				7A8332B42278251900493BA7 /* MWPlayerInfo.h */,
-				7A8332B52278251900493BA7 /* MWPlayerInfo.m */,
-				7A1BA755227EB1DE001B1223 /* MWPlayerLoadingProtocol.h */,
+				7A9DF8242282730500434AF2 /* MWPopup */,
+				7A9DF80F2282701500434AF2 /* MWPlayer */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
+		7A9DF80F2282701500434AF2 /* MWPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */,
+				7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */,
+				7A9DF8122282701500434AF2 /* MWPlayerInfo.m */,
+				7A9DF8132282701500434AF2 /* MWPlayerCoverView.m */,
+				7A9DF8142282701500434AF2 /* MWPlayerView.h */,
+				7A9DF8152282701500434AF2 /* MWPlayerConfiguration.h */,
+				7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */,
+				7A9DF8172282701500434AF2 /* MWPlayerCoverView.h */,
+				7A9DF8182282701500434AF2 /* MWPlayerInfo.h */,
+				7A9DF8192282701500434AF2 /* MWPlayerProgressView.h */,
+				7A9DF81A2282701500434AF2 /* MWPlayerBottomView.h */,
+				7A9DF81B2282701500434AF2 /* MWPlayerView.m */,
+				7A9DF81C2282701500434AF2 /* MWDefines.h */,
+				7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */,
 			);
 			path = MWPlayer;
+			sourceTree = "<group>";
+		};
+		7A9DF8242282730500434AF2 /* MWPopup */ = {
+			isa = PBXGroup;
+			children = (
+				7A9DF825228273AA00434AF2 /* MWPopup.h */,
+				7A9DF826228273AA00434AF2 /* MWPopup.m */,
+			);
+			path = MWPopup;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,16 +446,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A62D6B4228123BF000A25DF /* EVNetwork+Album.m in Sources */,
-				7A8332B22278238B00493BA7 /* MWPlayerBottomView.m in Sources */,
-				7A8332AF2277FA2B00493BA7 /* MWPlayerProgressView.m in Sources */,
-				7A8332A92277EA1600493BA7 /* MWPlayerView.m in Sources */,
+				7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */,
 				7A62D6A722811F11000A25DF /* EVUserModel.m in Sources */,
 				7A62D6BD22812535000A25DF /* UIColor+MWUtil.m in Sources */,
 				7A62D6BA22812462000A25DF /* NSString+NSHash.m in Sources */,
 				7A8332A12277E45300493BA7 /* EVBaseViewController.m in Sources */,
+				7A9DF8222282701500434AF2 /* MWPlayerView.m in Sources */,
 				7A62D6C02281257B000A25DF /* EVAlbumModel.m in Sources */,
-				7A8332B62278251900493BA7 /* MWPlayerInfo.m in Sources */,
-				7A1BA754227E7752001B1223 /* MWPlayerConfiguration.m in Sources */,
+				7A9DF81E2282701500434AF2 /* MWPlayerBottomView.m in Sources */,
 				7A1BA759227EE13C001B1223 /* EVHomeViewController.m in Sources */,
 				7A62D6C32281261D000A25DF /* EVVideoModel.m in Sources */,
 				7A62D6AE22811FD7000A25DF /* NSDate+Help.m in Sources */,
@@ -442,13 +461,16 @@
 				7A62D6B1228123B0000A25DF /* EVNetwork+User.m in Sources */,
 				7A1BA751227E74C8001B1223 /* EVVideoListViewController.m in Sources */,
 				7A8332942277E14300493BA7 /* main.m in Sources */,
+				7A9DF827228273AA00434AF2 /* MWPopup.m in Sources */,
 				7A62D6A422811F06000A25DF /* EVLoginUserModel.m in Sources */,
 				7A62D6B7228123C6000A25DF /* EVNetwork+Video.m in Sources */,
 				7A62D69C22811E4B000A25DF /* EVLoginViewController.m in Sources */,
+				7A9DF8212282701500434AF2 /* MWPlayerCoverView.m in Sources */,
 				7A62D6D622818580000A25DF /* EVPlayVideoViewController.m in Sources */,
 				7A62D6D222815666000A25DF /* EVNewVideoView.m in Sources */,
+				7A9DF8202282701500434AF2 /* MWPlayerInfo.m in Sources */,
 				7A8332862277E14200493BA7 /* AppDelegate.m in Sources */,
-				7A8332AC2277F32A00493BA7 /* MWPlayerCoverView.m in Sources */,
+				7A9DF81F2282701500434AF2 /* MWPlayerProgressView.m in Sources */,
 				7A62D6A022811E9C000A25DF /* EVNetwork.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

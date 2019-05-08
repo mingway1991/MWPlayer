@@ -284,7 +284,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 
 /* 加载失败 */
 - (void)_loadBreak {
-    [self _dragProgressWithPercent:0 needPlay:NO];
+    [self.info clear];
     [self.avPlayer pause];
     [self.coverView show];
     [self _stopLoadingDisplayLink];

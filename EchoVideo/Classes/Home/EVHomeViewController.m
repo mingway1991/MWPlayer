@@ -12,6 +12,8 @@
 #import "EVVideoListViewController.h"
 #import "MWDefines.h"
 
+@import MJRefresh;
+
 @interface EVHomeViewController ()<UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *albumTableView;
@@ -35,10 +37,11 @@
 - (void)loadAlbums {
     __weak typeof(self) weakSelf = self;
     [self.network loadAlbumsWithSuccessBlock:^(NSArray<EVAlbumModel *> * _Nonnull albums) {
+        [weakSelf.albumTableView.mj_header endRefreshing];
         weakSelf.albums = albums;
         [weakSelf.albumTableView reloadData];
     } failureBlock:^(NSString * _Nonnull msg) {
-        
+        [weakSelf.albumTableView.mj_header endRefreshing];
     }];
 }
 
@@ -77,6 +80,11 @@
         _albumTableView.dataSource = self;
         _albumTableView.delegate = self;
         _albumTableView.contentInset = UIEdgeInsetsMake(MWTopBarHeight, 0, 0, 0);
+        
+        __weak typeof(self) weakSelf = self;
+        _albumTableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+            [weakSelf loadAlbums];
+        }];
     }
     return _albumTableView;
 }

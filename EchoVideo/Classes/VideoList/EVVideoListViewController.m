@@ -12,6 +12,7 @@
 #import "EVNewVideoView.h"
 #import "EVPlayVideoViewController.h"
 #import "MWDefines.h"
+#import "MWPopup.h"
 
 @import MJRefresh;
 
@@ -51,9 +52,16 @@
 #pragma mark -
 #pragma mark Action
 - (void)newVideoAction {
-    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    newVideoView.delegate = self;
-    [newVideoView show];
+//    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+//    newVideoView.delegate = self;
+//    [newVideoView show];
+    
+    NSArray *items = @[[MWPopupItem itemWithIcon:nil title:@"测试" completion:^{
+        
+                        }]
+                       ];
+    
+    [[[MWPopup alloc] init] showWithItems:items];
 }
 
 #pragma mark -
