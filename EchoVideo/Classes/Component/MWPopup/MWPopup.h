@@ -12,13 +12,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPopupItem : NSObject
 
-@property (nonatomic, strong) UIImage *icon;
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) void(^completiom)(void);
+@property (nonatomic, strong) UIImage *icon;    // 图标
+@property (nonatomic, copy) NSString *title;    // 标题
+@property (nonatomic, copy) void(^completion)(void);    //
 
-+ (instancetype)itemWithIcon:(UIImage *)icon
++ (instancetype)itemWithIcon:(UIImage * _Nullable)icon
                        title:(NSString *)title
                   completion:(void(^)(void))completion;
+
+@end
+
+@interface MWPopupItemView : UIView
+
+- (void)updateUIWithItem:(MWPopupItem *)item;
 
 @end
 
