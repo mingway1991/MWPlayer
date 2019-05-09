@@ -9,7 +9,7 @@
 #import "MWPopup.h"
 #import "UIColor+MWUtil.h"
 
-static CGFloat kMWPopupArrowWidth = 12.f;   // 箭头宽度
+static CGFloat kMWPopupArrowWidth = 16.f;  // 箭头宽度
 static CGFloat kMWPopupArrowHeight = 8.f;  // 箭头高度
 
 static CGFloat kMWPopupMinSideMargin = 10.f; // 弹窗距离边框最小边距
@@ -43,6 +43,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
 
 @implementation MWPopupItemView
 
+#pragma mark -
+#pragma mark Init
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -66,11 +68,27 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     [self addSubview:self.titleLabel];
 }
 
+#pragma mark -
+#pragma mark Layout
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self updateSubviewsFrame];
+    [self _updateSubviewsFrame];
 }
 
+- (void)_updateSubviewsFrame {
+    self.backgroundButton.frame = self.bounds;
+    CGFloat minX = 20.f;
+    if (self.item.icon) {
+        CGFloat iconWidth = 25.f;
+        self.iconImageView.frame = CGRectMake(minX, (CGRectGetHeight(self.bounds)-iconWidth)/2.f, iconWidth, iconWidth);
+        minX+=(iconWidth+15.f);
+    }
+    CGFloat titleHeight = 20.f;
+    self.titleLabel.frame = CGRectMake(minX, (CGRectGetHeight(self.bounds)-titleHeight)/2.f, CGRectGetWidth(self.bounds)-minX-20.f, titleHeight);
+}
+
+#pragma mark -
+#pragma mark Draw Rect
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     if (self.hasTopLine) {
@@ -97,27 +115,20 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     }
 }
 
-- (void)updateUIWithItem:(MWPopupItem *)item hasTopLine:(BOOL)hasTopLine {
+#pragma mark -
+#pragma mark Public
+- (void)updateUIWithItem:(MWPopupItem *)item
+              hasTopLine:(BOOL)hasTopLine {
     self.hasTopLine = hasTopLine;
     self.item = item;
     self.iconImageView.image = item.icon;
     self.titleLabel.text = item.title;
-    [self updateSubviewsFrame];
+    [self _updateSubviewsFrame];
     [self setNeedsDisplay];
 }
 
-- (void)updateSubviewsFrame {
-    self.backgroundButton.frame = self.bounds;
-    CGFloat minX = 20.f;
-    if (self.item.icon) {
-        CGFloat iconWidth = 25.f;
-        self.iconImageView.frame = CGRectMake(minX, (CGRectGetHeight(self.bounds)-iconWidth)/2.f, iconWidth, iconWidth);
-        minX+=(iconWidth+15.f);
-    }
-    CGFloat titleHeight = 20.f;
-    self.titleLabel.frame = CGRectMake(minX, (CGRectGetHeight(self.bounds)-titleHeight)/2.f, CGRectGetWidth(self.bounds)-minX-20.f, titleHeight);
-}
-
+#pragma mark -
+#pragma mark Action
 - (void)clickBackgroundButton {
     if ([self.delegate respondsToSelector:@selector(itemView:didSelectItem:)]) {
         [self.delegate itemView:self didSelectItem:self.item];
@@ -157,6 +168,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
 
 @implementation MWPopupView
 
+#pragma mark -
+#pragma mark Init
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -177,6 +190,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     self.backgroundColor = [UIColor clearColor];
 }
 
+#pragma mark -
+#pragma mark Draw Rect
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
     
@@ -198,8 +213,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     
     switch (self.arrowDirection) {
         case MWPopupArrowDirectionTop: {
-            CGContextMoveToPoint(ctx, self.arrowPoint.x, 0);
-            CGContextAddLineToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
+            CGContextMoveToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x, 0);
             CGContextAddLineToPoint(ctx, self.arrowPoint.x+kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
@@ -207,8 +222,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
             break;
         }
         case MWPopupArrowDirectionBottom: {
-            CGContextMoveToPoint(ctx, self.arrowPoint.x, height);
-            CGContextAddLineToPoint(ctx, self.arrowPoint.x+kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
+            CGContextMoveToPoint(ctx, self.arrowPoint.x+kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x, height);
             CGContextAddLineToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
@@ -216,8 +231,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
             break;
         }
         case MWPopupArrowDirectionLeft: {
-            CGContextMoveToPoint(ctx, 0, self.arrowPoint.y);
-            CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, self.arrowPoint.y-kMWPopupArrowWidth/2.f);
+            CGContextMoveToPoint(ctx, kMWPopupArrowHeight, self.arrowPoint.y-kMWPopupArrowWidth/2.f);
+            CGContextAddLineToPoint(ctx, 0, self.arrowPoint.y);
             CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, self.arrowPoint.y+kMWPopupArrowWidth/2.f);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
@@ -225,8 +240,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
             break;
         }
         case MWPopupArrowDirectionRight: {
-            CGContextMoveToPoint(ctx, width, self.arrowPoint.y);
-            CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, self.arrowPoint.y+kMWPopupArrowWidth/2.f);
+            CGContextMoveToPoint(ctx, width-kMWPopupArrowHeight, self.arrowPoint.y+kMWPopupArrowWidth/2.f);
+            CGContextAddLineToPoint(ctx, width, self.arrowPoint.y);
             CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, self.arrowPoint.y-kMWPopupArrowWidth/2.f);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
@@ -317,12 +332,16 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     return self;
 }
 
+#pragma mark -
+#pragma mark Public
 - (void)showWithItems:(NSArray<MWPopupItem *> *)items
            arrowPoint:(CGPoint)arrowPoint {
     if (!items || items.count == 0) {
+        // 没有选项直接return
         return;
     }
     
+    // 添加内容视图
     self.backgroundView.frame = self.superView.bounds;
     self.coverButton.frame = self.superView.bounds;
     [self.superView addSubview:self.backgroundView];
