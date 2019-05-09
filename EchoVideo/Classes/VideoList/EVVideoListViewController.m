@@ -61,9 +61,9 @@
                        [MWPopupItem itemWithIcon:[UIImage imageNamed:@"play"] title:@"测试三啊" completion:^{}]];
     CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];
     
-    // 395 89
 //    CGPoint point = CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect));
     CGPoint point = CGPointMake(arc4random()%((int)[UIScreen mainScreen].bounds.size.width), arc4random()%((int)[UIScreen mainScreen].bounds.size.height));
+//    CGPoint point = CGPointMake(194.f, 17.f);
     
     [[[MWPopup alloc] init] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:point];
     

@@ -47,14 +47,14 @@ typedef enum : NSUInteger {
 
 @interface MWPopupView : UIView
 
-@property (nonatomic, assign) MWPopupArrowDirection arrowDirection;
-@property (nonatomic, assign) CGPoint arrowPoint;
+@property (nonatomic, assign) MWPopupArrowDirection arrowDirection; // 箭头朝向
+@property (nonatomic, assign) CGPoint arrowPoint; // 箭头顶点位置
 
 @end
 
 typedef enum : NSUInteger {
-    MWPopupDirectionVertical = 0,
-    MWPopupDirectionHorizontal,
+    MWPopupDirectionVertical = 0, // 箭头竖向显示
+    MWPopupDirectionHorizontal, // 箭头横向显示
 } MWPopupDirection;
 
 @interface MWPopup : NSObject

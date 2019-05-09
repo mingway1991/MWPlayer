@@ -15,6 +15,9 @@ static CGFloat kMWPopupArrowHeight = 8.f;  // 箭头高度
 static CGFloat kMWPopupItemWidth = 160.f;   // 选项item宽度
 static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
 
+static CGFloat kMWPopupMinSideMargin = 10.f; // 弹窗距离边框最小边距
+static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
+
 #define MWPOPUP_BACKGROUNDCOLOR [UIColor mw_colorWithHexString:@"393939"]
 
 @implementation MWPopupItem
@@ -296,10 +299,6 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
 @implementation MWPopup
 
 - (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint {
-    
-    // 弹窗与边界的最小距离
-    CGFloat sideMargin = 10.f;
-    
     UIView *superView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
     [superView addSubview:self.backgroundView];
     [self.backgroundView addSubview:self.coverView];
@@ -314,7 +313,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     if (direction == MWPopupDirectionVertical) {
         popupViewWidth = kMWPopupItemWidth;
         popupViewHeight = kMWPopupArrowHeight+items.count*kMWPopupItemHeight;
-        if (arrowPoint.y+popupViewHeight+60.f>CGRectGetHeight(superView.bounds)) {
+        if (arrowPoint.y+popupViewHeight+20.f>CGRectGetHeight(superView.bounds)) {
             arrowDirection = MWPopupArrowDirectionBottom;
         } else {
             arrowDirection = MWPopupArrowDirectionTop;
@@ -322,7 +321,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     } else {
         popupViewWidth = kMWPopupItemWidth+kMWPopupArrowHeight;
         popupViewHeight = items.count*kMWPopupItemHeight;
-        if (arrowPoint.x+popupViewWidth+60.f>CGRectGetWidth(superView.bounds)) {
+        if (arrowPoint.x+popupViewWidth+20.f>CGRectGetWidth(superView.bounds)) {
             arrowDirection = MWPopupArrowDirectionRight;
         } else {
             arrowDirection = MWPopupArrowDirectionLeft;
@@ -357,22 +356,22 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     }
     
     // 计算弹窗坐标X
-    CGFloat popupMinX = (sideMargin);
-    CGFloat popupMaxX = (CGRectGetWidth(superView.bounds)-sideMargin-popupViewWidth);
+    CGFloat popupMinX = (kMWPopupMinSideMargin);
+    CGFloat popupMaxX = (CGRectGetWidth(superView.bounds)-kMWPopupMinSideMargin-popupViewWidth);
     if (popupViewX > popupMinX && popupViewX < popupMaxX) {
         popupViewX = popupViewX;
-    } else if (arrowPoint.x <= popupMaxX) {
+    } else if (popupViewX <= popupMaxX) {
         popupViewX = popupMinX;
     } else {
         popupViewX = popupMaxX;
     }
     
     // 计算弹窗坐标Y
-    CGFloat popupMinY = (sideMargin);
-    CGFloat popupMaxY = (CGRectGetHeight(superView.bounds)-sideMargin-popupViewHeight);
+    CGFloat popupMinY = (kMWPopupMinSideMargin);
+    CGFloat popupMaxY = (CGRectGetHeight(superView.bounds)-kMWPopupMinSideMargin-popupViewHeight);
     if (popupViewY > popupMinY && popupViewY < popupMaxY) {
         popupViewY = popupViewY;
-    } else if (arrowPoint.y <= popupMinY) {
+    } else if (popupViewY <= popupMinY) {
         popupViewY = popupMinY;
     } else {
         popupViewY = popupMaxY;
@@ -414,8 +413,8 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         case MWPopupArrowDirectionTop: {
             arrowPointX = arrowPoint.x;
             arrowPointY = arrowPoint.y;
-            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+5.f;
-            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+kMWPopupArrowMinSideMargin;
+            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-kMWPopupArrowMinSideMargin;
             arrowMinY = popupViewY;
             arrowMaxY = popupViewY;
             break;
@@ -423,8 +422,8 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         case MWPopupArrowDirectionBottom: {
             arrowPointX = arrowPoint.x;
             arrowPointY = arrowPoint.y;
-            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+5.f;
-            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+kMWPopupArrowMinSideMargin;
+            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-kMWPopupArrowMinSideMargin;
             arrowMinY = popupViewY+popupViewHeight;
             arrowMaxY = popupViewY+popupViewHeight;
             break;
@@ -434,8 +433,8 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
             arrowPointY = arrowPoint.y;
             arrowMinX = popupViewX;
             arrowMaxX = popupViewX;
-            arrowMinY = popupViewY+kMWPopupArrowWidth/2.f+5.f;
-            arrowMaxY = popupViewY+popupViewHeight-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinY = popupViewY+kMWPopupArrowWidth/2.f+kMWPopupArrowMinSideMargin;
+            arrowMaxY = popupViewY+popupViewHeight-kMWPopupArrowWidth/2.f-kMWPopupArrowMinSideMargin;
             break;
         }
         case MWPopupArrowDirectionRight: {
@@ -443,8 +442,8 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
             arrowPointY = arrowPoint.y;
             arrowMinX = popupViewX+popupViewWidth;
             arrowMaxX = popupViewX+popupViewWidth;
-            arrowMinY = popupMinY+kMWPopupArrowWidth/2.f+5.f;
-            arrowMaxY = popupMaxY+popupViewHeight-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinY = popupMinY+kMWPopupArrowWidth/2.f+kMWPopupArrowMinSideMargin;
+            arrowMaxY = popupMaxY+popupViewHeight-kMWPopupArrowWidth/2.f-kMWPopupArrowMinSideMargin;
             break;
         }
         default:
