@@ -52,19 +52,22 @@
 #pragma mark -
 #pragma mark Action
 - (void)newVideoAction:(UIBarButtonItem *)item {
-//    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//    newVideoView.delegate = self;
-//    [newVideoView show];
-    
     NSMutableArray *items = [NSMutableArray array];
     
-    for (NSInteger i = 0; i< arc4random()%8; i++) {
-        [items addObject:[MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_in"] title:@"测试一人" completion:^{ NSLog(@"test"); }]];
-    }
+    __weak typeof(self) weakSelf = self;
+    [items addObject:[MWPopupItem itemWithIcon:nil title:@"添加链接" completion:^{
+        EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        newVideoView.delegate = weakSelf;
+        [newVideoView show];
+    }]];
+    [items addObject:[MWPopupItem itemWithIcon:nil title:@"录制视频" completion:^{
+        
+    }]];
     
     CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];
     CGPoint point = CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect));
-    [[MWPopup shared] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:point];
+    [MWPopup shared].itemWidth = 110.f;
+    [[MWPopup shared] showWithItems:items arrowPoint:point];
 }
 
 #pragma mark -

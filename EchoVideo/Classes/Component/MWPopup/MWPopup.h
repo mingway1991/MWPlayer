@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) UIImage *icon;    // 图标
 @property (nonatomic, copy) NSString *title;    // 标题
-@property (nonatomic, copy) void(^completion)(void);    //
+@property (nonatomic, copy) void(^completion)(void);    // 点击实现block
 
 + (instancetype)itemWithIcon:(UIImage * _Nullable)icon
                        title:(NSString *)title
@@ -59,26 +59,19 @@ typedef enum : NSUInteger {
 
 @interface MWPopup : NSObject
 
-+ (MWPopup *)shared;
+@property (nonatomic, assign) CGFloat itemWidth;   // 选项item宽度，默认160
+@property (nonatomic, assign) CGFloat itemHeight;   // 选项item高度，more50
+@property (nonatomic, assign) MWPopupDirection direction; // 箭头方向，水平还是纵向
 
-/*
- 显示弹窗，竖向箭头
- 
- @param items 弹窗选项
- @param arrowPoint 箭头位置
- */
-- (void)showVerticalWithItems:(NSArray<MWPopupItem *> *)items
-                    arrowPoint:(CGPoint)arrowPoint;
++ (MWPopup *)shared;
 
 /*
  显示弹窗
  
  @param items 弹窗选项
- @param direction 弹窗方向
  @param arrowPoint 箭头位置
  */
 - (void)showWithItems:(NSArray<MWPopupItem *> *)items
-            direction:(MWPopupDirection)direction
            arrowPoint:(CGPoint)arrowPoint;
 
 @end
