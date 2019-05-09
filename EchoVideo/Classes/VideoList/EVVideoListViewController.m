@@ -61,7 +61,16 @@
                        [MWPopupItem itemWithIcon:[UIImage imageNamed:@"play"] title:@"测试三啊" completion:^{}]];
     CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];
     
-    [[[MWPopup alloc] init] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect))];
+    // 395 89
+//    CGPoint point = CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect));
+    CGPoint point = CGPointMake(arc4random()%((int)[UIScreen mainScreen].bounds.size.width), arc4random()%((int)[UIScreen mainScreen].bounds.size.height));
+    
+    [[[MWPopup alloc] init] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:point];
+    
+    UIView *testView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5.f, 5.f)];
+    testView.backgroundColor = [UIColor redColor];
+    [[UIApplication sharedApplication].keyWindow.rootViewController.view addSubview:testView];
+    testView.center = point;
 }
 
 #pragma mark -

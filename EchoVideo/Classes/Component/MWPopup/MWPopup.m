@@ -198,36 +198,36 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     
     switch (self.arrowDirection) {
         case MWPopupArrowDirectionTop: {
-            CGContextMoveToPoint(ctx, width/2.f, 0);
-            CGContextAddLineToPoint(ctx, width/2.f-kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
-            CGContextAddLineToPoint(ctx, width/2.f+kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
+            CGContextMoveToPoint(ctx, self.arrowPoint.x, 0);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x+kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
             CGContextFillPath(ctx);
             break;
         }
         case MWPopupArrowDirectionBottom: {
-            CGContextMoveToPoint(ctx, width/2.f, height);
-            CGContextAddLineToPoint(ctx, width/2.f+kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
-            CGContextAddLineToPoint(ctx, width/2.f-kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
+            CGContextMoveToPoint(ctx, self.arrowPoint.x, height);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x+kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
+            CGContextAddLineToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, height-kMWPopupArrowHeight);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
             CGContextFillPath(ctx);
             break;
         }
         case MWPopupArrowDirectionLeft: {
-            CGContextMoveToPoint(ctx, 0, height/2.f);
-            CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, height/2.f-kMWPopupArrowWidth/2.f);
-            CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, height/2.f+kMWPopupArrowWidth/2.f);
+            CGContextMoveToPoint(ctx, 0, self.arrowPoint.y);
+            CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, self.arrowPoint.y-kMWPopupArrowWidth/2.f);
+            CGContextAddLineToPoint(ctx, kMWPopupArrowHeight, self.arrowPoint.y+kMWPopupArrowWidth/2.f);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
             CGContextFillPath(ctx);
             break;
         }
         case MWPopupArrowDirectionRight: {
-            CGContextMoveToPoint(ctx, width, height/2.f);
-            CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, height/2.f+kMWPopupArrowWidth/2.f);
-            CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, height/2.f-kMWPopupArrowWidth/2.f);
+            CGContextMoveToPoint(ctx, width, self.arrowPoint.y);
+            CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, self.arrowPoint.y+kMWPopupArrowWidth/2.f);
+            CGContextAddLineToPoint(ctx, width-kMWPopupArrowHeight, self.arrowPoint.y-kMWPopupArrowWidth/2.f);
             CGContextClosePath(ctx);
             [MWPOPUP_BACKGROUNDCOLOR setFill];
             CGContextFillPath(ctx);
@@ -297,6 +297,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
 
 - (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint {
     
+    // 弹窗与边界的最小距离
     CGFloat sideMargin = 10.f;
     
     UIView *superView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
@@ -309,6 +310,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     CGFloat popupViewHeight; // 弹出框区域高度
     
     MWPopupArrowDirection arrowDirection; // 箭头方向
+    // 计算箭头方向和弹窗宽度和高度
     if (direction == MWPopupDirectionVertical) {
         popupViewWidth = kMWPopupItemWidth;
         popupViewHeight = kMWPopupArrowHeight+items.count*kMWPopupItemHeight;
@@ -327,45 +329,73 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         }
     }
     
-    // 计算弹窗坐标X
-    CGFloat minX = (sideMargin);
-    CGFloat maxX = (CGRectGetWidth(superView.bounds)-sideMargin-popupViewWidth);
-    if (arrowPoint.x > minX && arrowPoint.x < maxX) {
-        popupViewX = arrowPoint.x;
-    } else if (arrowPoint.x <= minX) {
-        popupViewX = minX;
-    } else {
-        popupViewX = maxX;
-    }
-    
-    // 计算弹窗坐标Y
-    CGFloat minY = (sideMargin);
-    CGFloat maxY = (CGRectGetHeight(superView.bounds)-sideMargin-popupViewHeight);
-    if (arrowPoint.y > minY && arrowPoint.y < maxY) {
-        popupViewY = arrowPoint.y;
-    } else if (arrowPoint.y <= minY) {
-        popupViewY = minY;
-    } else {
-        popupViewY = maxY;
-    }
-    
-    // 创建popupView与itemViews
-    CGRect popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
+    CGRect popupViewFrame;
     CGRect itemsViewFrame;
     switch (arrowDirection) {
         case MWPopupArrowDirectionTop: {
+            popupViewX = arrowPoint.x-popupViewWidth/2.f;
+            popupViewY = arrowPoint.y;
+            break;
+        }
+        case MWPopupArrowDirectionBottom: {
+            popupViewX = arrowPoint.x-popupViewWidth/2.f;
+            popupViewY = arrowPoint.y-popupViewHeight;
+            break;
+        }
+        case MWPopupArrowDirectionLeft: {
+            popupViewX = arrowPoint.x;
+            popupViewY = arrowPoint.y-popupViewHeight/2.f;
+            break;
+        }
+        case MWPopupArrowDirectionRight: {
+            popupViewX = arrowPoint.x-popupViewWidth;
+            popupViewY = arrowPoint.y-popupViewHeight/2.f;
+            break;
+        }
+        default:
+            break;
+    }
+    
+    // 计算弹窗坐标X
+    CGFloat popupMinX = (sideMargin);
+    CGFloat popupMaxX = (CGRectGetWidth(superView.bounds)-sideMargin-popupViewWidth);
+    if (popupViewX > popupMinX && popupViewX < popupMaxX) {
+        popupViewX = popupViewX;
+    } else if (arrowPoint.x <= popupMaxX) {
+        popupViewX = popupMinX;
+    } else {
+        popupViewX = popupMaxX;
+    }
+    
+    // 计算弹窗坐标Y
+    CGFloat popupMinY = (sideMargin);
+    CGFloat popupMaxY = (CGRectGetHeight(superView.bounds)-sideMargin-popupViewHeight);
+    if (popupViewY > popupMinY && popupViewY < popupMaxY) {
+        popupViewY = popupViewY;
+    } else if (arrowPoint.y <= popupMinY) {
+        popupViewY = popupMinY;
+    } else {
+        popupViewY = popupMaxY;
+    }
+    
+    switch (arrowDirection) {
+        case MWPopupArrowDirectionTop: {
+            popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame)+kMWPopupArrowHeight, CGRectGetWidth(popupViewFrame), CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
             break;
         }
         case MWPopupArrowDirectionBottom: {
+            popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame), CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
             break;
         }
         case MWPopupArrowDirectionLeft: {
+            popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame)+kMWPopupArrowHeight, CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame));
             break;
         }
         case MWPopupArrowDirectionRight: {
+            popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame));
             break;
         }
@@ -373,10 +403,79 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
             break;
     }
     
+    CGFloat arrowPointX; // 箭头相对于popupView的坐标x
+    CGFloat arrowPointY; // 箭头相对于popupView的坐标y
+    CGFloat arrowMinX;
+    CGFloat arrowMaxX;
+    CGFloat arrowMinY;
+    CGFloat arrowMaxY;
+    
+    switch (arrowDirection) {
+        case MWPopupArrowDirectionTop: {
+            arrowPointX = arrowPoint.x;
+            arrowPointY = arrowPoint.y;
+            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+5.f;
+            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinY = popupViewY;
+            arrowMaxY = popupViewY;
+            break;
+        }
+        case MWPopupArrowDirectionBottom: {
+            arrowPointX = arrowPoint.x;
+            arrowPointY = arrowPoint.y;
+            arrowMinX = popupViewX+kMWPopupArrowWidth/2.f+5.f;
+            arrowMaxX = popupViewX+popupViewWidth-kMWPopupArrowWidth/2.f-10.f;
+            arrowMinY = popupViewY+popupViewHeight;
+            arrowMaxY = popupViewY+popupViewHeight;
+            break;
+        }
+        case MWPopupArrowDirectionLeft: {
+            arrowPointX = arrowPoint.x;
+            arrowPointY = arrowPoint.y;
+            arrowMinX = popupViewX;
+            arrowMaxX = popupViewX;
+            arrowMinY = popupViewY+kMWPopupArrowWidth/2.f+5.f;
+            arrowMaxY = popupViewY+popupViewHeight-kMWPopupArrowWidth/2.f-10.f;
+            break;
+        }
+        case MWPopupArrowDirectionRight: {
+            arrowPointX = arrowPoint.x;
+            arrowPointY = arrowPoint.y;
+            arrowMinX = popupViewX+popupViewWidth;
+            arrowMaxX = popupViewX+popupViewWidth;
+            arrowMinY = popupMinY+kMWPopupArrowWidth/2.f+5.f;
+            arrowMaxY = popupMaxY+popupViewHeight-kMWPopupArrowWidth/2.f-10.f;
+            break;
+        }
+        default:
+            break;
+    }
+    
+    // 计算箭头坐标X （因与边界最少保留箭头的一般宽度+5.f）
+    if (arrowPointX > arrowMinX && arrowPointX < arrowMaxX) {
+        arrowPointX = arrowPointX;
+    } else if (arrowPoint.x <= arrowMaxX) {
+        arrowPointX = arrowMinX;
+    } else {
+        arrowPointX = arrowMaxX;
+    }
+    
+    // 计算箭头坐标Y （因与边界最少保留箭头的一般宽度+5.f）
+    if (arrowPointY > arrowMinY && arrowPointY < arrowMaxY) {
+        arrowPointY = arrowPointY;
+    } else if (arrowPoint.y <= arrowMinY) {
+        arrowPointY = arrowMinY;
+    } else {
+        arrowPointY = arrowMaxY;
+    }
+    
+    // 创建弹窗背景视图
     MWPopupView *popupView = [[MWPopupView alloc] initWithFrame:popupViewFrame];
     popupView.arrowDirection = arrowDirection;
+    popupView.arrowPoint = CGPointMake(arrowPointX-popupViewX, arrowPointY-popupViewY);
     [self.backgroundView addSubview:popupView];
     
+    // 创建弹窗选项视图
     NSInteger itemIndex = 0;
     for (MWPopupItem *item in items) {
         // 重用itemView

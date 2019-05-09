@@ -48,6 +48,7 @@ typedef enum : NSUInteger {
 @interface MWPopupView : UIView
 
 @property (nonatomic, assign) MWPopupArrowDirection arrowDirection;
+@property (nonatomic, assign) CGPoint arrowPoint;
 
 @end
 
