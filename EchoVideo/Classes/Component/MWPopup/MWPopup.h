@@ -59,7 +59,27 @@ typedef enum : NSUInteger {
 
 @interface MWPopup : NSObject
 
-- (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint;
++ (MWPopup *)shared;
+
+/*
+ 显示弹窗，竖向箭头
+ 
+ @param items 弹窗选项
+ @param arrowPoint 箭头位置
+ */
+- (void)showVerticalWithItems:(NSArray<MWPopupItem *> *)items
+                    arrowPoint:(CGPoint)arrowPoint;
+
+/*
+ 显示弹窗
+ 
+ @param items 弹窗选项
+ @param direction 弹窗方向
+ @param arrowPoint 箭头位置
+ */
+- (void)showWithItems:(NSArray<MWPopupItem *> *)items
+            direction:(MWPopupDirection)direction
+           arrowPoint:(CGPoint)arrowPoint;
 
 @end
 

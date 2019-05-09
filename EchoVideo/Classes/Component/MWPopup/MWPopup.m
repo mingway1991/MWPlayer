@@ -92,7 +92,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
         
         CGFloat minX = CGRectGetMinX(self.titleLabel.frame);
         CGContextMoveToPoint(context, minX, yPos);
-        CGContextAddLineToPoint(context, CGRectGetWidth(self.titleLabel.frame)+minX, yPos);
+        CGContextAddLineToPoint(context, CGRectGetWidth(self.bounds), yPos);
         
         CGContextSetLineWidth(context, .5);
         CGContextSetStrokeColorWithColor(context, [UIColor mw_colorWithHexString:@"414141"].CGColor);
@@ -115,7 +115,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     if (self.item.icon) {
         CGFloat iconWidth = 25.f;
         self.iconImageView.frame = CGRectMake(minX, (kMWPopupItemHeight-iconWidth)/2.f, iconWidth, iconWidth);
-        minX+=(iconWidth+20.f);
+        minX+=(iconWidth+15.f);
     }
     CGFloat titleHeight = 20.f;
     self.titleLabel.frame = CGRectMake(minX, (kMWPopupItemHeight-titleHeight)/2.f, CGRectGetWidth(self.bounds)-minX-20.f, titleHeight);
@@ -290,18 +290,48 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
 
 @interface MWPopup () <MWPopupItemViewDelegate>
 
-@property (nonatomic, strong) UIView *backgroundView;
-@property (nonatomic, strong) UIView *coverView;
-@property (nonatomic, strong) NSMutableArray<MWPopupItemView *> *itemViews;
+@property (nonatomic, strong) UIView *backgroundView; // 主view
+@property (nonatomic, strong) UIButton *coverButton; // 点击消失button
+@property (nonatomic, strong) MWPopupView *popupView; // 弹框背景view
+@property (nonatomic, strong) NSMutableArray<MWPopupItemView *> *itemViews; // 选项视图数组
 
 @end
 
 @implementation MWPopup
 
-- (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint {
-    UIView *superView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-    [superView addSubview:self.backgroundView];
-    [self.backgroundView addSubview:self.coverView];
++ (MWPopup *)shared {
+    static dispatch_once_t predicate;
+    static MWPopup * popup;
+    dispatch_once(&predicate, ^{
+        popup = [[MWPopup alloc] init];
+    });
+    return popup;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self.backgroundView addSubview:self.coverButton];
+        [self.backgroundView addSubview:self.popupView];
+    }
+    return self;
+}
+
+- (void)showVerticalWithItems:(NSArray<MWPopupItem *> *)items
+                   arrowPoint:(CGPoint)arrowPoint {
+    [self showWithItems:items direction:MWPopupDirectionVertical arrowPoint:arrowPoint];
+}
+
+- (void)showWithItems:(NSArray<MWPopupItem *> *)items
+            direction:(MWPopupDirection)direction
+           arrowPoint:(CGPoint)arrowPoint {
+    if (!items || items.count == 0) {
+        return;
+    }
+    
+    self.backgroundView.frame = self.superView.bounds;
+    self.coverButton.frame = self.superView.bounds;
+    [self.superView addSubview:self.backgroundView];
     
     CGFloat popupViewX; // 弹出框坐标
     CGFloat popupViewY; // 弹出框坐标
@@ -313,7 +343,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     if (direction == MWPopupDirectionVertical) {
         popupViewWidth = kMWPopupItemWidth;
         popupViewHeight = kMWPopupArrowHeight+items.count*kMWPopupItemHeight;
-        if (arrowPoint.y+popupViewHeight+20.f>CGRectGetHeight(superView.bounds)) {
+        if (arrowPoint.y+popupViewHeight+kMWPopupMinSideMargin>CGRectGetHeight(self.superView.bounds)) {
             arrowDirection = MWPopupArrowDirectionBottom;
         } else {
             arrowDirection = MWPopupArrowDirectionTop;
@@ -321,7 +351,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     } else {
         popupViewWidth = kMWPopupItemWidth+kMWPopupArrowHeight;
         popupViewHeight = items.count*kMWPopupItemHeight;
-        if (arrowPoint.x+popupViewWidth+20.f>CGRectGetWidth(superView.bounds)) {
+        if (arrowPoint.x+popupViewWidth+kMWPopupMinSideMargin>CGRectGetWidth(self.superView.bounds)) {
             arrowDirection = MWPopupArrowDirectionRight;
         } else {
             arrowDirection = MWPopupArrowDirectionLeft;
@@ -357,7 +387,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     
     // 计算弹窗坐标X
     CGFloat popupMinX = (kMWPopupMinSideMargin);
-    CGFloat popupMaxX = (CGRectGetWidth(superView.bounds)-kMWPopupMinSideMargin-popupViewWidth);
+    CGFloat popupMaxX = (CGRectGetWidth(self.superView.bounds)-kMWPopupMinSideMargin-popupViewWidth);
     if (popupViewX > popupMinX && popupViewX < popupMaxX) {
         popupViewX = popupViewX;
     } else if (popupViewX <= popupMaxX) {
@@ -368,7 +398,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     
     // 计算弹窗坐标Y
     CGFloat popupMinY = (kMWPopupMinSideMargin);
-    CGFloat popupMaxY = (CGRectGetHeight(superView.bounds)-kMWPopupMinSideMargin-popupViewHeight);
+    CGFloat popupMaxY = (CGRectGetHeight(self.superView.bounds)-kMWPopupMinSideMargin-popupViewHeight);
     if (popupViewY > popupMinY && popupViewY < popupMaxY) {
         popupViewY = popupViewY;
     } else if (popupViewY <= popupMinY) {
@@ -450,7 +480,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
             break;
     }
     
-    // 计算箭头坐标X （因与边界最少保留箭头的一般宽度+5.f）
+    // 计算箭头坐标X
     if (arrowPointX > arrowMinX && arrowPointX < arrowMaxX) {
         arrowPointX = arrowPointX;
     } else if (arrowPoint.x <= arrowMaxX) {
@@ -459,7 +489,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
         arrowPointX = arrowMaxX;
     }
     
-    // 计算箭头坐标Y （因与边界最少保留箭头的一般宽度+5.f）
+    // 计算箭头坐标Y
     if (arrowPointY > arrowMinY && arrowPointY < arrowMaxY) {
         arrowPointY = arrowPointY;
     } else if (arrowPoint.y <= arrowMinY) {
@@ -469,10 +499,10 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     }
     
     // 创建弹窗背景视图
-    MWPopupView *popupView = [[MWPopupView alloc] initWithFrame:popupViewFrame];
-    popupView.arrowDirection = arrowDirection;
-    popupView.arrowPoint = CGPointMake(arrowPointX-popupViewX, arrowPointY-popupViewY);
-    [self.backgroundView addSubview:popupView];
+    self.popupView.frame = popupViewFrame;
+    self.popupView.arrowDirection = arrowDirection;
+    self.popupView.arrowPoint = CGPointMake(arrowPointX-popupViewX, arrowPointY-popupViewY);
+    [self.popupView setNeedsDisplay];
     
     // 创建弹窗选项视图
     NSInteger itemIndex = 0;
@@ -484,10 +514,12 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
         }
         CGRect frame = CGRectMake(CGRectGetMinX(itemsViewFrame),CGRectGetMinY(itemsViewFrame)+itemIndex*kMWPopupItemHeight, CGRectGetWidth(itemsViewFrame), kMWPopupItemHeight);
         if (!itemView) {
-            // 创建b数量不够的itemView
+            // 创建数量不够的itemView
             itemView = [[MWPopupItemView alloc] initWithFrame:frame];
             [self.backgroundView addSubview:itemView];
+            [self.itemViews addObject:itemView];
         } else {
+            // 存在的itemView设置新的frame
             itemView.frame = frame;
             itemView.hidden = NO;
         }
@@ -517,19 +549,24 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
 #pragma mark LazyLoad
 - (UIView *)backgroundView {
     if (!_backgroundView) {
-        self.backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        self.backgroundView = [[UIView alloc] init];
     }
     return _backgroundView;
 }
 
-- (UIView *)coverView {
-    if (!_coverView) {
-        self.coverView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
-        [_coverView addGestureRecognizer:tap];
+- (UIButton *)coverButton {
+    if (!_coverButton) {
+        self.coverButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_coverButton addTarget:self action:@selector(hide) forControlEvents:UIControlEventTouchUpInside];
     }
-    return _coverView;
+    return _coverButton;
+}
+
+- (MWPopupView *)popupView {
+    if (!_popupView) {
+        self.popupView = [[MWPopupView alloc] init];
+    }
+    return _popupView;
 }
 
 - (NSMutableArray<MWPopupItemView *> *)itemViews {
@@ -537,6 +574,10 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
         self.itemViews = [NSMutableArray array];
     }
     return _itemViews;
+}
+
+- (UIView *)superView {
+    return [UIApplication sharedApplication].keyWindow.rootViewController.view;
 }
 
 @end

@@ -56,21 +56,15 @@
 //    newVideoView.delegate = self;
 //    [newVideoView show];
     
-    NSArray *items = @[[MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_in"] title:@"测试一人" completion:^{ NSLog(@"test"); }],
-                       [MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_out"] title:@"测试二额" completion:^{}],
-                       [MWPopupItem itemWithIcon:[UIImage imageNamed:@"play"] title:@"测试三啊" completion:^{}]];
+    NSMutableArray *items = [NSMutableArray array];
+    
+    for (NSInteger i = 0; i< arc4random()%8; i++) {
+        [items addObject:[MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_in"] title:@"测试一人" completion:^{ NSLog(@"test"); }]];
+    }
+    
     CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];
-    
-//    CGPoint point = CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect));
-    CGPoint point = CGPointMake(arc4random()%((int)[UIScreen mainScreen].bounds.size.width), arc4random()%((int)[UIScreen mainScreen].bounds.size.height));
-//    CGPoint point = CGPointMake(194.f, 17.f);
-    
-    [[[MWPopup alloc] init] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:point];
-    
-    UIView *testView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5.f, 5.f)];
-    testView.backgroundColor = [UIColor redColor];
-    [[UIApplication sharedApplication].keyWindow.rootViewController.view addSubview:testView];
-    testView.center = point;
+    CGPoint point = CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect));
+    [[MWPopup shared] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:point];
 }
 
 #pragma mark -
