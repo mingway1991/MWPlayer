@@ -56,7 +56,7 @@
 //    newVideoView.delegate = self;
 //    [newVideoView show];
     
-    NSArray *items = @[[MWPopupItem itemWithIcon:nil title:@"测试一" completion:^{}],
+    NSArray *items = @[[MWPopupItem itemWithIcon:nil title:@"测试一" completion:^{ NSLog(@"test"); }],
                        [MWPopupItem itemWithIcon:nil title:@"测试二" completion:^{}],
                        [MWPopupItem itemWithIcon:nil title:@"测试三" completion:^{}]];
     [[[MWPopup alloc] init] showWithItems:items];

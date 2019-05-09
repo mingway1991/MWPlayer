@@ -22,9 +22,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class MWPopupItemView;
+
+@protocol MWPopupItemViewDelegate <NSObject>
+
+- (void)itemView:(MWPopupItemView *)itemView didSelectItem:(MWPopupItem *)item;
+
+@end
+
 @interface MWPopupItemView : UIView
 
-- (void)updateUIWithItem:(MWPopupItem *)item;
+@property (nonatomic, weak) id<MWPopupItemViewDelegate> delegate;
+
+- (void)updateUIWithItem:(MWPopupItem *)item hasTopLine:(BOOL)hasTopLine;
 
 @end
 
