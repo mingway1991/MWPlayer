@@ -10,9 +10,9 @@
 #import "UIColor+MWUtil.h"
 
 static CGFloat kMWPopupArrowWidth = 12.f;   // 箭头宽度
-static CGFloat kMWPopupArrowHeight = 5.f;  // 箭头高度
+static CGFloat kMWPopupArrowHeight = 8.f;  // 箭头高度
 
-static CGFloat kMWPopupItemWidth = 150.f;   // 选项item宽度
+static CGFloat kMWPopupItemWidth = 160.f;   // 选项item宽度
 static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
 
 #define MWPOPUP_BACKGROUNDCOLOR [UIColor mw_colorWithHexString:@"393939"]
@@ -87,10 +87,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         // 设置画线y值
         CGFloat yPos = 1 - pixelAdjustOffset;
         
-        CGFloat minX = 20.f;
-        if (self.item.icon) {
-            minX =(CGRectGetMaxX(self.iconImageView.frame)+10.f);
-        }
+        CGFloat minX = CGRectGetMinX(self.titleLabel.frame);
         CGContextMoveToPoint(context, minX, yPos);
         CGContextAddLineToPoint(context, CGRectGetWidth(self.titleLabel.frame)+minX, yPos);
         
@@ -113,9 +110,9 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
     self.backgroundButton.frame = self.bounds;
     CGFloat minX = 20.f;
     if (self.item.icon) {
-        CGFloat iconWidth = 30.f;
+        CGFloat iconWidth = 25.f;
         self.iconImageView.frame = CGRectMake(minX, (kMWPopupItemHeight-iconWidth)/2.f, iconWidth, iconWidth);
-        minX+=(iconWidth+10.f);
+        minX+=(iconWidth+20.f);
     }
     CGFloat titleHeight = 20.f;
     self.titleLabel.frame = CGRectMake(minX, (kMWPopupItemHeight-titleHeight)/2.f, CGRectGetWidth(self.bounds)-minX-20.f, titleHeight);
@@ -298,33 +295,78 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
 
 @implementation MWPopup
 
-- (void)showWithItems:(NSArray<MWPopupItem *> *)items {
-    [[UIApplication sharedApplication].keyWindow.rootViewController.view addSubview:self.backgroundView];
+- (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint {
+    
+    CGFloat sideMargin = 10.f;
+    
+    UIView *superView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
+    [superView addSubview:self.backgroundView];
     [self.backgroundView addSubview:self.coverView];
     
-    MWPopupArrowDirection arrowDirection = MWPopupArrowDirectionTop;
+    CGFloat popupViewX; // 弹出框坐标
+    CGFloat popupViewY; // 弹出框坐标
+    CGFloat popupViewWidth; // 弹出框区域宽度
+    CGFloat popupViewHeight; // 弹出框区域高度
     
-    CGRect popupViewFrame;
+    MWPopupArrowDirection arrowDirection; // 箭头方向
+    if (direction == MWPopupDirectionVertical) {
+        popupViewWidth = kMWPopupItemWidth;
+        popupViewHeight = kMWPopupArrowHeight+items.count*kMWPopupItemHeight;
+        if (arrowPoint.y+popupViewHeight+60.f>CGRectGetHeight(superView.bounds)) {
+            arrowDirection = MWPopupArrowDirectionBottom;
+        } else {
+            arrowDirection = MWPopupArrowDirectionTop;
+        }
+    } else {
+        popupViewWidth = kMWPopupItemWidth+kMWPopupArrowHeight;
+        popupViewHeight = items.count*kMWPopupItemHeight;
+        if (arrowPoint.x+popupViewWidth+60.f>CGRectGetWidth(superView.bounds)) {
+            arrowDirection = MWPopupArrowDirectionRight;
+        } else {
+            arrowDirection = MWPopupArrowDirectionLeft;
+        }
+    }
+    
+    // 计算弹窗坐标X
+    CGFloat minX = (sideMargin);
+    CGFloat maxX = (CGRectGetWidth(superView.bounds)-sideMargin-popupViewWidth);
+    if (arrowPoint.x > minX && arrowPoint.x < maxX) {
+        popupViewX = arrowPoint.x;
+    } else if (arrowPoint.x <= minX) {
+        popupViewX = minX;
+    } else {
+        popupViewX = maxX;
+    }
+    
+    // 计算弹窗坐标Y
+    CGFloat minY = (sideMargin);
+    CGFloat maxY = (CGRectGetHeight(superView.bounds)-sideMargin-popupViewHeight);
+    if (arrowPoint.y > minY && arrowPoint.y < maxY) {
+        popupViewY = arrowPoint.y;
+    } else if (arrowPoint.y <= minY) {
+        popupViewY = minY;
+    } else {
+        popupViewY = maxY;
+    }
+    
+    // 创建popupView与itemViews
+    CGRect popupViewFrame = CGRectMake(popupViewX, popupViewY, popupViewWidth, popupViewHeight);
     CGRect itemsViewFrame;
     switch (arrowDirection) {
         case MWPopupArrowDirectionTop: {
-            popupViewFrame = CGRectMake(30.f, 40.f, kMWPopupItemWidth, kMWPopupArrowHeight+items.count*kMWPopupItemHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame)+kMWPopupArrowHeight, CGRectGetWidth(popupViewFrame), CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
             break;
         }
         case MWPopupArrowDirectionBottom: {
-            popupViewFrame = CGRectMake(30.f, 40.f, kMWPopupItemWidth, kMWPopupArrowHeight+items.count*kMWPopupItemHeight);
             itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame), CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
             break;
         }
         case MWPopupArrowDirectionLeft: {
-            popupViewFrame = CGRectMake(30.f, 40.f, kMWPopupItemWidth+kMWPopupArrowHeight, kMWPopupArrowHeight+items.count*kMWPopupItemHeight);
-            itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame)+kMWPopupArrowHeight, CGRectGetMinY(popupViewFrame)+kMWPopupArrowHeight, CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
+            itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame)+kMWPopupArrowHeight, CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame));
             break;
         }
         case MWPopupArrowDirectionRight: {
-            popupViewFrame = CGRectMake(30.f, 40.f, kMWPopupItemWidth, kMWPopupArrowHeight+items.count*kMWPopupItemHeight);
-            itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame)+kMWPopupArrowHeight, CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame)-kMWPopupArrowHeight);
+            itemsViewFrame = CGRectMake(CGRectGetMinX(popupViewFrame), CGRectGetMinY(popupViewFrame), CGRectGetWidth(popupViewFrame)-kMWPopupArrowHeight, CGRectGetHeight(popupViewFrame));
             break;
         }
         default:
@@ -344,6 +386,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         }
         CGRect frame = CGRectMake(CGRectGetMinX(itemsViewFrame),CGRectGetMinY(itemsViewFrame)+itemIndex*kMWPopupItemHeight, CGRectGetWidth(itemsViewFrame), kMWPopupItemHeight);
         if (!itemView) {
+            // 创建b数量不够的itemView
             itemView = [[MWPopupItemView alloc] initWithFrame:frame];
             [self.backgroundView addSubview:itemView];
         } else {
@@ -355,6 +398,7 @@ static CGFloat kMWPopupItemHeight = 50.f;   // 选项item高度
         itemIndex++;
     }
     
+    // 隐藏不需要的itemView
     for (NSInteger i = itemIndex; i< self.itemViews.count; i++) {
         MWPopupItemView *itemView = [self.itemViews objectAtIndex:i];
         itemView.hidden = YES;

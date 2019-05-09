@@ -51,9 +51,14 @@ typedef enum : NSUInteger {
 
 @end
 
+typedef enum : NSUInteger {
+    MWPopupDirectionVertical = 0,
+    MWPopupDirectionHorizontal,
+} MWPopupDirection;
+
 @interface MWPopup : NSObject
 
-- (void)showWithItems:(NSArray<MWPopupItem *> *)items;
+- (void)showWithItems:(NSArray<MWPopupItem *> *)items direction:(MWPopupDirection)direction arrowPoint:(CGPoint)arrowPoint;
 
 @end
 

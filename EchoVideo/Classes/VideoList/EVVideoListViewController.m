@@ -38,7 +38,7 @@
 - (void)initUI {
     [self.view addSubview:self.videoListTableView];
     
-    UIBarButtonItem *newVideoBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newVideoAction)];
+    UIBarButtonItem *newVideoBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newVideoAction:)];
     self.navigationItem.rightBarButtonItem = newVideoBarButton;
 }
 
@@ -51,15 +51,17 @@
 
 #pragma mark -
 #pragma mark Action
-- (void)newVideoAction {
+- (void)newVideoAction:(UIBarButtonItem *)item {
 //    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
 //    newVideoView.delegate = self;
 //    [newVideoView show];
     
-    NSArray *items = @[[MWPopupItem itemWithIcon:nil title:@"测试一" completion:^{ NSLog(@"test"); }],
-                       [MWPopupItem itemWithIcon:nil title:@"测试二" completion:^{}],
-                       [MWPopupItem itemWithIcon:nil title:@"测试三" completion:^{}]];
-    [[[MWPopup alloc] init] showWithItems:items];
+    NSArray *items = @[[MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_in"] title:@"测试一人" completion:^{ NSLog(@"test"); }],
+                       [MWPopupItem itemWithIcon:[UIImage imageNamed:@"zoom_out"] title:@"测试二额" completion:^{}],
+                       [MWPopupItem itemWithIcon:[UIImage imageNamed:@"play"] title:@"测试三啊" completion:^{}]];
+    CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];
+    
+    [[[MWPopup alloc] init] showWithItems:items direction:MWPopupDirectionVertical arrowPoint:CGPointMake(CGRectGetMinX(rect)+CGRectGetWidth(rect)/2.f, CGRectGetMaxY(rect))];
 }
 
 #pragma mark -
