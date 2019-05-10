@@ -6,6 +6,14 @@
 //  Copyright © 2019 聽風入髓. All rights reserved.
 //
 
+/*
+ Demo
+ 
+ CGPoint point = CGPointMake(x, y);
+ NSArray *items = @[[MWPopupItem itemWithIcon:title:completion:]];
+ [[MWPopup shared] showWithItems:itemsarrowPoint:point]
+ */
+
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN

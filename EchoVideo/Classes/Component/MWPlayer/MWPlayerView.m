@@ -76,6 +76,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
         }
         weakSelf.info.totalTimeInterval = total;
         weakSelf.info.currentTimeInterval = current;
+        if ([weakSelf.delegate respondsToSelector:@selector(playerViewUpdateProgress:totalTimeInterval:currentTimeInterval:)]) {
+            [weakSelf.delegate playerViewUpdateProgress:weakSelf totalTimeInterval:total currentTimeInterval:current];
+        }
     }];
     
     [self.layer addSublayer:self.avPlayerLayer];
@@ -118,6 +121,23 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self.info clear];
 }
 
+- (void)setLocalUrl:(NSString *)localUrl {
+    _localUrl = localUrl;
+    [self _removeCurrentAvPlayerItemObserver];
+    if (localUrl.length > 0) {
+        NSURL *assetUrl = [NSURL fileURLWithPath:localUrl];
+        AVAsset *asset = [AVAsset assetWithURL:assetUrl];
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:asset];
+        [self.avPlayer replaceCurrentItemWithPlayerItem:playerItem];
+        [self _addCurrentAvPlayerItemObserver];
+    } else {
+        [self.avPlayer replaceCurrentItemWithPlayerItem:nil];
+    }
+    
+    self.info.localUrl = localUrl;
+    [self.info clear];
+}
+
 - (void)setConfiguration:(MWPlayerConfiguration *)configuration {
     self.coverView.configuration = configuration;
     [self _removeConfigurationPropertyObserver];
@@ -126,6 +146,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     [self _addLoadingView];
     [self _updateLoadingViewFrame];
     [self.avPlayerLayer setVideoGravity:[self _getAvPlayerVideoGravity]];
+    self.coverView.hidden = !self.configuration.needCoverView;
 }
 
 #pragma mark -
@@ -165,6 +186,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
                     NSLog(@"error: %@",playerItem.error.localizedDescription);
                 }
                 self.info.state = MWPlayerStateLoadBreak;
+                if ([self.delegate respondsToSelector:@selector(playerViewLoadBreak:)]) {
+                    [self.delegate playerViewLoadBreak:self];
+                }
             }
         } else if ([keyPath isEqualToString:kAvPlaterLoadedTimeRangesKeyPath]) {
             AVPlayerItem *playerItem = (AVPlayerItem *)object;
@@ -177,6 +201,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
             NSTimeInterval total = CMTimeGetSeconds(playerItem.duration);
             self.info.totalTimeInterval = total;
             self.info.cacheTimeInterval = cache;
+            if ([self.delegate respondsToSelector:@selector(playerViewLoadCache:totalTimeInterval:cacheTimeInterval:)]) {
+                [self.delegate playerViewLoadCache:self totalTimeInterval:total cacheTimeInterval:cache];
+            }
             
             if (self.info.state == MWPlayerStatePlaying) {
                 // 缓冲增加，继续播放
@@ -232,6 +259,8 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
             [self _addLoadingView];
         } else if ([keyPath isEqualToString:kConfigurationVideoGravityKeyPath]) {
             [self.avPlayerLayer setVideoGravity:[self _getAvPlayerVideoGravity]];
+        } else if ([keyPath isEqualToString:kConfigurationNeedCoverViewKeyPath]) {
+            self.coverView.hidden = !self.configuration.needCoverView;
         }
     }
 }
@@ -452,6 +481,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     if (_configuration) {
         [_configuration removeObserver:self forKeyPath:kConfigurationLoadingViewKeyPath];
         [_configuration removeObserver:self forKeyPath:kConfigurationVideoGravityKeyPath];
+        [_configuration removeObserver:self forKeyPath:kConfigurationNeedCoverViewKeyPath];
     }
 }
 
@@ -460,6 +490,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     if (_configuration) {
         [_configuration addObserver:self forKeyPath:kConfigurationLoadingViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
         [_configuration addObserver:self forKeyPath:kConfigurationVideoGravityKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [_configuration addObserver:self forKeyPath:kConfigurationNeedCoverViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
     }
 }
 

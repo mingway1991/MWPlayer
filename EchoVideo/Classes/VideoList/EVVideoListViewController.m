@@ -13,6 +13,7 @@
 #import "EVPlayVideoViewController.h"
 #import "MWDefines.h"
 #import "MWPopup.h"
+#import "EVRecordVideoViewController.h"
 
 @import MJRefresh;
 
@@ -61,7 +62,8 @@
         [newVideoView show];
     }]];
     [items addObject:[MWPopupItem itemWithIcon:nil title:@"录制视频" completion:^{
-        
+        EVRecordVideoViewController *vc = [[EVRecordVideoViewController alloc] init];
+        [weakSelf.navigationController presentViewController:vc animated:YES completion:nil];
     }]];
     
     CGRect rect = [self.navigationController.view convertRect:[(UIView *)[item valueForKey:@"_view"] frame] fromView:[(UIView *)[item valueForKey:@"_view"] superview]];

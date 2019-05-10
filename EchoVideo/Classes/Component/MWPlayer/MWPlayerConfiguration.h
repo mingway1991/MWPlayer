@@ -16,6 +16,7 @@ static NSString *kConfigurationTopToolViewHeightKeyPath = @"topToolViewHeight";
 static NSString *kConfigurationBottomToolViewHeightKeyPath = @"bottomToolViewHeight";
 static NSString *kConfigurationBottomToolViewBackgroundColorKeyPath = @"bottomToolViewBackgroundColor";
 static NSString *kConfigurationVideoGravityKeyPath = @"videoGravity";
+static NSString *kConfigurationNeedCoverViewKeyPath = @"needCoverView";
 
 typedef enum : NSUInteger {
     MWPlayerVideoGravityResizeAspect = 0, // 按比例完整显示
@@ -34,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIColor *bottomToolViewBackgroundColor; // 底部工具视图背景色，默认黑色
 @property (nonatomic, assign) BOOL needLoop; // 是否需要循环播放，默认NO
 @property (nonatomic, assign) MWPlayerVideoGravity videoGravity; // 填充模式，默认MWPlayerVideoGravityResizeAspect
+@property (nonatomic, assign) BOOL needCoverView; // 是否需要上层遮罩视图，默认YES
 @property (nonatomic, assign, readonly) int32_t timescale; // 帧率600
 
 + (instancetype)defaultConfiguration;

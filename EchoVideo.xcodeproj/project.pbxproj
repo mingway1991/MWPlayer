@@ -30,6 +30,7 @@
 		7A8332912277E14300493BA7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A83328F2277E14300493BA7 /* LaunchScreen.storyboard */; };
 		7A8332942277E14300493BA7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332932277E14300493BA7 /* main.m */; };
 		7A8332A12277E45300493BA7 /* EVBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A8332A02277E45300493BA7 /* EVBaseViewController.m */; };
+		7A96BBE22284326B00BAB056 /* EVRecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A96BBE12284326B00BAB056 /* EVRecordVideoViewController.m */; };
 		7A9DF81E2282701500434AF2 /* MWPlayerBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */; };
 		7A9DF81F2282701500434AF2 /* MWPlayerProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */; };
 		7A9DF8202282701500434AF2 /* MWPlayerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF8122282701500434AF2 /* MWPlayerInfo.m */; };
@@ -85,6 +86,8 @@
 		7A8332932277E14300493BA7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7A83329F2277E45300493BA7 /* EVBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EVBaseViewController.h; sourceTree = "<group>"; };
 		7A8332A02277E45300493BA7 /* EVBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EVBaseViewController.m; sourceTree = "<group>"; };
+		7A96BBE02284326B00BAB056 /* EVRecordVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EVRecordVideoViewController.h; sourceTree = "<group>"; };
+		7A96BBE12284326B00BAB056 /* EVRecordVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EVRecordVideoViewController.m; sourceTree = "<group>"; };
 		7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerBottomView.m; sourceTree = "<group>"; };
 		7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerProgressView.m; sourceTree = "<group>"; };
 		7A9DF8122282701500434AF2 /* MWPlayerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerInfo.m; sourceTree = "<group>"; };
@@ -268,6 +271,7 @@
 		7A83329D2277E45300493BA7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7A96BBDF2284326B00BAB056 /* RecordVideo */,
 				7A9DF80E2282701500434AF2 /* Component */,
 				7A62D6CD22813141000A25DF /* Constant */,
 				7A62D6AB22811FCE000A25DF /* Category */,
@@ -291,6 +295,15 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
+		7A96BBDF2284326B00BAB056 /* RecordVideo */ = {
+			isa = PBXGroup;
+			children = (
+				7A96BBE02284326B00BAB056 /* EVRecordVideoViewController.h */,
+				7A96BBE12284326B00BAB056 /* EVRecordVideoViewController.m */,
+			);
+			path = RecordVideo;
+			sourceTree = "<group>";
+		};
 		7A9DF80E2282701500434AF2 /* Component */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,20 +316,20 @@
 		7A9DF80F2282701500434AF2 /* MWPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */,
-				7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */,
-				7A9DF8122282701500434AF2 /* MWPlayerInfo.m */,
-				7A9DF8132282701500434AF2 /* MWPlayerCoverView.m */,
 				7A9DF8142282701500434AF2 /* MWPlayerView.h */,
-				7A9DF8152282701500434AF2 /* MWPlayerConfiguration.h */,
-				7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */,
-				7A9DF8172282701500434AF2 /* MWPlayerCoverView.h */,
-				7A9DF8182282701500434AF2 /* MWPlayerInfo.h */,
-				7A9DF8192282701500434AF2 /* MWPlayerProgressView.h */,
-				7A9DF81A2282701500434AF2 /* MWPlayerBottomView.h */,
 				7A9DF81B2282701500434AF2 /* MWPlayerView.m */,
-				7A9DF81C2282701500434AF2 /* MWDefines.h */,
+				7A9DF8172282701500434AF2 /* MWPlayerCoverView.h */,
+				7A9DF8132282701500434AF2 /* MWPlayerCoverView.m */,
+				7A9DF81A2282701500434AF2 /* MWPlayerBottomView.h */,
+				7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */,
+				7A9DF8192282701500434AF2 /* MWPlayerProgressView.h */,
+				7A9DF8112282701500434AF2 /* MWPlayerProgressView.m */,
+				7A9DF8182282701500434AF2 /* MWPlayerInfo.h */,
+				7A9DF8122282701500434AF2 /* MWPlayerInfo.m */,
+				7A9DF8152282701500434AF2 /* MWPlayerConfiguration.h */,
 				7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */,
+				7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */,
+				7A9DF81C2282701500434AF2 /* MWDefines.h */,
 			);
 			path = MWPlayer;
 			sourceTree = "<group>";
@@ -449,6 +462,7 @@
 				7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */,
 				7A62D6A722811F11000A25DF /* EVUserModel.m in Sources */,
 				7A62D6BD22812535000A25DF /* UIColor+MWUtil.m in Sources */,
+				7A96BBE22284326B00BAB056 /* EVRecordVideoViewController.m in Sources */,
 				7A62D6BA22812462000A25DF /* NSString+NSHash.m in Sources */,
 				7A8332A12277E45300493BA7 /* EVBaseViewController.m in Sources */,
 				7A9DF8222282701500434AF2 /* MWPlayerView.m in Sources */,

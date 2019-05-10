@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MWPlayerInfo : NSObject
 
 @property (nonatomic, copy) NSString *videoUrl;
+@property (nonatomic, copy) NSString *localUrl;
 @property (nonatomic, assign) MWPlayerState state;
 @property (nonatomic, assign) NSTimeInterval totalTimeInterval;
 @property (nonatomic, assign) NSTimeInterval cacheTimeInterval;
