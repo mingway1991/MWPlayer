@@ -17,6 +17,9 @@
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) UIButton *recordButton;
 
+@property (nonatomic, strong) UIButton *resetButton;
+@property (nonatomic, strong) UIButton *finishButton;
+
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 @property (nonatomic, strong) AVCaptureMovieFileOutput *captureMovieFileOutput;
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;
@@ -153,8 +156,23 @@
     } else {
         NSLog(@"停止录制");
         [self.captureMovieFileOutput stopRecording];
-        [self performSelector:@selector(playVideo) withObject:nil afterDelay:2.f];
+        [self performSelector:@selector(playVideo) withObject:nil afterDelay:1.f];
     }
+}
+
+- (void)clickResetButton {
+    [self.playerView stop];
+    self.playerView.hidden = YES;
+}
+
+- (void)clickFinishButton {
+    __weak typeof(self) weakSelf = self;
+    [self dismissViewControllerAnimated:YES completion:^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf.delegate respondsToSelector:@selector(recordVideoViewController:finishRecordWithLocalPath:)]) {
+            [strongSelf.delegate recordVideoViewController:strongSelf finishRecordWithLocalPath:strongSelf.tempLocalPath];
+        }
+    }];
 }
 
 #pragma mark -
@@ -206,6 +224,47 @@
     return _captureSession;
 }
 
+- (UIButton *)resetButton {
+    if (!_resetButton) {
+        self.resetButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _resetButton.backgroundColor = [UIColor redColor];
+        CGFloat buttonWidth = 60.f;
+        CGFloat buttonHeight = 40.f;
+        _resetButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonHeight)/2.f, buttonWidth, buttonHeight);
+        [_resetButton addTarget:self action:@selector(clickResetButton) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _resetButton;
+}
+
+- (UIButton *)finishButton {
+    if (!_finishButton) {
+        self.finishButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _finishButton.backgroundColor = [UIColor redColor];
+        CGFloat buttonWidth = 60.f;
+        CGFloat buttonHeight = 40.f;
+        _finishButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)*3/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonHeight)/2.f, buttonWidth, buttonHeight);
+        [_finishButton addTarget:self action:@selector(clickFinishButton) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _finishButton;
+}
+
+- (MWPlayerView *)playerView {
+    if (!_playerView) {
+        self.playerView = [[MWPlayerView alloc] initWithFrame:self.view.bounds];
+        _playerView.hidden = YES;
+        _playerView.delegate = self;
+        
+        MWPlayerConfiguration *configuration = [MWPlayerConfiguration defaultConfiguration];
+        configuration.needCoverView = NO;
+        configuration.needLoop = YES;
+        _playerView.configuration = configuration;
+        
+        [_playerView addSubview:self.resetButton];
+        [_playerView addSubview:self.finishButton];
+    }
+    return _playerView;
+}
+
 - (AVCaptureMovieFileOutput *)captureMovieFileOutput {
     if (!_captureMovieFileOutput) {
         self.captureMovieFileOutput = [[AVCaptureMovieFileOutput alloc]init];
@@ -224,19 +283,6 @@
         _captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     }
     return _captureVideoPreviewLayer;
-}
-
-- (MWPlayerView *)playerView {
-    if (!_playerView) {
-        self.playerView = [[MWPlayerView alloc] initWithFrame:self.view.bounds];
-        _playerView.hidden = YES;
-        _playerView.delegate = self;
-        
-        MWPlayerConfiguration *configuration = [MWPlayerConfiguration defaultConfiguration];
-        configuration.needCoverView = NO;
-        _playerView.configuration = configuration;
-    }
-    return _playerView;
 }
 
 @end

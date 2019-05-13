@@ -17,7 +17,7 @@
 
 @import MJRefresh;
 
-@interface EVVideoListViewController () <UITableViewDataSource, UITableViewDelegate, EVNewVideoViewDelegate>
+@interface EVVideoListViewController () <UITableViewDataSource, UITableViewDelegate, EVNewVideoViewDelegate, EVRecordVideoViewControllerDelegate>
 
 @property (nonatomic, strong) NSNumber *after;
 @property (nonatomic, strong) NSNumber *count;
@@ -63,6 +63,7 @@
     }]];
     [items addObject:[MWPopupItem itemWithIcon:nil title:@"录制视频" completion:^{
         EVRecordVideoViewController *vc = [[EVRecordVideoViewController alloc] init];
+        vc.delegate = weakSelf;
         [weakSelf.navigationController presentViewController:vc animated:YES completion:nil];
     }]];
     
@@ -156,6 +157,13 @@
         [weakSelf.videoListTableView.mj_header beginRefreshing];
         [newVideoView hide];
     }];
+}
+
+#pragma mark -
+#pragma mark EVRecordVideoViewControllerDelegate
+- (void)recordVideoViewController:(EVRecordVideoViewController *)recordVideoViewController
+        finishRecordWithLocalPath:(NSString *)localPath {
+    
 }
 
 #pragma mark -
