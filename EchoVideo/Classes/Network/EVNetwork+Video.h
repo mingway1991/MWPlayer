@@ -45,6 +45,17 @@ NS_ASSUME_NONNULL_BEGIN
                 successBlock:(void(^)(void))successBlock
                 failureBlock:(void(^)(NSString *msg))failureBlock;
 
+/**
+ 上传视频
+ 
+ @param localPath 本地视频地址
+ @param successBlock 成功回调
+ @param failureBlock 失败回调
+ */
+- (void)uploadVideoWithLocalPath:(NSString *)localPath
+                    successBlock:(void(^)(NSString *url))successBlock
+                    failureBlock:(void(^)(NSString *msg))failureBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

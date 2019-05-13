@@ -10,6 +10,7 @@
 #import "MWDefines.h"
 #import "Constant.h"
 #import "UIColor+MWUtil.h"
+#import "EVNetwork+Video.h"
 
 @interface EVNewVideoView ()
 
@@ -23,36 +24,39 @@
 
 @implementation EVNewVideoView
 
-- (instancetype)init {
-    self = [super init];
+- (instancetype)initWithType:(EVNewVideoType)type {
+    self = [super initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
-        [self commonInit];
+        self.type = type;
+        [self addSubview:self.shadowView];
+        [self addSubview:self.centerView];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self commonInit];
-    }
-    return self;
-}
-
-- (void)commonInit {
-    [self addSubview:self.shadowView];
-    [self addSubview:self.centerView];
+- (void)setType:(EVNewVideoType)type {
+    _type = type;
+    [self setNeedsLayout];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.shadowView.frame = self.bounds;
     CGFloat leftAndRight = 20.f;
-    CGFloat height = 200.f;
-    self.centerView.frame = CGRectMake(leftAndRight, MWTopBarHeight+60.f, CGRectGetWidth(self.bounds)-2*leftAndRight, height);
-    self.titleTextField.frame = CGRectMake(LEFT_RIGHT_MARGIN, 20.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
-    self.urlTextField.frame = CGRectMake(CGRectGetMinX(self.titleTextField.frame), CGRectGetMaxY(self.titleTextField.frame)+10.f, CGRectGetWidth(self.titleTextField.frame), CGRectGetHeight(self.titleTextField.frame));
-    self.createButton.frame = CGRectMake(LEFT_RIGHT_MARGIN, CGRectGetMaxY(self.urlTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+    if (self.type == EVNewVideoTypeUrl) {
+        CGFloat height = 200.f;
+        self.urlTextField.hidden = NO;
+        self.centerView.frame = CGRectMake(leftAndRight, MWTopBarHeight+60.f, CGRectGetWidth(self.bounds)-2*leftAndRight, height);
+        self.titleTextField.frame = CGRectMake(LEFT_RIGHT_MARGIN, 20.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+        self.urlTextField.frame = CGRectMake(CGRectGetMinX(self.titleTextField.frame), CGRectGetMaxY(self.titleTextField.frame)+10.f, CGRectGetWidth(self.titleTextField.frame), CGRectGetHeight(self.titleTextField.frame));
+        self.createButton.frame = CGRectMake(LEFT_RIGHT_MARGIN, CGRectGetMaxY(self.urlTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+    } else if (self.type == EVNewVideoTypeLocal) {
+        CGFloat height = 150.f;
+        self.urlTextField.hidden = YES;
+        self.centerView.frame = CGRectMake(leftAndRight, MWTopBarHeight+60.f, CGRectGetWidth(self.bounds)-2*leftAndRight, height);
+        self.titleTextField.frame = CGRectMake(LEFT_RIGHT_MARGIN, 20.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+        self.createButton.frame = CGRectMake(LEFT_RIGHT_MARGIN, CGRectGetMaxY(self.titleTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+    }
 }
 
 #pragma mark -
@@ -68,14 +72,32 @@
 #pragma mark -
 #pragma mark Action
 - (void)createAction {
-    if (self.titleTextField.text.length == 0) {
-        return;
-    }
-    if (self.urlTextField.text.length == 0) {
-        return;
-    }
-    if ([self.delegate respondsToSelector:@selector(newVideoView:title:url:)]) {
-        [self.delegate newVideoView:self title:self.titleTextField.text url:self.urlTextField.text];
+    if (self.type == EVNewVideoTypeUrl) {
+        if (self.titleTextField.text.length == 0) {
+            return;
+        }
+        if (self.urlTextField.text.length == 0) {
+            return;
+        }
+        if ([self.delegate respondsToSelector:@selector(newVideoView:title:url:)]) {
+            [self.delegate newVideoView:self title:self.titleTextField.text url:self.urlTextField.text];
+        }
+    } else if (self.type == EVNewVideoTypeLocal) {
+        if (!self.localVideoPath) {
+            return;
+        }
+        if (self.titleTextField.text.length == 0) {
+            return;
+        }
+        // 上传本地视频
+        __weak typeof(self) weakSelf = self;
+        [[[EVNetwork alloc] init] uploadVideoWithLocalPath:self.localVideoPath successBlock:^(NSString * _Nonnull url) {
+            if ([weakSelf.delegate respondsToSelector:@selector(newVideoView:title:url:)]) {
+                [weakSelf.delegate newVideoView:weakSelf title:weakSelf.titleTextField.text url:url];
+            }
+        } failureBlock:^(NSString * _Nonnull msg) {
+            
+        }];
     }
 }
 

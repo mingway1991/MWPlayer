@@ -25,6 +25,7 @@
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;
 @property (nonatomic, strong) MWPlayerView *playerView;
 @property (nonatomic, copy) NSString *tempLocalPath;
+@property (nonatomic, copy) NSString *tempLowLocalPath;
 
 @end
 
@@ -114,24 +115,6 @@
     [self.playerView play];
 }
 
-// 视频压缩
-- (void)videoCompression{
-    NSLog(@"begin");
-    NSURL *tempurl = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.mov"]];
-    //加载视频资源
-    AVAsset *asset = [AVAsset assetWithURL:tempurl];
-    //创建视频资源导出会话
-    AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetMediumQuality];
-    //创建导出视频的URL
-    session.outputURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"tempLow.mov"]];
-    //必须配置输出属性
-    session.outputFileType = @"com.apple.quicktime-movie";
-    //导出视频
-    [session exportAsynchronouslyWithCompletionHandler:^{
-        NSLog(@"end");
-    }];
-}
-
 #pragma mark -
 #pragma mark Action
 - (void)clickCancelButton {
@@ -156,6 +139,8 @@
     } else {
         NSLog(@"停止录制");
         [self.captureMovieFileOutput stopRecording];
+        self.recordButton.enabled = NO;
+        self.cancelButton.enabled = NO;
         [self performSelector:@selector(playVideo) withObject:nil afterDelay:1.f];
     }
 }
@@ -163,15 +148,31 @@
 - (void)clickResetButton {
     [self.playerView stop];
     self.playerView.hidden = YES;
+    self.recordButton.enabled = YES;
+    self.cancelButton.enabled = YES;
 }
 
 - (void)clickFinishButton {
+    NSLog(@"begin");
+    NSURL *tempurl = [NSURL fileURLWithPath:self.tempLocalPath];
+    self.tempLowLocalPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"tempLow.mov"];
+    //加载视频资源
+    AVAsset *asset = [AVAsset assetWithURL:tempurl];
+    //创建视频资源导出会话
+    AVAssetExportSession *session = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetMediumQuality];
+    //创建导出视频的URL
+    session.outputURL = [NSURL fileURLWithPath:self.tempLowLocalPath];
+    //必须配置输出属性
+    session.outputFileType = @"com.apple.quicktime-movie";
+    //导出视频
     __weak typeof(self) weakSelf = self;
-    [self dismissViewControllerAnimated:YES completion:^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if ([strongSelf.delegate respondsToSelector:@selector(recordVideoViewController:finishRecordWithLocalPath:)]) {
-            [strongSelf.delegate recordVideoViewController:strongSelf finishRecordWithLocalPath:strongSelf.tempLocalPath];
-        }
+    [session exportAsynchronouslyWithCompletionHandler:^{
+        [self dismissViewControllerAnimated:YES completion:^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if ([strongSelf.delegate respondsToSelector:@selector(recordVideoViewController:finishRecordWithLocalPath:)]) {
+                [strongSelf.delegate recordVideoViewController:strongSelf finishRecordWithLocalPath:strongSelf.tempLowLocalPath];
+            }
+        }];
     }];
 }
 

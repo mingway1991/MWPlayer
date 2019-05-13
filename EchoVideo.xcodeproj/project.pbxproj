@@ -38,6 +38,7 @@
 		7A9DF8222282701500434AF2 /* MWPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF81B2282701500434AF2 /* MWPlayerView.m */; };
 		7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */; };
 		7A9DF827228273AA00434AF2 /* MWPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF826228273AA00434AF2 /* MWPopup.m */; };
+		7AC05F4722898A040053410E /* OssService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC05F4622898A030053410E /* OssService.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +105,8 @@
 		7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
 		7A9DF825228273AA00434AF2 /* MWPopup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPopup.h; sourceTree = "<group>"; };
 		7A9DF826228273AA00434AF2 /* MWPopup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPopup.m; sourceTree = "<group>"; };
+		7AC05F4522898A030053410E /* OssService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OssService.h; sourceTree = "<group>"; };
+		7AC05F4622898A030053410E /* OssService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OssService.m; sourceTree = "<group>"; };
 		9F150051DAC68DF6DD99F236 /* Pods-EchoVideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EchoVideo.release.xcconfig"; path = "Pods/Target Support Files/Pods-EchoVideo/Pods-EchoVideo.release.xcconfig"; sourceTree = "<group>"; };
 		CD948BE7758D5B2AEAA4D27B /* Pods_EchoVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EchoVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -168,6 +171,8 @@
 		7A62D69D22811E89000A25DF /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				7AC05F4522898A030053410E /* OssService.h */,
+				7AC05F4622898A030053410E /* OssService.m */,
 				7A62D69E22811E9C000A25DF /* EVNetwork.h */,
 				7A62D69F22811E9C000A25DF /* EVNetwork.m */,
 				7A62D6A822811F2E000A25DF /* EVWebApi.h */,
@@ -461,6 +466,7 @@
 				7A62D6B4228123BF000A25DF /* EVNetwork+Album.m in Sources */,
 				7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */,
 				7A62D6A722811F11000A25DF /* EVUserModel.m in Sources */,
+				7AC05F4722898A040053410E /* OssService.m in Sources */,
 				7A62D6BD22812535000A25DF /* UIColor+MWUtil.m in Sources */,
 				7A96BBE22284326B00BAB056 /* EVRecordVideoViewController.m in Sources */,
 				7A62D6BA22812462000A25DF /* NSString+NSHash.m in Sources */,

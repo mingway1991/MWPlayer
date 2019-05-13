@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #define kEchoVideoHost @"http://119.28.1.117:8085"
+#define kEchoVideoOssApi [NSString stringWithFormat:@"%@/v1/oss_token",kEchoVideoHost]
 
 #define kLoginApi @"/v1/login"
 #define kRefreshApi @"/v1/refresh"

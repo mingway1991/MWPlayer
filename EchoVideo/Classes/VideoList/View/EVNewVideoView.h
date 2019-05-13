@@ -10,6 +10,11 @@
 
 @class EVNewVideoView;
 
+typedef enum : NSUInteger {
+    EVNewVideoTypeUrl = 0,  // 远端url
+    EVNewVideoTypeLocal,    // 本地录制视频
+} EVNewVideoType;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol EVNewVideoViewDelegate <NSObject>
@@ -21,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface EVNewVideoView : UIView
 
 @property (nonatomic, weak) id<EVNewVideoViewDelegate> delegate;
+@property (nonatomic, copy) NSString *localVideoPath;
+@property (nonatomic, assign) EVNewVideoType type;
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithType:(EVNewVideoType)type NS_DESIGNATED_INITIALIZER;
 
 - (void)show;
 - (void)hide;

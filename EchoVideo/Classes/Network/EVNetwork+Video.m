@@ -8,6 +8,8 @@
 
 #import "EVNetwork+Video.h"
 #import "EVWebApi.h"
+#import "OssService.h"
+#import "EVLoginUserModel.h"
 
 @implementation EVNetwork (Video)
 
@@ -39,6 +41,20 @@
         successBlock();
     } Failed:^(NSString *errorMsg) {
         failureBlock(errorMsg);
+    }];
+}
+
+- (void)uploadVideoWithLocalPath:(NSString *)localPath
+                    successBlock:(void(^)(NSString *url))successBlock
+                    failureBlock:(void(^)(NSString *msg))failureBlock {
+    NSData *videoData = [NSData dataWithContentsOfFile:localPath];
+    NSString *objectKey = [NSString stringWithFormat:@"%@_%@.mov", [EVLoginUserModel sharedInstance].user.uid, @([[NSDate date] timeIntervalSinceNow])];
+    [[OssService shareInstance] asyncPutVideo:videoData objectKey:objectKey Success:^(BOOL uploadResult) {
+        if (uploadResult) {
+            successBlock([NSString stringWithFormat:@"https://echo-video.oss-cn-shanghai.aliyuncs.com/upload/%@", objectKey]);
+        } else {
+            failureBlock(@"上传图片失败");
+        }
     }];
 }
 

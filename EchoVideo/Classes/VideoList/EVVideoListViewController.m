@@ -57,7 +57,7 @@
     
     __weak typeof(self) weakSelf = self;
     [items addObject:[MWPopupItem itemWithIcon:nil title:@"添加链接" completion:^{
-        EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithType:EVNewVideoTypeUrl];
         newVideoView.delegate = weakSelf;
         [newVideoView show];
     }]];
@@ -163,7 +163,10 @@
 #pragma mark EVRecordVideoViewControllerDelegate
 - (void)recordVideoViewController:(EVRecordVideoViewController *)recordVideoViewController
         finishRecordWithLocalPath:(NSString *)localPath {
-    
+    EVNewVideoView *newVideoView = [[EVNewVideoView alloc] initWithType:EVNewVideoTypeLocal];
+    newVideoView.delegate = self;
+    newVideoView.localVideoPath = localPath;
+    [newVideoView show];
 }
 
 #pragma mark -
