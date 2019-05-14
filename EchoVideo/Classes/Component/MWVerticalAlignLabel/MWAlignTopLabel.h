@@ -1,5 +1,5 @@
 //
-//  MWVerticalAlignLabel.h
+//  MWAlignTopLabel.h
 //  EchoVideo
 //
 //  Created by 石茗伟 on 2019/5/14.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MWVerticalAlignLabel : UILabel
+@interface MWAlignTopLabel : UILabel
 
 @end
 

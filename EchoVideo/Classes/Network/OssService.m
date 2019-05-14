@@ -12,7 +12,8 @@
 
 NSString * const BUCKET_NAME = @"echo-video";
 NSString * const ENDPOINT = @"http://oss-cn-shanghai.aliyuncs.com";
-NSString * const UPLOAD_FILE = @"upload/";
+NSString * const UPLOAD_FOLDER = @"upload/";
+NSString * const VIDEO_COVER_FOLDER = @"video_cover/";
 
 @import SDWebImage;
 
@@ -95,19 +96,25 @@ NSString * const UPLOAD_FILE = @"upload/";
     _client = [[OSSClient alloc] initWithEndpoint:ENDPOINT credentialProvider:credential];
 }
 
-/**
- *    @brief    上传视频
- *
- */
+- (void)asyncPutVideoCoverImage:(NSData *)imageData objectKey:(NSString*)objectKey Success:(void(^)(BOOL uploadResult))uploadResult {
+    if (objectKey == nil || [objectKey length] == 0) {
+        return;
+    }
+    [self _asyncPutData:imageData objectKey:[NSString stringWithFormat:@"%@%@",VIDEO_COVER_FOLDER,objectKey] Success:uploadResult];
+}
+
 - (void)asyncPutVideo:(NSData *)videoData objectKey:(NSString*)objectKey Success:(void(^)(BOOL uploadResult))uploadResult {
     if (objectKey == nil || [objectKey length] == 0) {
         return;
     }
-    
+    [self _asyncPutData:videoData objectKey:[NSString stringWithFormat:@"%@%@",UPLOAD_FOLDER,objectKey] Success:uploadResult];
+}
+
+- (void)_asyncPutData:(NSData *)data objectKey:(NSString*)objectKey Success:(void(^)(BOOL uploadResult))uploadResult {
     putRequest = [OSSPutObjectRequest new];
     putRequest.bucketName = BUCKET_NAME;
-    putRequest.objectKey = [NSString stringWithFormat:@"%@%@",UPLOAD_FILE,objectKey];
-    putRequest.uploadingData = videoData;
+    putRequest.objectKey = objectKey;
+    putRequest.uploadingData = data;
     putRequest.uploadProgress = ^(int64_t bytesSent, int64_t totalByteSent, int64_t totalBytesExpectedToSend) {
         NSLog(@"%lld, %lld, %lld", bytesSent, totalByteSent, totalBytesExpectedToSend);
     };
@@ -120,18 +127,18 @@ NSString * const UPLOAD_FILE = @"upload/";
             NSLog(@"Put video success!");
             NSLog(@"server callback : %@", result.serverReturnJsonString);
             dispatch_async(dispatch_get_main_queue(), ^{
-                //                [viewController showMessage:@"普通上传" inputMessage:@"Success!"];
                 uploadResult(YES);
             });
             
         } else {
-            uploadResult(NO);
             NSLog(@"Put video failed, %@", task.error);
             if (task.error.code == OSSClientErrorCodeTaskCancelled) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    uploadResult(NO);
                 });
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    uploadResult(NO);
                 });
             }
         }

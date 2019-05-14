@@ -11,6 +11,8 @@
 
 #define LEFT_RIGHT_MARGIN 10.f
 
+#define VIDEO_URL(video_name) [NSString stringWithFormat:@"https://echo-video.oss-cn-shanghai.aliyuncs.com/upload/%@", video_name]
+#define VIDEO_COVER_URL(image_name) [NSString stringWithFormat:@"https://echo-video.oss-cn-shanghai.aliyuncs.com/video_cover/%@", image_name]
 
 #define THEME_COLOR @"00FF7F"
 #define BOTTOM_LINE_COLOR @"CFCFCF"

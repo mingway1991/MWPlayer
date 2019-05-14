@@ -16,11 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)resetRefreshAuthorizationHeader;
 
-- (void)requestGetUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
-- (void)requestPostUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
-- (void)requestRefreshPostUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
-- (void)requestPutUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
-- (void)requestDeleteUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
+- (void)requestGetUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
+- (void)requestPostUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
+- (void)requestRefreshPostUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
+- (void)requestPutUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
+- (void)requestDeleteUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void(^)(id result))success Failed:(void(^)(NSString *errorMsg))failed;
 
 @end
 

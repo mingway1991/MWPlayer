@@ -37,7 +37,7 @@
     }
 }
 
-- (void)requestGetUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
+- (void)requestGetUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
     [self resetAuthorizationHeader];
     [self.sessionManager GET:url parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"%@",url);
@@ -55,7 +55,7 @@
     }];
 }
 
-- (void)requestPostUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
+- (void)requestPostUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
     [self resetAuthorizationHeader];
     [self.sessionManager POST:url parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"%@",url);
@@ -74,7 +74,7 @@
     }];
 }
 
-- (void)requestRefreshPostUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
+- (void)requestRefreshPostUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
     [self resetRefreshAuthorizationHeader];
     [self.sessionManager POST:url parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"%@",url);
@@ -93,7 +93,7 @@
     }];
 }
 
-- (void)requestPutUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
+- (void)requestPutUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
     [self resetAuthorizationHeader];
     [self.sessionManager PUT:url parameters:parameters success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"%@",url);
@@ -112,7 +112,7 @@
     }];
 }
 
-- (void)requestDeleteUrl:(NSString*)url Parameters:(NSDictionary*)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
+- (void)requestDeleteUrl:(NSString*)url Parameters:(NSDictionary* _Nullable)parameters Success:(void (^)(id result))success Failed:(void(^)(NSString *errorMsg))failed {
     [self resetAuthorizationHeader];
     [self.sessionManager DELETE:url parameters:parameters success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"%@",url);

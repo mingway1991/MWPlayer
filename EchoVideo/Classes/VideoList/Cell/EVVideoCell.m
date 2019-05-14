@@ -7,12 +7,16 @@
 //
 
 #import "EVVideoCell.h"
+#import "MWAlignTopLabel.h"
+#import "Constant.h"
+
+@import SDWebImage;
 
 @interface EVVideoCell ()
 
-@property (nonatomic, strong) UILabel *dateLabel;
+@property (nonatomic, strong) MWAlignTopLabel *dateLabel;
 @property (nonatomic, strong) UIImageView *videoCoverImageView;
-@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) MWAlignTopLabel *titleLabel;
 
 @end
 
@@ -20,6 +24,7 @@
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
         [self.contentView addSubview:self.dateLabel];
         [self.contentView addSubview:self.videoCoverImageView];
         [self.contentView addSubview:self.titleLabel];
@@ -32,7 +37,11 @@
     self.dateLabel.frame = CGRectMake(10.f, 10.f, 80.f, 50.f);
     self.videoCoverImageView.frame = CGRectMake(CGRectGetMaxX(self.dateLabel.frame)+10.f, CGRectGetMinY(self.dateLabel.frame), 60.f, 60.f);
     self.titleLabel.frame = CGRectMake(CGRectGetMaxX(self.videoCoverImageView.frame)+10.f, CGRectGetMinY(self.videoCoverImageView.frame), CGRectGetWidth(self.contentView.bounds)-CGRectGetMaxX(self.videoCoverImageView.frame)-10.f-10.f, 60.f);
-    
+}
+
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    self.videoCoverImageView.image = nil;
 }
 
 - (void)updateUIWithVideo:(EVVideoModel *)video
@@ -57,13 +66,19 @@
     self.dateLabel.attributedText = attr;
     
     self.titleLabel.text = video.title;
+    
+    if (video.cover_url.length > 0) {
+        [self.videoCoverImageView sd_setImageWithURL:[NSURL URLWithString:VIDEO_COVER_URL(video.cover_url)]];
+    } else {
+        
+    }
 }
 
 #pragma mark -
 #pragma mark LazyLoad
-- (UILabel *)dateLabel {
+- (MWAlignTopLabel *)dateLabel {
     if (!_dateLabel) {
-        self.dateLabel = [[UILabel alloc] init];
+        self.dateLabel = [[MWAlignTopLabel alloc] init];
         _dateLabel.numberOfLines = 2;
     }
     return _dateLabel;
@@ -77,9 +92,10 @@
     return _videoCoverImageView;
 }
 
-- (UILabel *)titleLabel {
+- (MWAlignTopLabel *)titleLabel {
     if (!_titleLabel) {
-        self.titleLabel = [[UILabel alloc] init];
+        self.titleLabel = [[MWAlignTopLabel alloc] init];
+        _titleLabel.numberOfLines = 0;
     }
     return _titleLabel;
 }

@@ -10,6 +10,7 @@
 #import "MWPlayerView.h"
 #import "MWPlayerConfiguration.h"
 #import "MWDefines.h"
+#import "Constant.h"
 
 @interface EVPlayVideoViewController ()
 
@@ -34,7 +35,11 @@
 - (void)playWithIndex:(NSInteger)index {
     self.title = [self.videos[index] title];
     self.playerView.hidden = NO;
-    self.playerView.videoUrl = [self.videos[index] video_url];
+    NSString *url = [self.videos[index] video_url];
+    if (![url hasPrefix:@"http"]) {
+        url = VIDEO_URL(url);
+    }
+    self.playerView.videoUrl = url;
     [self.playerView play];
 }
 

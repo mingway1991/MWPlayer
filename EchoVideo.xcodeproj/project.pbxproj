@@ -40,7 +40,8 @@
 		7A9DF827228273AA00434AF2 /* MWPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A9DF826228273AA00434AF2 /* MWPopup.m */; };
 		7AADF300228A720200883CB1 /* EVLoadingHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AADF2FF228A720200883CB1 /* EVLoadingHelper.m */; };
 		7AADF304228A910400883CB1 /* EVVideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AADF303228A910400883CB1 /* EVVideoCell.m */; };
-		7AADF30E228AA56400883CB1 /* MWVerticalAlignLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AADF30D228AA56400883CB1 /* MWVerticalAlignLabel.m */; };
+		7AADF30E228AA56400883CB1 /* MWAlignTopLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AADF30D228AA56400883CB1 /* MWAlignTopLabel.m */; };
+		7AADF311228AB66800883CB1 /* EVVideoHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AADF310228AB66800883CB1 /* EVVideoHelper.m */; };
 		7AC05F4722898A040053410E /* OssService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AC05F4622898A030053410E /* OssService.m */; };
 /* End PBXBuildFile section */
 
@@ -112,8 +113,10 @@
 		7AADF2FF228A720200883CB1 /* EVLoadingHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVLoadingHelper.m; sourceTree = "<group>"; };
 		7AADF302228A910400883CB1 /* EVVideoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVVideoCell.h; sourceTree = "<group>"; };
 		7AADF303228A910400883CB1 /* EVVideoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVVideoCell.m; sourceTree = "<group>"; };
-		7AADF30C228AA56400883CB1 /* MWVerticalAlignLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWVerticalAlignLabel.h; sourceTree = "<group>"; };
-		7AADF30D228AA56400883CB1 /* MWVerticalAlignLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWVerticalAlignLabel.m; sourceTree = "<group>"; };
+		7AADF30C228AA56400883CB1 /* MWAlignTopLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWAlignTopLabel.h; sourceTree = "<group>"; };
+		7AADF30D228AA56400883CB1 /* MWAlignTopLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWAlignTopLabel.m; sourceTree = "<group>"; };
+		7AADF30F228AB66800883CB1 /* EVVideoHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EVVideoHelper.h; sourceTree = "<group>"; };
+		7AADF310228AB66800883CB1 /* EVVideoHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVVideoHelper.m; sourceTree = "<group>"; };
 		7AC05F4522898A030053410E /* OssService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OssService.h; sourceTree = "<group>"; };
 		7AC05F4622898A030053410E /* OssService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OssService.m; sourceTree = "<group>"; };
 		9F150051DAC68DF6DD99F236 /* Pods-EchoVideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EchoVideo.release.xcconfig"; path = "Pods/Target Support Files/Pods-EchoVideo/Pods-EchoVideo.release.xcconfig"; sourceTree = "<group>"; };
@@ -365,6 +368,8 @@
 			children = (
 				7AADF2FE228A720200883CB1 /* EVLoadingHelper.h */,
 				7AADF2FF228A720200883CB1 /* EVLoadingHelper.m */,
+				7AADF30F228AB66800883CB1 /* EVVideoHelper.h */,
+				7AADF310228AB66800883CB1 /* EVVideoHelper.m */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -381,8 +386,8 @@
 		7AADF30B228AA4C900883CB1 /* MWVerticalAlignLabel */ = {
 			isa = PBXGroup;
 			children = (
-				7AADF30C228AA56400883CB1 /* MWVerticalAlignLabel.h */,
-				7AADF30D228AA56400883CB1 /* MWVerticalAlignLabel.m */,
+				7AADF30C228AA56400883CB1 /* MWAlignTopLabel.h */,
+				7AADF30D228AA56400883CB1 /* MWAlignTopLabel.m */,
 			);
 			path = MWVerticalAlignLabel;
 			sourceTree = "<group>";
@@ -503,6 +508,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A62D6B4228123BF000A25DF /* EVNetwork+Album.m in Sources */,
+				7AADF311228AB66800883CB1 /* EVVideoHelper.m in Sources */,
 				7A9DF8232282701500434AF2 /* MWPlayerConfiguration.m in Sources */,
 				7A62D6A722811F11000A25DF /* EVUserModel.m in Sources */,
 				7AC05F4722898A040053410E /* OssService.m in Sources */,
@@ -528,7 +534,7 @@
 				7A62D69C22811E4B000A25DF /* EVLoginViewController.m in Sources */,
 				7A9DF8212282701500434AF2 /* MWPlayerCoverView.m in Sources */,
 				7A62D6D622818580000A25DF /* EVPlayVideoViewController.m in Sources */,
-				7AADF30E228AA56400883CB1 /* MWVerticalAlignLabel.m in Sources */,
+				7AADF30E228AA56400883CB1 /* MWAlignTopLabel.m in Sources */,
 				7A62D6D222815666000A25DF /* EVNewVideoView.m in Sources */,
 				7A9DF8202282701500434AF2 /* MWPlayerInfo.m in Sources */,
 				7A8332862277E14200493BA7 /* AppDelegate.m in Sources */,

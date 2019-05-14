@@ -55,6 +55,23 @@
     }];
 }
 
+- (void)uploadVideoCoverImageWithImage:(UIImage *)image
+                          successBlock:(void(^)(NSString *url))successBlock
+                          failureBlock:(void(^)(NSString *msg))failureBlock {
+    NSData* imageData = UIImageJPEGRepresentation(image, 0.8);
+    NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
+    NSInteger time = interval;
+    NSString *timestamp = [NSString stringWithFormat:@"%zd",time];
+    NSString *objectKey = [NSString stringWithFormat:@"%@_%@.jpg", [EVLoginUserModel sharedInstance].user.uid, timestamp];
+    [[OssService shareInstance] asyncPutVideoCoverImage:imageData objectKey:objectKey Success:^(BOOL uploadResult) {
+        if (uploadResult) {
+            successBlock(objectKey);
+        } else {
+            failureBlock(@"上传图片失败");
+        }
+    }];
+}
+
 - (void)uploadVideoWithLocalPath:(NSString *)localPath
                     successBlock:(void(^)(NSString *url))successBlock
                     failureBlock:(void(^)(NSString *msg))failureBlock {
@@ -72,7 +89,7 @@
             } else {
                 NSLog(@"删除本地视频成功");
             }
-            successBlock([NSString stringWithFormat:@"https://echo-video.oss-cn-shanghai.aliyuncs.com/upload/%@", objectKey]);
+            successBlock(objectKey);
         } else {
             failureBlock(@"上传视频失败");
         }

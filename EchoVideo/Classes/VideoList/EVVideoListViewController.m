@@ -16,6 +16,7 @@
 #import "EVRecordVideoViewController.h"
 #import "EVLoadingHelper.h"
 #import "EVVideoCell.h"
+#import "EVVideoHelper.h"
 
 @import MJRefresh;
 
@@ -151,8 +152,11 @@
     }];
 }
 
-- (void)createVideoWithTitle:(NSString *)title videoUrl:(NSString *)videoUrl completion:(void(^)(BOOL success, NSString *errorMsg))completion {
-    [self.network createVideoWithTitle:title cover_url:nil video_url:videoUrl aid:self.album.album_id successBlock:^{
+- (void)createVideoWithTitle:(NSString *)title
+                   cover_url:(NSString *)cover_url
+                    videoUrl:(NSString *)videoUrl
+                  completion:(void(^)(BOOL success, NSString *errorMsg))completion {
+    [self.network createVideoWithTitle:title cover_url:cover_url video_url:videoUrl aid:self.album.album_id successBlock:^{
         completion(YES, nil);
     } failureBlock:^(NSString * _Nonnull msg) {
         completion(NO, msg);
@@ -233,7 +237,7 @@
     EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
     [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
     __weak typeof(self) weakSelf = self;
-    [self createVideoWithTitle:title videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
+    [self createVideoWithTitle:title cover_url:nil videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
         [helper hideLoadingHUD];
         if (success) {
             [newVideoView hide];
@@ -245,18 +249,29 @@
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title localVideoPath:(NSString *)localVideoPath {
     EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
     [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
-    __weak typeof(self) weakSelf = self;
-    [[[EVNetwork alloc] init] uploadVideoWithLocalPath:localVideoPath successBlock:^(NSString * _Nonnull url) {
-        [weakSelf createVideoWithTitle:title videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
+    UIImage *thumbnail = [EVVideoHelper getThumbnailImage:localVideoPath];
+    if (thumbnail) {
+        __weak typeof(self) weakSelf = self;
+        [self.network uploadVideoCoverImageWithImage:thumbnail successBlock:^(NSString * _Nonnull url) {
+            NSString *cover_url = url;
+            [weakSelf.network uploadVideoWithLocalPath:localVideoPath successBlock:^(NSString * _Nonnull url) {
+                NSString *video_url = url;
+                [weakSelf createVideoWithTitle:title cover_url:cover_url videoUrl:video_url completion:^(BOOL success, NSString *errorMsg) {
+                    [helper hideLoadingHUD];
+                    if (success) {
+                        [newVideoView hide];
+                        [weakSelf.videoListTableView.mj_header beginRefreshing];
+                    }
+                }];
+            } failureBlock:^(NSString * _Nonnull msg) {
+                [helper hideLoadingHUD];
+            }];
+        } failureBlock:^(NSString * _Nonnull msg) {
             [helper hideLoadingHUD];
-            if (success) {
-                [newVideoView hide];
-                [weakSelf.videoListTableView.mj_header beginRefreshing];
-            }
         }];
-    } failureBlock:^(NSString * _Nonnull msg) {
+    } else {
         [helper hideLoadingHUD];
-    }];
+    }
 }
 
 #pragma mark -

@@ -59,6 +59,17 @@ NS_ASSUME_NONNULL_BEGIN
                     failureBlock:(void(^)(NSString *msg))failureBlock;
 
 /**
+ 上传视频封面
+ 
+ @param image 视频封面图片
+ @param successBlock 成功回调
+ @param failureBlock 失败回调
+ */
+- (void)uploadVideoCoverImageWithImage:(UIImage *)image
+                          successBlock:(void(^)(NSString *url))successBlock
+                          failureBlock:(void(^)(NSString *msg))failureBlock;
+
+/**
  上传视频
  
  @param localPath 本地视频地址
