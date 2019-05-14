@@ -219,13 +219,23 @@
     EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
     [helper showLoadingHUDAddedToView:self.view text:@"加载中..."];
     __weak typeof(self) weakSelf = self;
-    [self.network deleteVideoWithAid:self.album.album_id vid:[self.videos[indexPath.row] video_id] successBlock:^{
+    NSString *key = self.videoCombineDictSortedKeys[indexPath.section];
+    NSMutableArray *videos = [self.videoCombineDict objectForKey:key];
+    EVVideoModel *video = videos[indexPath.row];
+    [self.network deleteVideoWithAid:self.album.album_id vid:[video video_id] successBlock:^{
         [helper hideLoadingHUD];
         //删除数据，和删除动画
         NSMutableArray *newVideos = [NSMutableArray arrayWithArray:weakSelf.videos];
         [newVideos removeObjectAtIndex:indexPath.row];
         weakSelf.videos = newVideos;
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:indexPath.row inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
+        [videos removeObject:video];
+        if (videos.count == 0) {
+            NSMutableDictionary *newVideoCombineDict = [NSMutableDictionary dictionaryWithDictionary:weakSelf.videoCombineDict];
+            [newVideoCombineDict removeObjectForKey:key];
+            NSMutableArray *newVideoCombineDictSortedKeys = [NSMutableArray arrayWithArray:weakSelf.videoCombineDictSortedKeys];
+            [newVideoCombineDictSortedKeys removeObject:key];
+        }
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationTop];
     } failureBlock:^(NSString * _Nonnull msg) {
         [helper hideLoadingHUD];
     }];
