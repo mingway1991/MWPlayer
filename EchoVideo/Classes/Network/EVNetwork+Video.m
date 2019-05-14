@@ -44,16 +44,37 @@
     }];
 }
 
+- (void)deleteVideoWithAid:(NSNumber *)aid
+                       vid:(NSNumber *)vid
+              successBlock:(void(^)(void))successBlock
+              failureBlock:(void(^)(NSString *msg))failureBlock {
+    [self requestDeleteUrl:kDeleteVideoOfAlbumApi(aid, vid) Parameters:nil Success:^(id result) {
+        successBlock();
+    } Failed:^(NSString *errorMsg) {
+        failureBlock(errorMsg);
+    }];
+}
+
 - (void)uploadVideoWithLocalPath:(NSString *)localPath
                     successBlock:(void(^)(NSString *url))successBlock
                     failureBlock:(void(^)(NSString *msg))failureBlock {
     NSData *videoData = [NSData dataWithContentsOfFile:localPath];
-    NSString *objectKey = [NSString stringWithFormat:@"%@_%@.mov", [EVLoginUserModel sharedInstance].user.uid, @([[NSDate date] timeIntervalSinceNow])];
+    NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
+    NSInteger time = interval;
+    NSString *timestamp = [NSString stringWithFormat:@"%zd",time];
+    NSString *objectKey = [NSString stringWithFormat:@"%@_%@.mov", [EVLoginUserModel sharedInstance].user.uid, timestamp];
     [[OssService shareInstance] asyncPutVideo:videoData objectKey:objectKey Success:^(BOOL uploadResult) {
         if (uploadResult) {
+            NSError *error = nil;
+            [[NSFileManager defaultManager] removeItemAtPath:localPath error:&error];
+            if (error) {
+                NSLog(@"删除本地视频failed：%@", error.localizedDescription);
+            } else {
+                NSLog(@"删除本地视频成功");
+            }
             successBlock([NSString stringWithFormat:@"https://echo-video.oss-cn-shanghai.aliyuncs.com/upload/%@", objectKey]);
         } else {
-            failureBlock(@"上传图片失败");
+            failureBlock(@"上传视频失败");
         }
     }];
 }

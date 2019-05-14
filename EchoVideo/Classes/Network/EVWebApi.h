@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define kVideosOfAlbumApi(aid) [NSString stringWithFormat:@"/v1/albums/%@/videos",aid]
 #define kCreateVideoOfAlbumApi(aid) [NSString stringWithFormat:@"/v1/albums/%@/videos",aid]
+#define kDeleteVideoOfAlbumApi(aid, vid) [NSString stringWithFormat:@"/v1/albums/%@/videos/%@/delete",aid,vid]
 
 
 NS_ASSUME_NONNULL_END

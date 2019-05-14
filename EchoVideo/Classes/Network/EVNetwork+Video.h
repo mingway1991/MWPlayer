@@ -46,6 +46,19 @@ NS_ASSUME_NONNULL_BEGIN
                 failureBlock:(void(^)(NSString *msg))failureBlock;
 
 /**
+ 删除视频
+ 
+ @param aid 专辑id
+ @param vid 视频id
+ @param successBlock 成功回调
+ @param failureBlock 失败回调
+ */
+- (void)deleteVideoWithAid:(NSNumber *)aid
+                       vid:(NSNumber *)vid
+                    successBlock:(void(^)(void))successBlock
+                    failureBlock:(void(^)(NSString *msg))failureBlock;
+
+/**
  上传视频
  
  @param localPath 本地视频地址

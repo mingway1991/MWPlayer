@@ -117,7 +117,7 @@ NSString * const UPLOAD_FILE = @"upload/";
         OSSPutObjectResult * result = task.result;
         // 查看server callback是否成功
         if (!task.error) {
-            NSLog(@"Put image success!");
+            NSLog(@"Put video success!");
             NSLog(@"server callback : %@", result.serverReturnJsonString);
             dispatch_async(dispatch_get_main_queue(), ^{
                 //                [viewController showMessage:@"普通上传" inputMessage:@"Success!"];
@@ -126,7 +126,7 @@ NSString * const UPLOAD_FILE = @"upload/";
             
         } else {
             uploadResult(NO);
-            NSLog(@"Put image failed, %@", task.error);
+            NSLog(@"Put video failed, %@", task.error);
             if (task.error.code == OSSClientErrorCodeTaskCancelled) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                 });

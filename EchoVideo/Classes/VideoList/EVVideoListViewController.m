@@ -149,6 +149,36 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleDelete;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"删除";
+}
+
+- (BOOL)tableView: (UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    //在这里实现删除操作
+    __weak typeof(self) weakSelf = self;
+    [self.network deleteVideoWithAid:self.album.album_id vid:[self.videos[indexPath.row] video_id] successBlock:^{
+        //删除数据，和删除动画
+        NSMutableArray *newVideos = [NSMutableArray arrayWithArray:weakSelf.videos];
+        [newVideos removeObjectAtIndex:indexPath.row];
+        weakSelf.videos = newVideos;
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:indexPath.row inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
+    } failureBlock:^(NSString * _Nonnull msg) {
+        
+    }];
+}
+
 #pragma mark -
 #pragma mark EVNewVideoViewDelegate
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title url:(NSString *)url {
