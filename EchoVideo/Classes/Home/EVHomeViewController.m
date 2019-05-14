@@ -82,7 +82,7 @@
         _albumTableView.contentInset = UIEdgeInsetsMake(MWTopBarHeight, 0, 0, 0);
         
         __weak typeof(self) weakSelf = self;
-        _albumTableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+        _albumTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             [weakSelf loadAlbums];
         }];
     }

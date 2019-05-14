@@ -11,6 +11,7 @@
 #import "MWDefines.h"
 #import "UIColor+MWUtil.h"
 #import "EVNetwork+User.h"
+#import "EVLoadingHelper.h"
 
 @interface EVLoginViewController ()
 
@@ -39,16 +40,21 @@
 #pragma mark -
 #pragma mark Request
 - (void)loginAction {
+    [self.usernameTextFiled resignFirstResponder];
+    [self.passwordTextFiled resignFirstResponder];
     if (self.usernameTextFiled.text.length == 0) {
         return;
     }
     if (self.passwordTextFiled.text.length == 0) {
         return;
     }
+    EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
+    [helper showLoadingHUDAddedToView:self.view text:@"加载中..."];
     [self.network loginWithUsername:self.usernameTextFiled.text password:self.passwordTextFiled.text successBlock:^{
+        [helper hideLoadingHUD];
         [[NSNotificationCenter defaultCenter] postNotificationName:SWITCH_HOME_NOTIFICATION_NAME object:nil];
     } failureBlock:^(NSString * _Nonnull msg) {
-        
+        [helper hideLoadingHUD];
     }];
 }
 

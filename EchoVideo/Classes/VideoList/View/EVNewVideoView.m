@@ -10,7 +10,6 @@
 #import "MWDefines.h"
 #import "Constant.h"
 #import "UIColor+MWUtil.h"
-#import "EVNetwork+Video.h"
 
 @interface EVNewVideoView ()
 
@@ -72,6 +71,8 @@
 #pragma mark -
 #pragma mark Action
 - (void)createAction {
+    [self.titleTextField resignFirstResponder];
+    [self.urlTextField resignFirstResponder];
     if (self.type == EVNewVideoTypeUrl) {
         if (self.titleTextField.text.length == 0) {
             return;
@@ -89,15 +90,9 @@
         if (self.titleTextField.text.length == 0) {
             return;
         }
-        // 上传本地视频
-        __weak typeof(self) weakSelf = self;
-        [[[EVNetwork alloc] init] uploadVideoWithLocalPath:self.localVideoPath successBlock:^(NSString * _Nonnull url) {
-            if ([weakSelf.delegate respondsToSelector:@selector(newVideoView:title:url:)]) {
-                [weakSelf.delegate newVideoView:weakSelf title:weakSelf.titleTextField.text url:url];
-            }
-        } failureBlock:^(NSString * _Nonnull msg) {
-            
-        }];
+        if ([self.delegate respondsToSelector:@selector(newVideoView:title:localVideoPath:)]) {
+            [self.delegate newVideoView:self title:self.titleTextField.text localVideoPath:self.localVideoPath];
+        }
     }
 }
 

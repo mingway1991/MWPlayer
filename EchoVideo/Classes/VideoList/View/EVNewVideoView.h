@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol EVNewVideoViewDelegate <NSObject>
 
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title url:(NSString *)url;
+- (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title localVideoPath:(NSString *)localVideoPath;
 
 @end
 

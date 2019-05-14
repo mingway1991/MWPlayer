@@ -14,6 +14,8 @@
 #import "MWDefines.h"
 #import "MWPopup.h"
 #import "EVRecordVideoViewController.h"
+#import "EVLoadingHelper.h"
+#import "EVVideoCell.h"
 
 @import MJRefresh;
 
@@ -24,6 +26,8 @@
 @property (nonatomic, strong) UITableView *videoListTableView;
 @property (nonatomic, strong) EVNetwork *network;
 @property (nonatomic, strong) NSArray<EVVideoModel *> *videos;
+@property (nonatomic, strong) NSDictionary *videoCombineDict; // 按日期归类后的videos
+@property (nonatomic, strong) NSArray *videoCombineDictSortedKeys; // 字典的日期key数组
 
 @end
 
@@ -48,6 +52,38 @@
 - (void)setAlbum:(EVAlbumModel *)album {
     _album = album;
     self.title = album.title;
+}
+
+#pragma mark -
+#pragma mark Private
+/**
+ 组装日期-video字典
+ */
+- (void)_recombineVideos:(NSArray *)videos
+               isRefresh:(BOOL)isRefresh {
+    NSMutableDictionary *newDict;
+    if (isRefresh) {
+        newDict = [NSMutableDictionary dictionary];
+    } else {
+        newDict = [NSMutableDictionary dictionaryWithDictionary:self.videoCombineDict];
+    }
+    for (EVVideoModel *video in videos) {
+        NSString *createdAt = video.created_at;
+        NSDate *createdAtDate = [NSDate dateWithString:createdAt format:@"yyyy-MM-dd HH:mm:ss"];
+        NSString *formattedCreatedAt = [createdAtDate stringWithFormat:@"yyyy-MM-dd"];
+        NSMutableArray *videosArray = [newDict objectForKey:formattedCreatedAt];
+        if (!videosArray) {
+            videosArray = [NSMutableArray array];
+        }
+        [videosArray addObject:video];
+        [newDict setObject:videosArray forKey:formattedCreatedAt];
+    }
+    NSArray *keysArray = [newDict allKeys];//获取所有键存到数组
+    NSArray *sortedArray = [keysArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2){
+        return [obj2 compare:obj1 options:NSNumericSearch];
+    }];
+    self.videoCombineDict = newDict;
+    self.videoCombineDictSortedKeys = sortedArray;
 }
 
 #pragma mark -
@@ -103,6 +139,7 @@
                                    [weakSelf.videoListTableView.mj_footer endRefreshing];
                                }
                            }
+                           [weakSelf _recombineVideos:videos isRefresh:isRefresh];
                            weakSelf.videos = newVideos;
                            [weakSelf.videoListTableView reloadData];
     } failureBlock:^(NSString * _Nonnull msg) {
@@ -114,38 +151,46 @@
     }];
 }
 
-- (void)createVideoWithTitle:(NSString *)title videoUrl:(NSString *)videoUrl completion:(void(^)(void))completion {
+- (void)createVideoWithTitle:(NSString *)title videoUrl:(NSString *)videoUrl completion:(void(^)(BOOL success, NSString *errorMsg))completion {
     [self.network createVideoWithTitle:title cover_url:nil video_url:videoUrl aid:self.album.album_id successBlock:^{
-        completion();
+        completion(YES, nil);
     } failureBlock:^(NSString * _Nonnull msg) {
-        
+        completion(NO, msg);
     }];
 }
 
 #pragma mark -
 #pragma mark UITableViewDataSource && UITableViewDelegate
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return self.videoCombineDictSortedKeys.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _videos.count;
+    NSArray *videos = [self.videoCombineDict objectForKey:self.videoCombineDictSortedKeys[section]];
+    return videos.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 80.f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    EVVideoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[EVVideoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = [_videos[indexPath.row] title];
+    NSString *date = self.videoCombineDictSortedKeys[indexPath.section];
+    EVVideoModel *video = [self.videoCombineDict objectForKey:date][indexPath.row];
+    [cell updateUIWithVideo:video date:date index:indexPath.row];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    EVVideoModel *video = [self.videoCombineDict objectForKey:self.videoCombineDictSortedKeys[indexPath.section]][indexPath.row];
     EVPlayVideoViewController *vc = [[EVPlayVideoViewController alloc] init];
-    vc.videos = @[self.videos[indexPath.row]];
+    vc.videos = @[video];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -167,25 +212,50 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     //在这里实现删除操作
+    EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
+    [helper showLoadingHUDAddedToView:self.view text:@"加载中..."];
     __weak typeof(self) weakSelf = self;
     [self.network deleteVideoWithAid:self.album.album_id vid:[self.videos[indexPath.row] video_id] successBlock:^{
+        [helper hideLoadingHUD];
         //删除数据，和删除动画
         NSMutableArray *newVideos = [NSMutableArray arrayWithArray:weakSelf.videos];
         [newVideos removeObjectAtIndex:indexPath.row];
         weakSelf.videos = newVideos;
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:indexPath.row inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
     } failureBlock:^(NSString * _Nonnull msg) {
-        
+        [helper hideLoadingHUD];
     }];
 }
 
 #pragma mark -
 #pragma mark EVNewVideoViewDelegate
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title url:(NSString *)url {
+    EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
+    [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
     __weak typeof(self) weakSelf = self;
-    [self createVideoWithTitle:title videoUrl:url completion:^{
-        [weakSelf.videoListTableView.mj_header beginRefreshing];
-        [newVideoView hide];
+    [self createVideoWithTitle:title videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
+        [helper hideLoadingHUD];
+        if (success) {
+            [newVideoView hide];
+            [weakSelf.videoListTableView.mj_header beginRefreshing];
+        }
+    }];
+}
+
+- (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title localVideoPath:(NSString *)localVideoPath {
+    EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
+    [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
+    __weak typeof(self) weakSelf = self;
+    [[[EVNetwork alloc] init] uploadVideoWithLocalPath:localVideoPath successBlock:^(NSString * _Nonnull url) {
+        [weakSelf createVideoWithTitle:title videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
+            [helper hideLoadingHUD];
+            if (success) {
+                [newVideoView hide];
+                [weakSelf.videoListTableView.mj_header beginRefreshing];
+            }
+        }];
+    } failureBlock:^(NSString * _Nonnull msg) {
+        [helper hideLoadingHUD];
     }];
 }
 
@@ -207,9 +277,10 @@
         _videoListTableView.dataSource = self;
         _videoListTableView.delegate = self;
         _videoListTableView.contentInset = UIEdgeInsetsMake(MWTopBarHeight, 0, 0, 0);
+        _videoListTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         
         __weak typeof(self) weakSelf = self;
-        _videoListTableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+        _videoListTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             [weakSelf loadVideosWithIsRefresh:YES];
         }];
     }

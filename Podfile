@@ -9,4 +9,5 @@ target 'EchoVideo' do
   pod 'MJRefresh'
   pod 'AliyunOSSiOS', '2.10.5'
   pod 'LCActionSheet'
+  pod 'MBProgressHUD'
 end

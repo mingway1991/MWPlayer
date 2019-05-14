@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9FF4F37F1595EF8664A5E0B1D3B03D35"
+               BlueprintIdentifier = "D7C96EB2CEC2F0A98782A61673E21453"
                BuildableName = "Pods_EchoVideo.framework"
                BlueprintName = "Pods-EchoVideo"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9FF4F37F1595EF8664A5E0B1D3B03D35"
+            BlueprintIdentifier = "D7C96EB2CEC2F0A98782A61673E21453"
             BuildableName = "Pods_EchoVideo.framework"
             BlueprintName = "Pods-EchoVideo"
             ReferencedContainer = "container:Pods.xcodeproj">
