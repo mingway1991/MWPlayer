@@ -244,21 +244,22 @@
 #pragma mark -
 #pragma mark EVNewVideoViewDelegate
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title url:(NSString *)url {
+    [newVideoView hide];
     EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
-    [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
+    [helper showLoadingHUDAddedToView:self.view text:@"加载中..."];
     __weak typeof(self) weakSelf = self;
     [self createVideoWithTitle:title cover_url:nil videoUrl:url completion:^(BOOL success, NSString *errorMsg) {
         [helper hideLoadingHUD];
         if (success) {
-            [newVideoView hide];
             [weakSelf.videoListTableView.mj_header beginRefreshing];
         }
     }];
 }
 
 - (void)newVideoView:(EVNewVideoView *)newVideoView title:(NSString *)title localVideoPath:(NSString *)localVideoPath {
+    [newVideoView hide];
     EVLoadingHelper *helper = [[EVLoadingHelper alloc] init];
-    [helper showLoadingHUDAddedToView:newVideoView text:@"加载中..."];
+    [helper showLoadingHUDAddedToView:self.view text:@"加载中..."];
     UIImage *thumbnail = [EVVideoHelper getThumbnailImage:localVideoPath];
     if (thumbnail) {
         __weak typeof(self) weakSelf = self;
@@ -269,7 +270,6 @@
                 [weakSelf createVideoWithTitle:title cover_url:cover_url videoUrl:video_url completion:^(BOOL success, NSString *errorMsg) {
                     [helper hideLoadingHUD];
                     if (success) {
-                        [newVideoView hide];
                         [weakSelf.videoListTableView.mj_header beginRefreshing];
                     }
                 }];

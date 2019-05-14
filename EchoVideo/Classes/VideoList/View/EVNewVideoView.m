@@ -46,15 +46,15 @@
         CGFloat height = 200.f;
         self.urlTextField.hidden = NO;
         self.centerView.frame = CGRectMake(leftAndRight, MWTopBarHeight+60.f, CGRectGetWidth(self.bounds)-2*leftAndRight, height);
-        self.titleTextField.frame = CGRectMake(LEFT_RIGHT_MARGIN, 20.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+        self.titleTextField.frame = CGRectMake(leftAndRight, 20.f, CGRectGetWidth(self.centerView.frame)-2*leftAndRight, 40.f);
         self.urlTextField.frame = CGRectMake(CGRectGetMinX(self.titleTextField.frame), CGRectGetMaxY(self.titleTextField.frame)+10.f, CGRectGetWidth(self.titleTextField.frame), CGRectGetHeight(self.titleTextField.frame));
-        self.createButton.frame = CGRectMake(LEFT_RIGHT_MARGIN, CGRectGetMaxY(self.urlTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+        self.createButton.frame = CGRectMake(leftAndRight, CGRectGetMaxY(self.urlTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*leftAndRight, 40.f);
     } else if (self.type == EVNewVideoTypeLocal) {
         CGFloat height = 150.f;
         self.urlTextField.hidden = YES;
         self.centerView.frame = CGRectMake(leftAndRight, MWTopBarHeight+60.f, CGRectGetWidth(self.bounds)-2*leftAndRight, height);
-        self.titleTextField.frame = CGRectMake(LEFT_RIGHT_MARGIN, 20.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
-        self.createButton.frame = CGRectMake(LEFT_RIGHT_MARGIN, CGRectGetMaxY(self.titleTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*LEFT_RIGHT_MARGIN, 40.f);
+        self.titleTextField.frame = CGRectMake(leftAndRight, 20.f, CGRectGetWidth(self.centerView.frame)-2*leftAndRight, 40.f);
+        self.createButton.frame = CGRectMake(leftAndRight, CGRectGetMaxY(self.titleTextField.frame)+30.f, CGRectGetWidth(self.centerView.frame)-2*leftAndRight, 40.f);
     }
 }
 

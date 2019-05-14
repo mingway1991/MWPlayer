@@ -9,6 +9,7 @@
 #import "EVRecordVideoViewController.h"
 #import "MWPlayerView.h"
 #import "MWPlayerConfiguration.h"
+#import "UIColor+MWUtil.h"
 
 @import AVFoundation;
 
@@ -34,6 +35,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.tempLocalPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.mov"];
+    [self deleteTempLocalVideo];
     [self initUI];
 }
 
@@ -115,6 +118,16 @@
     [self.playerView play];
 }
 
+- (void)deleteTempLocalVideo {
+    NSError *error = nil;
+    if ([[NSFileManager defaultManager] fileExistsAtPath:self.tempLocalPath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:self.tempLocalPath error:&error];
+        if (error) {
+            NSLog(@"删除视频错误:%@",error.localizedDescription);
+        }
+    }
+}
+
 #pragma mark -
 #pragma mark Action
 - (void)clickCancelButton {
@@ -123,7 +136,6 @@
 
 - (void)clickRecordButton:(UIButton *)sender {
     [sender setSelected:!sender.isSelected];
-    self.tempLocalPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.mov"];
     if (![self.captureMovieFileOutput isRecording]) {
         NSLog(@"开始录制");
         AVCaptureConnection *captureConnection = [self.captureMovieFileOutput connectionWithMediaType:AVMediaTypeVideo];
@@ -193,10 +205,9 @@
 - (UIButton *)cancelButton {
     if (!_cancelButton) {
         self.cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _cancelButton.backgroundColor = [UIColor redColor];
+        [_cancelButton setImage:[UIImage imageNamed:@"down"] forState:UIControlStateNormal];
         CGFloat buttonWidth = 60.f;
-        CGFloat buttonHeight = 40.f;
-        _cancelButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonHeight)/2.f, buttonWidth, buttonHeight);
+        _cancelButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth-CGRectGetWidth(self.resetButton.bounds)/2.f)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonWidth)/2.f, buttonWidth, buttonWidth);
         [_cancelButton addTarget:self action:@selector(clickCancelButton) forControlEvents:UIControlEventTouchUpInside];
     }
     return _cancelButton;
@@ -206,9 +217,12 @@
     if (!_recordButton) {
         CGFloat buttonWidth = 80.f;
         self.recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _recordButton.backgroundColor = [UIColor redColor];
+        _recordButton.layer.cornerRadius = buttonWidth/2.f;
+        _recordButton.backgroundColor = [UIColor whiteColor];
         [_recordButton setTitle:@"录制" forState:UIControlStateNormal];
+        [_recordButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
         [_recordButton setTitle:@"停止" forState:UIControlStateSelected];
+        [_recordButton setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
         _recordButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)-buttonWidth)/2.f, CGRectGetHeight(self.view.bounds)-buttonWidth-50.f, buttonWidth, buttonWidth);
         [_recordButton addTarget:self action:@selector(clickRecordButton:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -228,10 +242,11 @@
 - (UIButton *)resetButton {
     if (!_resetButton) {
         self.resetButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _resetButton.backgroundColor = [UIColor redColor];
+        _resetButton.backgroundColor = [UIColor mw_colorWithHexString:@"F5F5F5"];
+        [_resetButton setImage:[UIImage imageNamed:@"reset"] forState:UIControlStateNormal];
         CGFloat buttonWidth = 60.f;
-        CGFloat buttonHeight = 40.f;
-        _resetButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonHeight)/2.f, buttonWidth, buttonHeight);
+        _resetButton.layer.cornerRadius = buttonWidth/2.f;
+        _resetButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonWidth)/2.f, buttonWidth, buttonWidth);
         [_resetButton addTarget:self action:@selector(clickResetButton) forControlEvents:UIControlEventTouchUpInside];
     }
     return _resetButton;
@@ -240,10 +255,11 @@
 - (UIButton *)finishButton {
     if (!_finishButton) {
         self.finishButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _finishButton.backgroundColor = [UIColor redColor];
+        _finishButton.backgroundColor = [UIColor mw_colorWithHexString:@"F5F5F5"];
+        [_finishButton setImage:[UIImage imageNamed:@"confirm"] forState:UIControlStateNormal];
         CGFloat buttonWidth = 60.f;
-        CGFloat buttonHeight = 40.f;
-        _finishButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)*3/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonHeight)/2.f, buttonWidth, buttonHeight);
+        _finishButton.layer.cornerRadius = buttonWidth/2.f;
+        _finishButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)*3/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonWidth)/2.f, buttonWidth, buttonWidth);
         [_finishButton addTarget:self action:@selector(clickFinishButton) forControlEvents:UIControlEventTouchUpInside];
     }
     return _finishButton;
