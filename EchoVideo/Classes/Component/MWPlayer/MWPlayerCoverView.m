@@ -356,6 +356,16 @@ typedef enum : NSUInteger {
 
 #pragma mark -
 #pragma mark UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (self.topView && [touch.view isDescendantOfView:self.topView]) {
+        return NO;
+    }
+    if ([touch.view isDescendantOfView:self.bottomView]) {
+        return NO;
+    }
+    return YES;
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return YES;
 }

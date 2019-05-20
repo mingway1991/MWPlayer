@@ -13,7 +13,9 @@
 
 @import AVFoundation;
 
-@interface EVRecordVideoViewController () <AVCaptureFileOutputRecordingDelegate, MWPlayerViewDelegate>
+@interface EVRecordVideoViewController () <AVCaptureFileOutputRecordingDelegate, MWPlayerViewDelegate> {
+    BOOL _canRunCatureSession;
+}
 
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) UIButton *recordButton;
@@ -35,6 +37,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor blackColor];
     self.tempLocalPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"temp.mov"];
     [self deleteTempLocalVideo];
     [self initUI];
@@ -42,32 +45,45 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.captureSession startRunning];
+    if (_canRunCatureSession) {
+        [self.captureSession startRunning];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.captureSession stopRunning];
+    if (_canRunCatureSession && [self.captureSession isRunning]) {
+        [self.captureSession stopRunning];
+    }
 }
 
 - (void)dealloc {
-    [_playerView stop];
-    [_playerView removeFromSuperview];
+    if (_playerView) {
+        [_playerView stop];
+        [_playerView removeFromSuperview];
+    }
 }
 
 - (void)initUI {
-    [self setupCamera];
     [self.view addSubview:self.recordButton];
     [self.view addSubview:self.cancelButton];
-    [self.view addSubview:self.playerView];
+    if ([self setupCamera]) {
+        [self.view addSubview:self.playerView];
+        self.recordButton.enabled = YES;
+    } else {
+        self.recordButton.enabled = NO;
+    }
 }
 
-- (void)setupCamera {
+- (BOOL)setupCamera {
     NSError *error = nil;
-    [self setupSessionInputs:&error];
+    _canRunCatureSession = [self setupSessionInputs:&error];
+    if (!_canRunCatureSession) {
+        return NO;
+    }
     if (error) {
         NSLog(@"%@",error.localizedDescription);
-        return;
+        return NO;
     }
     
     // 添加预览图层
@@ -79,6 +95,7 @@
     if ([self.captureSession canAddOutput:self.captureMovieFileOutput]) {
         [self.captureSession addOutput:self.captureMovieFileOutput];
     }
+    return YES;
 }
 
 /* 初始化设备信息，摄像头、话筒 */
@@ -244,7 +261,7 @@
         self.resetButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _resetButton.backgroundColor = [UIColor mw_colorWithHexString:@"F5F5F5"];
         [_resetButton setImage:[UIImage imageNamed:@"reset"] forState:UIControlStateNormal];
-        CGFloat buttonWidth = 60.f;
+        CGFloat buttonWidth = 80.f;
         _resetButton.layer.cornerRadius = buttonWidth/2.f;
         _resetButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonWidth)/2.f, buttonWidth, buttonWidth);
         [_resetButton addTarget:self action:@selector(clickResetButton) forControlEvents:UIControlEventTouchUpInside];
@@ -257,7 +274,7 @@
         self.finishButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _finishButton.backgroundColor = [UIColor mw_colorWithHexString:@"F5F5F5"];
         [_finishButton setImage:[UIImage imageNamed:@"confirm"] forState:UIControlStateNormal];
-        CGFloat buttonWidth = 60.f;
+        CGFloat buttonWidth = 80.f;
         _finishButton.layer.cornerRadius = buttonWidth/2.f;
         _finishButton.frame = CGRectMake((CGRectGetWidth(self.view.bounds)*3/2.f-buttonWidth)/2.f, CGRectGetMinY(self.recordButton.frame)+(CGRectGetHeight(self.recordButton.bounds)-buttonWidth)/2.f, buttonWidth, buttonWidth);
         [_finishButton addTarget:self action:@selector(clickFinishButton) forControlEvents:UIControlEventTouchUpInside];
