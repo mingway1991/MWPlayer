@@ -7,7 +7,7 @@
 //
 
 #import "MWPlayerProgressView.h"
-#import "MWDefines.h"
+#import "Constant.h"
 
 static CGFloat kProgressHeight = 2.f;
 

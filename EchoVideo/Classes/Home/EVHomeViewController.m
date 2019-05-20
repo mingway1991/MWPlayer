@@ -10,7 +10,7 @@
 #import "EVAlbumModel.h"
 #import "EVNetwork+Album.h"
 #import "EVVideoListViewController.h"
-#import "MWDefines.h"
+#import "Constant.h"
 
 @import MJRefresh;
 

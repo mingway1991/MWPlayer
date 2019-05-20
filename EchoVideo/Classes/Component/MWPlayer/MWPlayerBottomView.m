@@ -7,7 +7,7 @@
 //
 
 #import "MWPlayerBottomView.h"
-#import "MWDefines.h"
+#import "MWPlayerDefines.h"
 #import "MWPlayerProgressView.h"
 
 static CGFloat kCoverViewBottomHeight = 30.f;
@@ -65,15 +65,7 @@ static CGFloat kCoverViewBottomHeight = 30.f;
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat viewWidth = CGRectGetWidth(self.bounds);
     CGFloat minX = 10.f;
-    if (self.info.direction == MWPlayerDirectionLandscapeLeft) {
-        viewWidth -= (MWStatusBarHeight+MWSafeAreaHeight);
-        minX += MWStatusBarHeight;
-    } else if (self.info.direction == MWPlayerDirectionLandscapeRight) {
-        viewWidth -= (MWStatusBarHeight+MWSafeAreaHeight);
-        minX += MWSafeAreaHeight;
-    }
     self.playOrPauseButton.frame = CGRectMake(minX, (CGRectGetHeight(self.bounds)-kCoverViewBottomHeight)/2.f, kCoverViewBottomHeight, kCoverViewBottomHeight);
     self.fullScreenButton.frame = CGRectMake(CGRectGetWidth(self.bounds)-minX-kCoverViewBottomHeight, CGRectGetMinY(self.playOrPauseButton.frame), kCoverViewBottomHeight, kCoverViewBottomHeight);
     [self _updateDurationLabel];

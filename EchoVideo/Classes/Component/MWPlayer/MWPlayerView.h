@@ -16,12 +16,15 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MWPlayerViewDelegate <NSObject>
 
 @optional
+// 更新播放进度
 - (void)playerViewUpdateProgress:(MWPlayerView *)playerView
                totalTimeInterval:(NSTimeInterval)totalTimeInterval
              currentTimeInterval:(NSTimeInterval)currentTimeInterval;
+// 更新缓存进度
 - (void)playerViewLoadCache:(MWPlayerView *)playerView
           totalTimeInterval:(NSTimeInterval)totalTimeInterval
           cacheTimeInterval:(NSTimeInterval)cacheTimeInterval;
+// 加载视频失败
 - (void)playerViewLoadBreak:(MWPlayerView *)playerView;
 
 @end

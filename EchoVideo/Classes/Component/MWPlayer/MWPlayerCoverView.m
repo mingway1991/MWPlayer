@@ -8,7 +8,7 @@
 
 #import "MWPlayerCoverView.h"
 #import "MWPlayerBottomView.h"
-#import "MWDefines.h"
+#import "MWPlayerDefines.h"
 
 @import MediaPlayer;
 
@@ -170,9 +170,9 @@ typedef enum : NSUInteger {
 #pragma mark Private
 - (void)_hideView {
     [UIView animateWithDuration:.25f animations:^{
-        MWSetMinY(self.bottomView, CGRectGetHeight(self.bounds));
+        MWPlayerSetMinY(self.bottomView, CGRectGetHeight(self.bounds));
         if (self.topView) {
-            MWSetMinY(self.topView, -CGRectGetHeight(self.topView.bounds));
+            MWPlayerSetMinY(self.topView, -CGRectGetHeight(self.topView.bounds));
         }
     } completion:^(BOOL finished) {
         if (finished) {
@@ -183,9 +183,9 @@ typedef enum : NSUInteger {
 
 - (void)_showView {
     [UIView animateWithDuration:.25f animations:^{
-        MWSetMinY(self.bottomView, CGRectGetHeight(self.bounds)-self.configuration.bottomToolViewHeight);
+        MWPlayerSetMinY(self.bottomView, CGRectGetHeight(self.bounds)-self.configuration.bottomToolViewHeight);
         if (self.topView) {
-            MWSetMinY(self.topView, 0);
+            MWPlayerSetMinY(self.topView, 0);
         }
     } completion:^(BOOL finished) {
         if (finished) {

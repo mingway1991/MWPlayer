@@ -196,13 +196,10 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     [super drawRect:rect];
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextBeginPath(ctx);
-    
     // 画箭头
     [self drawArrowWithContext:ctx];
     // 画圆角矩形
     [self drawRoundedRectangleWithContext:ctx];
-    
     CGContextSaveGState(ctx);
     CGContextRestoreGState(ctx);
 }
@@ -211,6 +208,7 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     CGFloat width = CGRectGetWidth(self.bounds);
     CGFloat height = CGRectGetHeight(self.bounds);
     
+    CGContextBeginPath(ctx);
     switch (self.arrowDirection) {
         case MWPopupArrowDirectionTop: {
             CGContextMoveToPoint(ctx, self.arrowPoint.x-kMWPopupArrowWidth/2.f, kMWPopupArrowHeight);
@@ -257,8 +255,8 @@ static CGFloat kMWPopupArrowMinSideMargin = 10.f; // 箭头距离边最小距离
     CGFloat width = CGRectGetWidth(self.bounds);
     CGFloat height = CGRectGetHeight(self.bounds);
     
+    CGContextBeginPath(ctx);
     CGRect rect = CGRectZero;
-    
     switch (self.arrowDirection) {
         case MWPopupArrowDirectionTop: {
             rect = CGRectMake(0, kMWPopupArrowHeight, width, height-kMWPopupArrowHeight);

@@ -11,7 +11,7 @@
 #import "EVNetwork+Video.h"
 #import "EVNewVideoView.h"
 #import "EVPlayVideoViewController.h"
-#import "MWDefines.h"
+#import "Constant.h"
 #import "MWPopup.h"
 #import "EVRecordVideoViewController.h"
 #import "EVLoadingHelper.h"

@@ -7,7 +7,7 @@
 //
 
 #import "EVNewVideoView.h"
-#import "MWDefines.h"
+#import "Constant.h"
 #import "Constant.h"
 #import "UIColor+MWUtil.h"
 

@@ -7,7 +7,7 @@
 //
 
 #import "MWPlayerView.h"
-#import "MWDefines.h"
+#import "MWPlayerDefines.h"
 #import "MWPlayerCoverView.h"
 #import "MWPlayerInfo.h"
 
@@ -39,7 +39,7 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
 @synthesize configuration = _configuration;
 
 - (instancetype)init {
-    self = [super init];
+    self = [super initWithFrame:CGRectZero];
     if (self) {
         [self commonInit];
     }
@@ -403,11 +403,11 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.frame = [UIScreen mainScreen].bounds;
     [[UIApplication sharedApplication].keyWindow addSubview:self];
     if (direction == MWPlayerDirectionLandscapeLeft) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWPlayerDegreeToRadian(90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWPlayerDegreeToRadian(90))];
     } else if (direction == MWPlayerDirectionLandscapeRight) {
-        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
-        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWDegreeToRadian(-90))];
+        [self.avPlayerLayer setAffineTransform:CGAffineTransformMakeRotation(MWPlayerDegreeToRadian(-90))];
+        [self.coverView.layer setAffineTransform:CGAffineTransformMakeRotation(MWPlayerDegreeToRadian(-90))];
     }
 }
 

@@ -105,7 +105,7 @@
 		7A9DF8192282701500434AF2 /* MWPlayerProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerProgressView.h; sourceTree = "<group>"; };
 		7A9DF81A2282701500434AF2 /* MWPlayerBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerBottomView.h; sourceTree = "<group>"; };
 		7A9DF81B2282701500434AF2 /* MWPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerView.m; sourceTree = "<group>"; };
-		7A9DF81C2282701500434AF2 /* MWDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWDefines.h; sourceTree = "<group>"; };
+		7A9DF81C2282701500434AF2 /* MWPlayerDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MWPlayerDefines.h; sourceTree = "<group>"; };
 		7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerConfiguration.m; sourceTree = "<group>"; };
 		7A9DF825228273AA00434AF2 /* MWPopup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPopup.h; sourceTree = "<group>"; };
 		7A9DF826228273AA00434AF2 /* MWPopup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MWPopup.m; sourceTree = "<group>"; };
@@ -349,7 +349,7 @@
 				7A9DF8152282701500434AF2 /* MWPlayerConfiguration.h */,
 				7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */,
 				7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */,
-				7A9DF81C2282701500434AF2 /* MWDefines.h */,
+				7A9DF81C2282701500434AF2 /* MWPlayerDefines.h */,
 			);
 			path = MWPlayer;
 			sourceTree = "<group>";

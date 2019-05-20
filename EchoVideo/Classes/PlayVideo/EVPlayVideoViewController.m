@@ -9,7 +9,7 @@
 #import "EVPlayVideoViewController.h"
 #import "MWPlayerView.h"
 #import "MWPlayerConfiguration.h"
-#import "MWDefines.h"
+#import "Constant.h"
 #import "Constant.h"
 
 @interface EVPlayVideoViewController ()
@@ -25,6 +25,11 @@
     [super viewDidLoad];
     
     [self.view addSubview:self.playerView];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    self.playerView.frame = self.view.bounds;
 }
 
 - (void)dealloc {
@@ -47,15 +52,13 @@
 #pragma mark Setter
 - (void)setVideos:(NSArray<EVVideoModel *> *)videos {
     _videos = videos;
-    
-    [self playWithIndex:0];
 }
 
 #pragma mark -
 #pragma mark LazyLoad
 - (MWPlayerView *)playerView {
     if (!_playerView) {
-        self.playerView = [[MWPlayerView alloc] initWithFrame:CGRectMake(0, MWTopBarHeight, CGRectGetWidth([UIScreen mainScreen].bounds), 300.f)];
+        self.playerView = [[MWPlayerView alloc] init];
         _playerView.hidden = YES;
         
         self.configuration = [MWPlayerConfiguration defaultConfiguration];

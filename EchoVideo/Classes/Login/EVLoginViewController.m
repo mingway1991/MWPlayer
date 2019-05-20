@@ -8,7 +8,6 @@
 
 #import "EVLoginViewController.h"
 #import "Constant.h"
-#import "MWDefines.h"
 #import "UIColor+MWUtil.h"
 #import "EVNetwork+User.h"
 #import "EVLoadingHelper.h"
