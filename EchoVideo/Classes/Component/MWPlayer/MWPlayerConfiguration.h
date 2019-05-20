@@ -18,12 +18,6 @@ static NSString *kConfigurationBottomToolViewBackgroundColorKeyPath = @"bottomTo
 static NSString *kConfigurationVideoGravityKeyPath = @"videoGravity";
 static NSString *kConfigurationNeedCoverViewKeyPath = @"needCoverView";
 
-typedef enum : NSUInteger {
-    MWPlayerVideoGravityResizeAspect = 0, // 按比例完整显示
-    MWPlayerVideoGravityResizeAspectFill, // 按比例充满屏幕
-    MWPlayerVideoGravityResize
-} MWPlayerVideoGravity;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MWPlayerConfiguration : NSObject

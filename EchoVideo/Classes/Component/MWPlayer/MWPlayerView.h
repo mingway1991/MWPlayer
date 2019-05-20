@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MWPlayerConfiguration.h"
+#import "MWPlayerEnum.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,13 +27,19 @@ NS_ASSUME_NONNULL_BEGIN
           cacheTimeInterval:(NSTimeInterval)cacheTimeInterval;
 // 加载视频失败
 - (void)playerViewLoadBreak:(MWPlayerView *)playerView;
+// 更改播放器状态
+- (void)playerViewChangedState:(MWPlayerView *)playerView
+                         state:(MWPlayerState)state;
+// 更改播放器方向
+- (void)playerViewChangedDirection:(MWPlayerView *)playerView
+                         direction:(MWPlayerDirection)direction;
 
 @end
 
 @interface MWPlayerView : UIView
 
-@property (nonatomic, copy) NSString *videoUrl;
-@property (nonatomic, copy) NSString *localUrl;
+@property (nonatomic, copy) NSString *videoUrl; // 网络视频
+@property (nonatomic, copy) NSString *localUrl; // 本地视频
 @property (nonatomic, strong) MWPlayerConfiguration *configuration; // 不赋值使用默认配置
 @property (nonatomic, weak) id<MWPlayerViewDelegate> delegate;
 
@@ -44,6 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)seekToPlay:(float)percent;
 /* 重置为未播放状态 */
 - (void)stop;
+/* 调整播放器方向 */
+- (void)changePlayerDirection:(MWPlayerDirection)direction;
 
 @end
 

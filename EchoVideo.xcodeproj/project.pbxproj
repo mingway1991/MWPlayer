@@ -91,6 +91,7 @@
 		7A8332932277E14300493BA7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7A83329F2277E45300493BA7 /* EVBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EVBaseViewController.h; sourceTree = "<group>"; };
 		7A8332A02277E45300493BA7 /* EVBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EVBaseViewController.m; sourceTree = "<group>"; };
+		7A94A54E2292841A00A5E146 /* MWPlayerEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MWPlayerEnum.h; sourceTree = "<group>"; };
 		7A96BBE02284326B00BAB056 /* EVRecordVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EVRecordVideoViewController.h; sourceTree = "<group>"; };
 		7A96BBE12284326B00BAB056 /* EVRecordVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EVRecordVideoViewController.m; sourceTree = "<group>"; };
 		7A9DF8102282701500434AF2 /* MWPlayerBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MWPlayerBottomView.m; sourceTree = "<group>"; };
@@ -326,7 +327,7 @@
 		7A9DF80E2282701500434AF2 /* Component */ = {
 			isa = PBXGroup;
 			children = (
-				7AADF30B228AA4C900883CB1 /* MWVerticalAlignLabel */,
+				7AADF30B228AA4C900883CB1 /* MWAlignTopLabel */,
 				7A9DF8242282730500434AF2 /* MWPopup */,
 				7A9DF80F2282701500434AF2 /* MWPlayer */,
 			);
@@ -350,6 +351,7 @@
 				7A9DF81D2282701500434AF2 /* MWPlayerConfiguration.m */,
 				7A9DF8162282701500434AF2 /* MWPlayerLoadingProtocol.h */,
 				7A9DF81C2282701500434AF2 /* MWPlayerDefines.h */,
+				7A94A54E2292841A00A5E146 /* MWPlayerEnum.h */,
 			);
 			path = MWPlayer;
 			sourceTree = "<group>";
@@ -383,13 +385,13 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		7AADF30B228AA4C900883CB1 /* MWVerticalAlignLabel */ = {
+		7AADF30B228AA4C900883CB1 /* MWAlignTopLabel */ = {
 			isa = PBXGroup;
 			children = (
 				7AADF30C228AA56400883CB1 /* MWAlignTopLabel.h */,
 				7AADF30D228AA56400883CB1 /* MWAlignTopLabel.m */,
 			);
-			path = MWVerticalAlignLabel;
+			path = MWAlignTopLabel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

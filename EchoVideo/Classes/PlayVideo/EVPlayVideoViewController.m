@@ -23,13 +23,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self.view addSubview:self.playerView];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     self.playerView.frame = self.view.bounds;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self playWithIndex:0];
 }
 
 - (void)dealloc {
@@ -39,7 +43,6 @@
 
 - (void)playWithIndex:(NSInteger)index {
     self.title = [self.videos[index] title];
-    self.playerView.hidden = NO;
     NSString *url = [self.videos[index] video_url];
     if (![url hasPrefix:@"http"]) {
         url = VIDEO_URL(url);
@@ -59,7 +62,6 @@
 - (MWPlayerView *)playerView {
     if (!_playerView) {
         self.playerView = [[MWPlayerView alloc] init];
-        _playerView.hidden = YES;
         
         self.configuration = [MWPlayerConfiguration defaultConfiguration];
         _playerView.configuration = self.configuration;

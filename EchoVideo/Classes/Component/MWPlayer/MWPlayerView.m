@@ -167,6 +167,14 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
     self.info.state = MWPlayerStateStop;
 }
 
+- (void)changePlayerDirection:(MWPlayerDirection)direction {
+    if (direction == MWPlayerDirectionPortrait) {
+        [self _zoomOut];
+    } else {
+        [self _zoomInWithDirection:direction];
+    }
+}
+
 #pragma mark -
 #pragma mark Observe Callback
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -242,6 +250,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
             } else if (self.info.state == MWPlayerStateLoadBreak) {
                 [self _loadBreak];
             }
+            if ([self.delegate respondsToSelector:@selector(playerViewChangedState:state:)]) {
+                [self.delegate playerViewChangedState:self state:self.info.state];
+            }
         } else if ([keyPath isEqualToString:kInfoPanToPlayPercentKeyPath]) {
             // 更改播放进度
             [self _dragProgressWithPercent:self.info.panToPlayPercent needPlay:NO];
@@ -251,6 +262,9 @@ static NSString *kAvPlaterPlaybackBufferEmptyKeyPath = @"playbackBufferEmpty"; /
                 [self _zoomOut];
             } else {
                 [self _zoomInWithDirection:self.info.direction];
+            }
+            if ([self.delegate respondsToSelector:@selector(playerViewChangedDirection:direction:)]) {
+                [self.delegate playerViewChangedDirection:self direction:self.info.direction];
             }
         }
     } else if ([object isKindOfClass:[MWPlayerConfiguration class]]) {
